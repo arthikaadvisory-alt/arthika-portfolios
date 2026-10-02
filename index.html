@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arthika - Premium CFP Wealth Planner & Diagnostic Portal</title>
+  <meta name="description" content="A premium SEBI-aware Certified Financial Planner wealth diagnostic portal. Collects cash flows, assets, liabilities, and insurance gaps, generating a full Nobel-driven wealth roadmap with Indian mutual fund recommendations.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header>
+      <div class="logo-container" style="display: flex; align-items: center;">
+        <div class="logo-icon-shield" style="margin-right: 0.75rem; flex-shrink: 0;">
+          <svg class="logo-svg" viewBox="0 0 100 110" width="36" height="40" style="display: block; overflow: visible;">
+            <path d="M50,5 L85,15 C85,60 50,90 50,90 C50,90 15,60 15,15 Z" fill="#0a1424" stroke="#c5a059" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M50,10 L80,19 C80,57 50,83 50,83 C50,83 20,57 20,19 Z" fill="none" stroke="#dfc599" stroke-width="1.2" opacity="0.8"/>
+            <path d="M38,62 L48,34 L54,34 L43,62 L38,62 Z M46,39 L39,57 L49,57 Z" fill="#c5a059"/>
+            <path d="M48,62 L58,34 L64,34 L53,62 L48,62 Z M56,39 L49,57 L59,57 Z" fill="#dfc599" opacity="0.95"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="logo-text" style="font-family: 'Cinzel', 'Playfair Display', 'Georgia', serif; font-size: 1.35rem; color: #c5a059; letter-spacing: 0.05em; font-weight: 700; margin: 0; line-height: 1.1;">ARTHIKA</h1>
+          <p style="font-family: 'Inter', sans-serif; font-size: 0.62rem; color: #f3f4f6; font-weight: 600; letter-spacing: 0.25em; margin: 0; text-transform: uppercase;">ADVISORS</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="badge" id="badge-mode">Diagnostic Mode</span>
+        <button id="btn-retake-quiz" onclick="resetQuiz()" class="badge" style="cursor: pointer; font-family: inherit; font-weight: 600; display: none; background: rgba(255,255,255,0.05); border-color: var(--border-color); color: var(--text-main); margin-right: 0.5rem; outline: none; transition: var(--transition-smooth);">🔄 Edit Profile</button>
+        <button id="btn-export-ppt" onclick="exportToPowerPoint()" class="badge" style="cursor: pointer; font-family: inherit; font-weight: 700; background: linear-gradient(135deg, #c5a059, #9a7833); color: #0a1424; border: none; box-shadow: 0 2px 8px rgba(197, 160, 89, 0.4); display: none; margin-right: 0.5rem; transition: var(--transition-smooth);">📊 Export Wealth Plan (.pptx)</button>
+        <button onclick="window.print()" class="badge success" style="cursor: pointer; font-family: inherit; font-weight: 600;">🖨️ Export Wealth Plan</button>
+      </div>
+    </header>
+
+    <!-- Onboarding Step-by-Step Wizard -->
+    <div id="onboarding-container" class="panel" style="max-width: 800px; margin: 2rem auto; padding: 2.5rem;">
+      
+      <!-- Welcome Screen -->
+      <div id="onboarding-welcome">
+        <div class="logo-icon-shield" style="width: 80px; height: 90px; margin: 0 auto 1.5rem auto;">
+          <svg class="logo-svg" viewBox="0 0 100 110" width="80" height="90" style="display: block; overflow: visible;">
+            <path d="M50,5 L85,15 C85,60 50,90 50,90 C50,90 15,60 15,15 Z" fill="#0a1424" stroke="#c5a059" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M50,10 L80,19 C80,57 50,83 50,83 C50,83 20,57 20,19 Z" fill="none" stroke="#dfc599" stroke-width="1.2" opacity="0.8"/>
+            <path d="M38,62 L48,34 L54,34 L43,62 L38,62 Z M46,39 L39,57 L49,57 Z" fill="#c5a059"/>
+            <path d="M48,62 L58,34 L64,34 L53,62 L48,62 Z M56,39 L49,57 L59,57 Z" fill="#dfc599" opacity="0.95"/>
+          </svg>
+        </div>
+        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ffffff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center;">Comprehensive Wealth Diagnostic</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2.5rem; font-size: 0.95rem; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto;">
+          Enter your financial details below. Our diagnostic engine compiles cash flows, loan liabilities, tax structures, and insurance status to architect a custom Nobel-laureate model portfolio.
+        </p>
+        <div style="text-align: center;">
+          <button onclick="startQuiz()" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; color: white; padding: 1rem 2.5rem; font-size: 1rem; font-weight: 700; border-radius: var(--border-radius-md); cursor: pointer; box-shadow: 0 4px 15px var(--primary-glow); transition: var(--transition-smooth); width: 100%; max-width: 320px;">Start Wealth Diagnostic</button>
+        </div>
+      </div>
+
+      <!-- Quiz Form Container -->
+      <div id="onboarding-quiz" style="display: none;">
+        
+        <!-- Progress Indicator -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dark); font-weight: 700;" id="quiz-progress-text">Step 1 of 4</span>
+          <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700;" id="quiz-progress-percent">25%</span>
+        </div>
+        <div style="width: 100%; height: 4px; background: rgba(255, 255, 255, 0.05); border-radius: 2px; margin-bottom: 2rem; overflow: hidden;">
+          <div id="quiz-progress-bar" style="width: 25%; height: 100%; background: var(--primary); border-radius: 2px; transition: var(--transition-smooth);"></div>
+        </div>
+
+        <h3 id="quiz-question-title" style="font-size: 1.4rem; margin-bottom: 1.5rem; color: white;">Basic Biography & Goals</h3>
+
+        <div id="step-content-container">
+          <!-- Inputs will be injected dynamically via JS based on Step Index -->
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+          <button id="quiz-btn-prev" onclick="prevQuestion()" style="background: none; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.75rem 1.5rem; border-radius: var(--border-radius-md); cursor: pointer; font-weight: 600; transition: var(--transition-smooth);">← Back</button>
+          <button id="quiz-btn-next" onclick="nextQuestion()" style="background: var(--primary); border: none; color: white; padding: 0.75rem 2rem; border-radius: var(--border-radius-md); cursor: pointer; font-weight: 700; transition: var(--transition-smooth);">Next →</button>
+        </div>
+      </div>
+
+      <!-- Analyzing view -->
+      <div id="onboarding-analyzing" style="display: none; padding: 3rem 0; text-align: center;">
+        <div class="logo-icon-shield animate-pulse" style="width: 60px; height: 70px; margin: 0 auto 1.5rem auto;">
+          <svg class="logo-svg" viewBox="0 0 100 110" width="60" height="70" style="display: block; overflow: visible;">
+            <path d="M50,5 L85,15 C85,60 50,90 50,90 C50,90 15,60 15,15 Z" fill="#0a1424" stroke="#c5a059" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M50,10 L80,19 C80,57 50,83 50,83 C50,83 20,57 20,19 Z" fill="none" stroke="#dfc599" stroke-width="1.2" opacity="0.8"/>
+            <path d="M38,62 L48,34 L54,34 L43,62 L38,62 Z M46,39 L39,57 L49,57 Z" fill="#c5a059"/>
+            <path d="M48,62 L58,34 L64,34 L53,62 L48,62 Z M56,39 L49,57 L59,57 Z" fill="#dfc599" opacity="0.95"/>
+          </svg>
+        </div>
+        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: white;">Compiling Wealth Architecture...</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Calculating tax slabs, identifying protection gaps, and factoring RBI yield models...</p>
+      </div>
+
+      <!-- Diagnostic Results Screen -->
+      <div id="onboarding-result" style="display: none; text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 1rem;">💼</div>
+        <h3 style="font-size: 1.1rem; text-transform: uppercase; color: var(--accent-cyan); letter-spacing: 0.1em; font-weight: 700; margin-bottom: 0.5rem;">Diagnostic Complete</h3>
+        <h2 id="result-profile-name" style="font-size: 2rem; margin-bottom: 1rem; color: white;">Aggressive Accumulator</h2>
+        
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--border-radius-md); text-align: left; margin-bottom: 2rem;">
+          <p id="result-profile-desc" style="color: var(--text-muted); font-size: 0.9rem; margin: 0; line-height: 1.6;"></p>
+        </div>
+
+        <button onclick="finishQuiz()" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; color: white; padding: 1rem 2.5rem; font-size: 1rem; font-weight: 700; border-radius: var(--border-radius-md); cursor: pointer; box-shadow: 0 4px 15px var(--primary-glow); transition: var(--transition-smooth); width: 100%; max-width: 350px;">Generate Comprehensive Wealth Plan</button>
+      </div>
+
+    </div>
+
+    <!-- Complete Wealth Report Dashboard Container -->
+    <div id="dashboard-container" style="display: none;">
+      
+      <!-- REPORT TITLE BAR -->
+      <div class="panel" style="margin-bottom: 2rem; border-left: 5px solid var(--primary); padding: 1.5rem 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="font-size: 1.8rem; color: white; margin-bottom: 0.25rem;">Comprehensive Financial Plan & Asset Diagnostics</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+              Prepared by **Arthika Wealth Advisory** under Nobel-laureate glide path parameters. 
+              Client Profile: <span id="report-meta-name" style="color: white; font-weight: 600;">Indian Investor</span> | 
+              Age: <span id="report-meta-age" style="color: white; font-weight: 600;">--</span>
+            </p>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-dark); font-weight: 700;">Date of Analysis</div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700; color: white;" id="report-meta-date">September 2026</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 1: INVESTOR SNAPSHOT -->
+      <section class="panel" style="margin-bottom: 2rem;">
+        <h3 class="panel-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" stroke-width="2"/></svg>
+          SECTION 1 — Investor Snapshot & Gaps Analysis
+        </h3>
+
+        <!-- Gaps Alarm Notification Box -->
+        <div id="snapshot-gaps-alarm-box" style="margin-bottom: 1.5rem;">
+          <!-- Dynamically injected critical alarms (Insurance, Emergency reserves) -->
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+          <div class="projection-mini-card" style="background: rgba(255,255,255,0.01);">
+            <div class="stat-lbl">Monthly Net Surplus</div>
+            <div class="val" id="snap-val-surplus">₹0</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">(Income minus Expense & EMIs)</p>
+          </div>
+          <div class="projection-mini-card" style="background: rgba(255,255,255,0.01);">
+            <div class="stat-lbl">Net Savings Rate</div>
+            <div class="val highlight" id="snap-val-rate">0%</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Target rate benchmark: >30%</p>
+          </div>
+          <div class="projection-mini-card" style="background: rgba(255,255,255,0.01);">
+            <div class="stat-lbl">Total Current Capital</div>
+            <div class="val" id="snap-val-assets">₹0</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Sum of cash & current investments</p>
+          </div>
+          <div class="projection-mini-card" style="background: rgba(255,255,255,0.01);">
+            <div class="stat-lbl">Tax Bracket Mode</div>
+            <div class="val" style="color: var(--color-gold);" id="snap-val-tax">0% Slab</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">New vs Old Tax Regime</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: MACRO OUTLOOK -->
+      <section class="panel" style="margin-bottom: 2rem;">
+        <h3 class="panel-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" stroke-width="2"/></svg>
+          SECTION 2 — Macroeconomic & Market Outlook
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+          <div>
+            <h4 style="color: white; font-size: 1.1rem; margin-bottom: 0.5rem;">Indian Macroeconomic Indicators</h4>
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 1.25rem;">
+              <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.7; display: flex; flex-direction: column; gap: 0.5rem;">
+                <li><strong>10-Year G-Sec Yield:</strong> Rose to <span style="color: white; font-weight: 600;">6.94%</span> (2-month high) amid elevated global yields and crude oil regaining $90.</li>
+                <li><strong>Inflation Trend:</strong> July 2026 inflation stood at <span style="color: white; font-weight: 600;">4.45%</span>, while U.S. inflation moderated slightly to 3.4%.</li>
+                <li><strong>FPI Capital Inflows:</strong> August 2026 recorded ₹30,000 Crore of foreign portfolio inflows (23-month high) supported by strong GDP and GST revenue growth.</li>
+                <li><strong>Precious Metals & Commodities:</strong> Gold & Silver rallied over 9% in August before seeing profit booking; maintain gold asset allocations through disciplined SIP/STP.</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <h4 style="color: white; font-size: 1.1rem; margin-bottom: 0.5rem;">Recommended Strategic Positioning</h4>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">
+              Based on the **September 2026 Outlook**, equities remain the prime long-term compounding driver (3-5+ year horizon via STP/SIP). BAF and Multi-Asset strategies are well-suited for lump sum deployment.
+            </p>
+            <div class="callout info" style="margin: 0; padding: 1rem 1.25rem;">
+              <div class="callout-icon">💡</div>
+              <div class="callout-content">
+                <h5 style="color: white; font-size: 0.9rem;">Debt Strategy Guidelines</h5>
+                <p style="font-size: 0.78rem; line-height: 1.4; color: var(--text-muted);">
+                  CFP recommendation: **Avoid Long-Duration & Gilt Funds** due to interest rate and crude volatility. Allocate debt into **Short-Term Bond Funds**, **Dynamic Bond Funds**, or **Corporate Bond Funds (Accrual)**.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: BEHAVIORAL & RISK ANALYSIS -->
+      <section class="panel" style="margin-bottom: 2rem;">
+        <h3 class="panel-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" stroke-width="2"/></svg>
+          SECTION 3 — Risk Profile & Behavioral Diagnostics
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--border-radius-md);">
+            <h4 style="color: white; font-size: 1rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--accent-cyan);">⚖️</span> Risk Capacity
+            </h4>
+            <p id="risk-cap-evaluation" style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+              Evaluating capital cushion, income stability, time horizon, and loan commitments...
+            </p>
+          </div>
+          <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--border-radius-md);">
+            <h4 style="color: white; font-size: 1rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--primary);">🧠</span> Risk Willingness
+            </h4>
+            <p id="risk-will-evaluation" style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+              Evaluating emotional tolerance, behavioral target goals, and comfort under volatility...
+            </p>
+          </div>
+          <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--border-radius-md);">
+            <h4 style="color: white; font-size: 1rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--color-gold);">⚠️</span> Behavioral Warnings
+            </h4>
+            <p id="risk-behavior-warnings" style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+              Pinpointing cognitive errors: loss aversion, cash flow traps, or lifestyle drift dangers...
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: RECOMMENDED ASSET ALLOCATION -->
+      <section class="panel" style="margin-bottom: 2rem;">
+        <h3 class="panel-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" stroke-width="2"/></svg>
+          SECTION 4 — Recommended Portfolio Asset Allocation
+        </h3>
+        <div class="portfolio-details">
+          
+          <!-- Asset allocation banner details -->
+          <div class="portfolio-header-banner">
+            <div class="portfolio-title-text">
+              <h3 id="portfolio-display-name">Loading Profile...</h3>
+              <p id="portfolio-target-audience">Target Phase...</p>
+            </div>
+            <div class="portfolio-stats">
+              <div class="stat-item">
+                <div class="stat-lbl">Target Return CAGR</div>
+                <div class="stat-val growth" id="portfolio-stat-return">--%</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-lbl">Systemic Volatility</div>
+                <div class="stat-val volatility" id="portfolio-stat-vol">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart Visual Area -->
+          <div class="visualization-box">
+            <div class="chart-wrapper">
+              <svg class="donut-chart" viewBox="0 0 100 100">
+                <circle class="donut-hole" cx="50" cy="50" r="38"></circle>
+                <g id="donut-segments-group"></g>
+              </svg>
+              <div class="chart-center">
+                <div class="chart-center-val" id="chart-center-ratio">--%</div>
+                <div class="chart-center-lbl" id="chart-center-label">EQUITY</div>
+              </div>
+            </div>
+            <div class="chart-legend" id="chart-legend-container"></div>
+          </div>
+
+          <!-- Split list breakdown with Rupees -->
+          <div class="allocation-list" id="allocation-cards-container"></div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 5: MULTI-INSTRUMENT PRODUCT RECOMMENDATIONS -->
+      <section class="panel" style="margin-bottom: 2rem; overflow-x: auto;">
+        <h3 class="panel-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" stroke-width="2"/></svg>
+          SECTION 5 — Curated Product Portfolio (Equities, Corporate FDs, NCDs & Debt MFs)
+        </h3>
+        
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+          These specific investments match your asset allocation and stability preference. Stability assets span <strong>AAA Corporate Fixed Deposits</strong>, <strong>Senior Secured NCDs</strong>, <strong>Debt Mutual Funds</strong>, and <strong>Sovereign Floating Bonds</strong> from the September 2026 House View.
+        </p>
+
+        <!-- Return Calculation Mode Toggle Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; background: rgba(0,0,0,0.25); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+          <div>
+            <span style="font-size: 0.85rem; font-weight: 700; color: white; margin-right: 0.5rem;">Expected Value Compounding Mode:</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">(Toggle between exact historical 3Y yield and conservative benchmark)</span>
+          </div>
+          <div class="mode-toggle-group">
+            <button id="btn-mode-historical" class="mode-toggle-btn active" onclick="setReturnCalculationMode('historical')">
+              📈 Historical Yield / 3Y CAGR View
+            </button>
+            <button id="btn-mode-conservative" class="mode-toggle-btn" onclick="setReturnCalculationMode('conservative')">
+              🛡️ Conservative Baseline View
+            </button>
+          </div>
+        </div>
+
+        <!-- Product Instrument Filter Chips -->
+        <div class="product-filter-bar" id="product-filter-container">
+          <button class="filter-chip active" onclick="filterProducts('all', event)">All Recommendations</button>
+          <button class="filter-chip" onclick="filterProducts('equity', event)">Equities (Core & Satellite)</button>
+          <button class="filter-chip" onclick="filterProducts('fd', event)">Corporate FDs (AAA)</button>
+          <button class="filter-chip" onclick="filterProducts('ncd', event)">Bonds & NCDs (AA+ / AA)</button>
+          <button class="filter-chip" onclick="filterProducts('mf_debt', event)">Debt Mutual Funds</button>
+          <button class="filter-chip" onclick="filterProducts('gov', event)">Sovereign & Tax (RBI / 54EC)</button>
+        </div>
+
+        <table class="report-table" id="rec-products-table" style="width: 100%; border-collapse: collapse; min-width: 960px; font-size: 0.85rem;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+              <th style="padding: 0.75rem 0.5rem; color: white;">Product / Instrument Scheme</th>
+              <th style="padding: 0.75rem 0.5rem; color: white;">Asset Bucket</th>
+              <th style="padding: 0.75rem 0.5rem; color: white; text-align: right;">Allocation %</th>
+              <th style="padding: 0.75rem 0.5rem; color: white; text-align: right;">Monthly SIP (₹500)</th>
+              <th style="padding: 0.75rem 0.5rem; color: var(--color-gold); text-align: right;">Daily SIP (₹100)</th>
+              <th style="padding: 0.75rem 0.5rem; color: white; text-align: right;">Lump Sum</th>
+              <th style="padding: 0.75rem 0.5rem; color: white; text-align: center;">Yield / Rating</th>
+              <th style="padding: 0.75rem 0.5rem; color: white; text-align: center;">Risk Rating</th>
+              <th style="padding: 0.75rem 0.5rem; color: white; text-align: right;">Expected Value</th>
+              <th style="padding: 0.75rem 0.5rem; color: white; width: 220px;">Strategic Rationale</th>
+            </tr>
+          </thead>
+          <tbody id="rec-products-tbody">
+            <!-- Dynamically generated rows -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SECTION 6: GOAL ROADMAP -->
+      <section class="panel" style="margin-bottom: 2rem;">
+        <h3 class="panel-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" stroke-width="2"/></svg>
+          SECTION 6 — Goal-Based Wealth Roadmap
+        </h3>
+
+        <!-- Interactive Horizon & Tenure Simulator -->
+        <div class="dashboard-horizon-bar">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <span style="font-size: 0.9rem; font-weight: 700; color: white;">⏱️ Investment Horizon & Tenure Simulator</span>
+              <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.15rem 0 0 0;">Select or enter <strong>ANY number of years</strong> to simulate portfolio compounding, inflation, and goal timelines live.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Active Horizon:</span>
+              <div style="position: relative; width: 110px;">
+                <input type="number" class="text-input" id="dash-horizon-num" value="15" min="1" max="100" step="1" style="font-size: 1.1rem; font-weight: 700; color: var(--color-gold); text-align: center; padding: 0.35rem 1.6rem 0.35rem 0.35rem;" oninput="setDashboardHorizon(this.value, 'number')">
+                <span style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 0.72rem; color: var(--text-muted); pointer-events: none; font-weight: 600;">Yrs</span>
+              </div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr; gap: 0.5rem;">
+            <div class="slider-container" style="margin-bottom:0; padding: 0.1rem 0; background: transparent; border: none;">
+              <input type="range" class="custom-range" id="dash-horizon-slider" min="1" max="50" step="1" value="15" oninput="setDashboardHorizon(this.value, 'slider')">
+            </div>
+            <div class="horizon-chip-group" id="dash-horizon-chips">
+              <button class="horizon-chip" onclick="setDashboardHorizon(1, 'chip')">1 Yr</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(2, 'chip')">2 Yrs</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(3, 'chip')">3 Yrs</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(5, 'chip')">5 Yrs</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(7, 'chip')">7 Yrs</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(10, 'chip')">10 Yrs</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(12, 'chip')">12 Yrs</button>
+              <button class="horizon-chip active" onclick="setDashboardHorizon(15, 'chip')">15 Yrs</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(18, 'chip')">18 Yrs</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(20, 'chip')">20 Yrs</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(25, 'chip')">25 Yrs</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(30, 'chip')">30 Yrs</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(40, 'chip')">40 Yrs</button>
+              <button class="horizon-chip" onclick="setDashboardHorizon(50, 'chip')">50 Yrs</button>
+            </div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+          <div>
+            <h4 style="color: white; font-size: 1.1rem; margin-bottom: 0.75rem;">Goal Target vs Inflation Analysis</h4>
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                <span style="color: var(--text-muted);">Target Goal Value (Current Rupees):</span>
+                <span id="goal-val-current" style="color: white; font-weight: 600;">₹0</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                <span style="color: var(--text-muted);">Investment Horizon:</span>
+                <span id="goal-val-horizon" style="color: white; font-weight: 600;">-- Years</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                <span style="color: var(--text-muted);">Assumed Inflation Rate:</span>
+                <span style="color: white; font-weight: 600;">6.0% Per Year</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.95rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                <span style="color: var(--text-muted);">Inflation-Adjusted Target Cost:</span>
+                <span id="goal-val-inflated" style="color: var(--color-gold); font-weight: 700;">₹0</span>
+              </div>
+            </div>
+            
+            <h4 style="color: white; font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem;">Shortfall & Saving Gaps</h4>
+            <div id="goal-gap-analysis" style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+              Calculating compound capacity versus desired goal parameters...
+            </div>
+          </div>
+
+          <div>
+            <h4 style="color: white; font-size: 1.1rem; margin-bottom: 0.75rem;">Portfolio Accumulation Path</h4>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+              <div>
+                <div class="stat-lbl">Invested Capital</div>
+                <div class="val" id="road-val-invested" style="font-size: 1.4rem;">₹0</div>
+              </div>
+              <div>
+                <div class="stat-lbl">Projected Portfolio Value</div>
+                <div class="val highlight" id="road-val-future" style="font-size: 1.4rem;">₹0</div>
+              </div>
+            </div>
+            
+            <label class="form-label" style="font-size: 0.75rem;">Timeline Accumulation Graph</label>
+            <div class="projection-graph-container" id="road-bars-container" style="height: 180px;"></div>
+          </div>
+        </div>
+
+        <!-- SIP JOURNEY ACCELERATORS: STEP-UP SIP & FREEDOM SIP -->
+        <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <h4 style="color: white; font-size: 1.15rem; margin: 0;">🚀 Wealth Acceleration: Step-Up SIP vs. Freedom SIP Journey</h4>
+            <span class="badge" style="background: rgba(197, 160, 89, 0.15); color: var(--primary); border-color: rgba(197, 160, 89, 0.3);">Growth Accelerators</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Compare standard fixed investing against an automated <strong>Step-Up SIP (+10% Annual Increment)</strong> and a goal-based <strong>Freedom SIP (Lifetime SWP Retirement Pension)</strong>.
+          </p>
+          
+          <div class="sip-strategy-grid" id="sip-strategy-comparison-grid">
+            <!-- Dynamically injected strategy cards -->
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 7: PROTECTION AND RISK CONTINGENCY -->
+      <section class="panel" style="margin-bottom: 2rem;">
+        <h3 class="panel-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" stroke-width="2"/></svg>
+          SECTION 7 — Protection & Contingency Diagnostics
+        </h3>
+        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem;">
+          <div>
+            <h4 style="color: white; font-size: 1.1rem; margin-bottom: 0.75rem;">Contingency Analysis & Defenses</h4>
+            <div class="allocation-list" id="contingency-analysis-container"></div>
+          </div>
+          <div>
+            <div style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: var(--border-radius-md); border: 1px solid var(--border-color);">
+              <h5 style="margin-bottom: 0.5rem; color: white;">Estate & Nominee Gaps</h5>
+              <ul style="font-size: 0.8rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.7; display: flex; flex-direction: column; gap: 0.5rem;">
+                <li>Ensure **Nominations** are active across all new mutual fund folios.</li>
+                <li>Add secondary bank nominees for ease of recovery.</li>
+                <li>Consider creating a formal **Will** if you hold multiple real estate properties or complex business entities.</li>
+                <li>Maintain a private password manager/document repository sharing folder with your primary nominee.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 8: EXECUTION PLAN -->
+      <section class="panel" style="margin-bottom: 2rem;">
+        <h3 class="panel-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" stroke-width="2"/></svg>
+          SECTION 8 — Actionable Execution Plan
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--border-radius-md);">
+            <h4 style="color: white; font-size: 1rem; margin-bottom: 0.5rem; color: var(--accent-cyan);">📅 First 30 Days</h4>
+            <ul style="font-size: 0.82rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.6; display: flex; flex-direction: column; gap: 0.4rem;">
+              <li>Top up the emergency fund account to reach target requirements in liquid funds.</li>
+              <li>Purchase individual health/term insurance top-up covers to close protection gaps.</li>
+              <li>Initiate Nivesh SIP transactions with **Automated Annual Step-Up Mandate (+10%)**.</li>
+            </ul>
+          </div>
+          <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--border-radius-md);">
+            <h4 style="color: white; font-size: 1rem; margin-bottom: 0.5rem; color: var(--primary);">📆 Day 31 to Day 90</h4>
+            <ul style="font-size: 0.82rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.6; display: flex; flex-direction: column; gap: 0.4rem;">
+              <li>Verify NACH/e-Mandate auto-debit triggers directly from your bank account.</li>
+              <li>Set up **Freedom SIP Target Maturity Triggers** for systematic pension switching.</li>
+              <li>Consolidate older mutual fund portfolios with high expense ratios.</li>
+            </ul>
+          </div>
+          <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--border-radius-md);">
+            <h4 style="color: white; font-size: 1rem; margin-bottom: 0.5rem; color: var(--color-gold);">📊 Annual Maintenance</h4>
+            <ul style="font-size: 0.82rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.6; display: flex; flex-direction: column; gap: 0.4rem;">
+              <li>**Rebalance Bands:** Adjust allocations if Core/Satellite segments drift by more than **5% absolute** weight.</li>
+              <li>**Step-up SIP Confirmation:** Verify the +10% annual top-up execution on your SIPs.</li>
+              <li>Review tax liability and LTCG exemption limits harvesting.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- NOBEL CONCEPTS TAB BED HUB -->
+      <section class="panel education-section" style="margin-bottom: 2rem;">
+        <div class="tabs-header">
+          <button class="tab-btn active" onclick="switchTab(event, 'tab-markowitz')">1. Portfolio Diversification</button>
+          <button class="tab-btn" onclick="switchTab(event, 'tab-fama')">2. Factor & Smart Beta</button>
+          <button class="tab-btn" onclick="switchTab(event, 'tab-sharpe')">3. Core & Satellite Allocation</button>
+          <button class="tab-btn" onclick="switchTab(event, 'tab-thaler')">4. Behavioral Finance</button>
+        </div>
+
+        <div class="tab-content active" id="tab-markowitz">
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div>
+              <div class="content-block">
+                <h4>Diversification & Safe Havens</h4>
+                <p>Modern portfolio research proves that you shouldn't just evaluate an asset's individual risk; you must evaluate how it behaves <em>relative</em> to everything else. True diversification only works when assets have low or negative correlation.</p>
+              </div>
+              <div class="content-block">
+                <h4>The Indian Shock Absorber</h4>
+                <p>In India, Nifty 500 equities and G-Secs/AAA Corporate debt form the core. However, the true shock absorber is **Gold**. When foreign capital (FIIs) aggressively pulls out of Indian equities, the Rupee depreciates, which simultaneously drives up domestic Gold prices (since gold is dollar-denominated globally). This creates a highly resilient negative correlation hedge during equity market crashes.</p>
+              </div>
+            </div>
+            <div>
+              <div style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: var(--border-radius-md); border: 1px solid var(--border-color);">
+                <h5 style="margin-bottom: 0.5rem; color: white;">Diversification Insights</h5>
+                <ul style="font-size: 0.8rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.6;">
+                  <li>Assets must be selected based on relative correlation, not just individual returns.</li>
+                  <li>Adding uncorrelated assets increases return-to-risk efficiency.</li>
+                  <li>Gold acts as a currency and stock market hedge on Dalal Street.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-fama">
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div>
+              <div class="content-block">
+                <h4>Smart Beta & Factor Investing</h4>
+                <p>Standard market indexing assumes that it is extremely difficult to consistently beat the market. However, factor models prove that targeting specific investment traits (factors) like Size, Value, and Momentum consistently drives excess risk premiums over standard market-cap-weighted indices.</p>
+              </div>
+              <div class="content-block">
+                <h4>Factor Realities on Dalal Street</h4>
+                <p>Factor investing has exploded in India, surpassing ₹50,000 crore in assets. We utilize two major factors to generate alpha:</p>
+                <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.6;">
+                  <li><strong>Momentum (Nifty200 Momentum 30):</strong> Aggressively rides price trends and outperforms heavily during structural bull markets, though it suffers in sharp reversals.</li>
+                  <li><strong>Quality (Nifty100 Quality 30):</strong> Focuses on high Return on Equity (ROE), low debt-to-equity ratios, and low earnings volatility, acting as a defensive shield during volatile periods.</li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <div style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: var(--border-radius-md); border: 1px solid var(--border-color);">
+                <h5 style="margin-bottom: 0.5rem; color: white;">Smart Beta Insights</h5>
+                <ul style="font-size: 0.8rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.6;">
+                  <li>Standard indexing is cheap, but smart factors capture structural excess returns.</li>
+                  <li>Momentum drives alpha in bull runs; Quality preserves capital in corrections.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-sharpe">
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div>
+              <div class="content-block">
+                <h4>Risk-Adjusted Return Overlay</h4>
+                <p>To evaluate performance, we measure risk-adjusted returns, demonstrating that systematic market risk (Beta) should be captured as cheaply as possible, while individual active risk (Alpha) should be isolated and targeted in small doses.</p>
+              </div>
+              <div class="content-block">
+                <h4>Core & Satellite Portfolio Construction</h4>
+                <p>We divide assets into a strict Core-Satellite structure to optimize risk-adjusted returns:</p>
+                <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.6;">
+                  <li><strong>The Core (70%):</strong> Captures cheap market Beta. We use ultra-low-cost index funds with minimal tracking error.</li>
+                  <li><strong>The Satellite (30%):</strong> Targets excess Alpha. Consists of Momentum ETFs, Quality factors, or active swing trading and systematic option writing strategies.</li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <div style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: var(--border-radius-md); border: 1px solid var(--border-color);">
+                <h5 style="margin-bottom: 0.5rem; color: white;">Risk-Adjusted Return Insights</h5>
+                <ul style="font-size: 0.8rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.6;">
+                  <li>Evaluate portfolios on risk-adjusted return, not absolute return.</li>
+                  <li>Separate cheap Beta (Core) from high-conviction Alpha (Satellite).</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-thaler">
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div>
+              <div class="content-block">
+                <h4>Behavioral Finance & Decision Safety</h4>
+                <p>Behavioral finance research shows that human emotion and cognitive biases (like loss aversion and mental accounting) frequently derail long-term compounding. Investors tend to panic-sell during crashes, locking in losses instead of staying the course.</p>
+              </div>
+              <div class="content-block">
+                <h4>Automated Glide Paths</h4>
+                <p>To shield investors from emotional decision-making, we construct automated glide paths. As you transition from young accumulation to older preservation, the app shifts your assets systematically. Crucially, we do not just reduce equity—we shift the *type* of equity, moving from high-beta momentum factors into quality and low-volatility factor buckets to stabilize the corpus for Systematic Withdrawal Plans (SWP).</p>
+              </div>
+            </div>
+            <div>
+              <div style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: var(--border-radius-md); border: 1px solid var(--border-color);">
+                <h5 style="margin-bottom: 0.5rem; color: white;">Behavioral Insights</h5>
+                <ul style="font-size: 0.8rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.6;">
+                  <li>Emotions are the biggest threat to compound interest.</li>
+                  <li>Systematizing allocations removes active human error.</li>
+                  <li>Glide paths shift equity styles, not just debt ratios, to lock in gains.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUMMARY DIAGNOSTIC CONCLUSIONS -->
+      <section class="panel" style="margin-bottom: 2rem; border-top: 3px solid var(--accent-rose);">
+        <h3 class="panel-title" style="color: var(--accent-rose);">🚨 Diagnostics Stress Test & Gaps Summary</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+          <div>
+            <h4 style="color: white; font-size: 1.1rem; margin-bottom: 0.5rem;">Stress Test Scenarios</h4>
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 1.25rem;">
+              <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.6; display: flex; flex-direction: column; gap: 0.5rem;">
+                <li><strong>2008 Global Financial Crash Scenario:</strong> Under a simulated 50% equity correction, your proposed portfolio would experience a peak drawdown of approximately <span id="stress-val-2008" style="color: var(--accent-rose); font-weight: 700;">-0%</span>. Recovery period estimation: <span id="stress-val-2008-rec" style="color: white;">-- Months</span>.</li>
+                <li><strong>2020 Covid Liquid Flash Correction Scenario:</strong> Under a simulated 35% equity flash drop, your portfolio would experience a drawdown of <span id="stress-val-2020" style="color: var(--accent-rose); font-weight: 700;">-0%</span>. Recovery time: <span id="stress-val-2020-rec" style="color: white;">-- Months</span>.</li>
+                <li><strong>Top Return-Destroying Mistake:</strong> <span style="color: white; font-weight: 600;">Panic selling during drawdowns.</span> Keep your emergency fund liquid so that you never liquidate your SIPs under market stress.</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <h4 style="color: white; font-size: 1.1rem; margin-bottom: 0.5rem;">Financial Advisor Direction Summary</h4>
+            <div style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: var(--border-radius-md); border: 1px dashed var(--border-color);">
+              <p id="advisor-direction-concl" style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                Analyzing inputs to establish target wealth direction...
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRESENTATION EXPORT ACTION BAR -->
+      <section class="panel" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(197,160,89,0.1), rgba(10,20,36,0.9)); border: 1px solid var(--primary); text-align: center; padding: 2rem;">
+        <div style="max-width: 700px; margin: 0 auto;">
+          <span class="badge" style="background: rgba(197,160,89,0.2); color: var(--primary); margin-bottom: 0.75rem;">Executive Presentation Ready</span>
+          <h3 style="font-size: 1.5rem; color: white; margin-bottom: 0.5rem;">Export Comprehensive Wealth Presentation (11 Slides)</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+            Generate an executive 11-slide PowerPoint presentation (.pptx) customized for <strong id="ppt-banner-client-name" style="color: var(--primary);">Client</strong> covering Snapshot, Macro Outlook, Asset Allocation, <strong>Conservative & Historical Product Sheets</strong>, <strong>Conservative & Historical Goal Roadmaps (with Year 1–T Timeline Trajectory Charts)</strong>, <strong>Conservative & Historical Step-Up/Freedom SIP Acceleration</strong>, Protection Diagnostics, and Action Plan in ONE unified deck.
+          </p>
+          <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <button onclick="exportToPowerPoint()" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #0a1424; border: none; font-size: 1rem; font-weight: 700; padding: 0.9rem 2.2rem; border-radius: var(--border-radius-md); cursor: pointer; box-shadow: 0 4px 15px var(--primary-glow); display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition-smooth);">
+              <span>📊</span> Download Complete Presentation (.pptx)
+            </button>
+            <button onclick="window.print()" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border-color); font-size: 1rem; font-weight: 600; padding: 0.9rem 1.8rem; border-radius: var(--border-radius-md); cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition-smooth);">
+              <span>🖨️</span> Print PDF Plan
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer / Legal Disclaimer -->
+    <footer>
+      <div style="max-width: 800px; margin: 0 auto;">
+        <p style="margin-bottom: 0.5rem;">© 2026 Arthika Financial Advisory Services. All rights reserved.</p>
+        <p style="font-size: 0.7rem; line-height: 1.4;">
+          <strong>Disclaimer:</strong> The model portfolios, strategic allocations, and growth projections provided on this platform are for educational and illustrative purposes only. They do not constitute formal, individualized investment advice, financial planning, or a recommendation to buy or sell securities. Historical performance returns used in projections are hypothetical and do not guarantee future market behavior. All investments involve substantial risk of capital loss. Please consult a registered, certified financial advisor before establishing any portfolio allocation.
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="pptxgen.bundle.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
