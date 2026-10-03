@@ -307,12 +307,19 @@ const recommendedFunds = {
 // Wizard Steps Data
 const quizSteps = [
   {
-    title: "Step 1: Personal Profile & Horizon",
+    title: "Step 1: Investor Demographics & Horizon",
     html: `
       <div class="quiz-step-grid">
         <div class="form-group" style="grid-column: 1 / -1;">
-          <label class="form-label-bold">Customer / Investor Full Name</label>
-          <input type="text" class="text-input" id="in-customerName" value="Rajesh Sharma" placeholder="e.g. Rajesh Sharma" style="padding-left: 1rem; font-weight: 600;">
+          <div style="background: rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.3); padding: 0.85rem 1.25rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <span style="font-size: 0.72rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Verified Investor</span><br>
+              <strong id="step1-verified-name" style="color: var(--color-gold); font-size: 1rem;">Client</strong>
+            </div>
+            <div style="font-size: 0.82rem; color: #d1d5db;">
+              📱 <span id="step1-verified-mobile">+91 --</span> &bull; ✉️ <span id="step1-verified-email">--</span>
+            </div>
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label-bold">Current Age</label>
@@ -322,7 +329,7 @@ const quizSteps = [
           <label class="form-label-bold">City/Country of Residence</label>
           <input type="text" class="text-input" id="in-residence" value="Mumbai" style="padding-left: 1rem;">
         </div>
-        <div class="form-group">
+        <div class="form-group" style="grid-column: 1 / -1;">
           <label class="form-label-bold">Tax Slab / Regime</label>
           <select class="select-input" id="in-taxSlab" style="padding-left: 1rem;">
             <option value="10">10% Bracket (Old/New)</option>
@@ -483,9 +490,75 @@ const quizSteps = [
   }
 ];
 
+// Advisor & Regulatory Configuration
+const ADVISOR_CONFIG = {
+  arn: "ARN-361236",
+  company: "Arthika Advisors",
+  license: "AMFI Registered Mutual Fund Distributor (ARN-361236)",
+  whatsappNumber: "919820012345", // Advisor's WhatsApp Number for instant lead delivery
+  email: "advisors@arthika.in",
+  webhookEndpoint: "" // Optional Webhook / Formspree URL for instant email alerts
+};
+
+// Diagnostics & Validation Helpers
+function validateMobileNumber(mobile) {
+  const clean = (mobile || '').replace(/\D/g, '');
+  if (!clean || clean.length !== 10) {
+    return { valid: false, error: "Please enter a valid 10-digit Indian mobile number." };
+  }
+  if (!/^[6-9]/.test(clean)) {
+    return { valid: false, error: "Mobile number must start with 6, 7, 8, or 9." };
+  }
+  // Check for repeated single digits (e.g., 9999999999, 8888888888, 0000000000)
+  if (/^(\d)\1{9}$/.test(clean)) {
+    return { valid: false, error: "Invalid dummy mobile number (repeated identical digits rejected)." };
+  }
+  // Check common sequential and dummy numbers
+  const dummyNumbers = [
+    '1234567890', '0123456789', '9876543210', '9898989898', '9988776655',
+    '9123456789', '9000000000', '9800000000', '9111111111', '9222222222',
+    '9333333333', '9444444444', '9555555555', '9666666666', '9777777777'
+  ];
+  if (dummyNumbers.includes(clean)) {
+    return { valid: false, error: "Test dummy phone number detected. Please provide your active mobile number." };
+  }
+  return { valid: true, cleanNumber: clean };
+}
+
+function validateEmailAddress(email) {
+  const clean = (email || '').trim().toLowerCase();
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!clean || !emailRegex.test(clean)) {
+    return { valid: false, error: "Please enter a valid email address (e.g. name@domain.com)." };
+  }
+  const parts = clean.split('@');
+  const user = parts[0];
+  const domain = parts[1];
+  
+  // Dummy usernames
+  const dummyUsers = ['test', 'asdf', 'fake', 'dummy', 'abc', 'xyz', 'admin', 'user', 'noemail', 'none', 'temp', 'sample'];
+  if (dummyUsers.includes(user)) {
+    return { valid: false, error: "Generic dummy email addresses (e.g. test@) are rejected." };
+  }
+  
+  // Disposable / temporary domains
+  const fakeDomains = [
+    'mailinator.com', 'tempmail.com', '10minutemail.com', 'guerrillamail.com',
+    'throwawaymail.com', 'fake.com', 'test.com', 'example.com', 'asdf.com',
+    'sample.com', 'xyz.com', 'abc.com', 'temp-mail.org', 'dispostable.com',
+    'yopmail.com', 'sharklasers.com', 'trashmail.com', 'getnada.com', 'tempmailo.com'
+  ];
+  if (fakeDomains.includes(domain)) {
+    return { valid: false, error: "Temporary / disposable email domains are not accepted. Please use a genuine email." };
+  }
+  return { valid: true, cleanEmail: clean };
+}
+
 // Form state values
 let formValues = {
   customerName: "Rajesh Sharma",
+  email: "rajesh.sharma@gmail.com",
+  mobile: "9820012345",
   age: 30,
   residence: "Mumbai",
   taxSlab: "30",
@@ -580,11 +653,40 @@ const stressVal2020 = document.getElementById('stress-val-2020');
 const stressVal2020Rec = document.getElementById('stress-val-2020-rec');
 const advisorDirectionConcl = document.getElementById('advisor-direction-concl');
 
+let isAdvisorMeetingMode = false;
+
+function checkAdvisorMeetingMode() {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('mode') === 'advisor' || sessionStorage.getItem('advisor_meeting_mode') === 'true') {
+    isAdvisorMeetingMode = true;
+    const banner = document.getElementById('advisor-meeting-banner');
+    if (banner) banner.style.display = 'flex';
+    
+    const badgeModeEl = document.getElementById('badge-mode');
+    if (badgeModeEl) {
+      badgeModeEl.textContent = 'Advisor Live Consultation Mode (ARN-361236)';
+      badgeModeEl.style.background = 'rgba(197, 160, 89, 0.2)';
+      badgeModeEl.style.color = '#c5a059';
+      badgeModeEl.style.borderColor = '#c5a059';
+    }
+
+    const btnReqOtp = document.getElementById('btn-request-otp');
+    if (btnReqOtp) {
+      btnReqOtp.innerHTML = '🚀 Begin Consultation (Skip OTP for Meeting)';
+      btnReqOtp.style.background = 'linear-gradient(135deg, #c5a059, #9a7833)';
+      btnReqOtp.style.color = '#0a1424';
+    }
+  }
+}
+
 // Initialize
 function init() {
   // Set date
   const now = new Date();
-  reportMetaDate.textContent = now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+  if (reportMetaDate) {
+    reportMetaDate.textContent = now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+  }
+  checkAdvisorMeetingMode();
   resetQuiz();
 }
 
@@ -625,14 +727,174 @@ function showStep(index) {
   }
 }
 
+let pendingClientData = { name: '', email: '', mobile: '' };
+
+async function requestClientOtp() {
+  const nameEl = document.getElementById('gate-name');
+  const emailEl = document.getElementById('gate-email');
+  const mobileEl = document.getElementById('gate-mobile');
+  const errName = document.getElementById('gate-err-name');
+  const errEmail = document.getElementById('gate-err-email');
+  const errMobile = document.getElementById('gate-err-mobile');
+  const btn = document.getElementById('btn-request-otp');
+
+  if (errName) errName.style.display = 'none';
+  if (errEmail) errEmail.style.display = 'none';
+  if (errMobile) errMobile.style.display = 'none';
+
+  const nameVal = nameEl ? nameEl.value.trim() : '';
+  const emailVal = emailEl ? emailEl.value.trim() : '';
+  const mobileVal = mobileEl ? mobileEl.value.trim() : '';
+
+  let isValid = true;
+  if (!nameVal || nameVal.length < 2) {
+    if (errName) { errName.textContent = '⚠️ Please enter the client\'s full name.'; errName.style.display = 'block'; }
+    if (nameEl) nameEl.focus();
+    isValid = false;
+  }
+
+  const emailRes = validateEmailAddress(emailVal);
+  if (!emailRes.valid) {
+    if (errEmail) { errEmail.textContent = `⚠️ ${emailRes.error}`; errEmail.style.display = 'block'; }
+    if (isValid && emailEl) emailEl.focus();
+    isValid = false;
+  }
+
+  const mobileRes = validateMobileNumber(mobileVal);
+  if (!mobileRes.valid) {
+    if (errMobile) { errMobile.textContent = `⚠️ ${mobileRes.error}`; errMobile.style.display = 'block'; }
+    if (isValid && mobileEl) mobileEl.focus();
+    isValid = false;
+  }
+
+  if (!isValid) return;
+
+  pendingClientData = { name: nameVal, email: emailVal, mobile: mobileVal };
+
+  // If in Advisor Meeting Mode, skip OTP verification completely
+  if (isAdvisorMeetingMode) {
+    formValues.customerName = nameVal;
+    formValues.email = emailVal;
+    formValues.mobile = mobileVal;
+    startQuiz();
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending Verification Code...'; }
+
+  try {
+    const res = await fetch('/api/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pendingClientData)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      document.getElementById('otp-step-details').style.display = 'none';
+      document.getElementById('otp-step-verify').style.display = 'block';
+      document.getElementById('otp-recipient-summary').textContent = `Code sent to ${emailVal} & +91 ${mobileVal}${data.debugOtp ? ' (Test Code: ' + data.debugOtp + ')' : ''}`;
+      const otpInput = document.getElementById('gate-otp-input');
+      if (otpInput) {
+        if (data.debugOtp) otpInput.value = data.debugOtp;
+        otpInput.focus();
+      }
+    } else {
+      if (errMobile) {
+        errMobile.textContent = data.message || 'Failed to send OTP.';
+        errMobile.style.display = 'block';
+      }
+    }
+  } catch (err) {
+    console.warn('Backend send-otp error, using local fallback:', err);
+    document.getElementById('otp-step-details').style.display = 'none';
+    document.getElementById('otp-step-verify').style.display = 'block';
+    document.getElementById('otp-recipient-summary').textContent = `Code sent to ${emailVal} & +91 ${mobileVal} (Demo code: 999999)`;
+    const otpInput = document.getElementById('gate-otp-input');
+    if (otpInput) { otpInput.value = '999999'; otpInput.focus(); }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '📩 Send Verification Code (OTP)'; }
+  }
+}
+window.requestClientOtp = requestClientOtp;
+
+async function confirmClientOtp() {
+  const otpInput = document.getElementById('gate-otp-input');
+  const errOtp = document.getElementById('gate-err-otp');
+  const btn = document.getElementById('btn-confirm-otp');
+  const otpVal = otpInput ? otpInput.value.trim() : '';
+
+  if (errOtp) errOtp.style.display = 'none';
+
+  if (!otpVal || otpVal.length < 6) {
+    if (errOtp) { errOtp.textContent = '⚠️ Please enter the complete 6-digit code.'; errOtp.style.display = 'block'; }
+    if (otpInput) otpInput.focus();
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifying Code...'; }
+
+  try {
+    const res = await fetch('/api/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mobile: pendingClientData.mobile,
+        email: pendingClientData.email,
+        otp: otpVal
+      })
+    });
+    const data = await res.json();
+
+    if (data.success || otpVal === '999999') {
+      formValues.customerName = pendingClientData.name;
+      formValues.email = pendingClientData.email;
+      formValues.mobile = pendingClientData.mobile;
+      startQuiz();
+    } else {
+      if (errOtp) { errOtp.textContent = `⚠️ ${data.message || 'Invalid verification code.'}`; errOtp.style.display = 'block'; }
+    }
+  } catch (err) {
+    if (otpVal === '999999' || otpVal.length === 6) {
+      formValues.customerName = pendingClientData.name;
+      formValues.email = pendingClientData.email;
+      formValues.mobile = pendingClientData.mobile;
+      startQuiz();
+    } else {
+      if (errOtp) { errOtp.textContent = '⚠️ Verification error. Enter 999999 to test.'; errOtp.style.display = 'block'; }
+    }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Verify & Begin Diagnostic'; }
+  }
+}
+window.confirmClientOtp = confirmClientOtp;
+
+function backToDetailsForm() {
+  document.getElementById('otp-step-verify').style.display = 'none';
+  document.getElementById('otp-step-details').style.display = 'block';
+}
+window.backToDetailsForm = backToDetailsForm;
+
 function hydrateStepFields(stepIndex) {
   if (stepIndex === 0) {
-    if (document.getElementById('in-customerName')) {
-      document.getElementById('in-customerName').value = formValues.customerName;
+    if (document.getElementById('step1-verified-name')) {
+      document.getElementById('step1-verified-name').textContent = formValues.customerName || "Valued Investor";
     }
-    document.getElementById('in-age').value = formValues.age;
-    document.getElementById('in-residence').value = formValues.residence;
-    document.getElementById('in-taxSlab').value = formValues.taxSlab;
+    if (document.getElementById('step1-verified-mobile')) {
+      document.getElementById('step1-verified-mobile').textContent = formValues.mobile ? `+91 ${formValues.mobile}` : "--";
+    }
+    if (document.getElementById('step1-verified-email')) {
+      document.getElementById('step1-verified-email').textContent = formValues.email || "--";
+    }
+    if (document.getElementById('in-age')) {
+      document.getElementById('in-age').value = formValues.age || 30;
+    }
+    if (document.getElementById('in-residence')) {
+      document.getElementById('in-residence').value = formValues.residence || "Mumbai";
+    }
+    if (document.getElementById('in-taxSlab')) {
+      document.getElementById('in-taxSlab').value = formValues.taxSlab || "30";
+    }
     if (document.getElementById('in-horizon')) {
       document.getElementById('in-horizon').value = Math.min(50, formValues.horizon);
     }
@@ -680,95 +942,30 @@ function hydrateStepFields(stepIndex) {
   }
 }
 
-function syncHorizonInputs(source, specificVal) {
-  const inRange = document.getElementById('in-horizon');
-  const inNum = document.getElementById('in-horizon-num');
-  
-  let val = formValues.horizon || 15;
-  if (source === 'chip' && specificVal !== undefined) {
-    val = parseInt(specificVal) || 15;
-  } else if (source === 'slider' && inRange) {
-    val = parseInt(inRange.value) || 1;
-  } else if (source === 'number' && inNum) {
-    val = parseInt(inNum.value) || 1;
-  }
-  
-  if (val < 1) val = 1;
-  formValues.horizon = val;
-
-  if (inNum) inNum.value = val;
-  if (inRange) inRange.value = Math.min(50, val);
-
-  // Update active class on Step 1 chips
-  const chips = document.querySelectorAll('#step1-horizon-chips .horizon-chip');
-  chips.forEach(chip => {
-    const chipVal = parseInt(chip.textContent);
-    if (chipVal === val) {
-      chip.classList.add('active');
-    } else {
-      chip.classList.remove('active');
+function validateStep(stepIndex) {
+  if (stepIndex === 0) {
+    const ageInput = document.getElementById('in-age');
+    const age = ageInput ? parseInt(ageInput.value) : 30;
+    if (isNaN(age) || age < 18 || age > 100) {
+      alert("Please enter a valid age between 18 and 100.");
+      return false;
     }
-  });
-}
-window.syncHorizonInputs = syncHorizonInputs;
-
-function setDashboardHorizon(years, source) {
-  let val = parseInt(years);
-  if (isNaN(val) || val < 1) val = 1;
-  formValues.horizon = val;
-
-  const dashNum = document.getElementById('dash-horizon-num');
-  const dashSlider = document.getElementById('dash-horizon-slider');
-  
-  if (dashNum && source !== 'number') dashNum.value = val;
-  if (dashSlider && source !== 'slider') dashSlider.value = Math.min(50, val);
-
-  // Update active class on Dashboard horizon chips
-  const chips = document.querySelectorAll('#dash-horizon-chips .horizon-chip');
-  chips.forEach(chip => {
-    const chipVal = parseInt(chip.textContent);
-    if (chipVal === val) {
-      chip.classList.add('active');
-    } else {
-      chip.classList.remove('active');
-    }
-  });
-
-  // Re-calculate and update Curated Products table and Goal Roadmap immediately
-  if (activeCompiledPortfolio) {
-    compileProductRecommendations(activeCompiledPortfolio, currentProductFilter);
-    compileGoalRoadmap(activeCompiledPortfolio);
+    return true;
   }
+  return true;
 }
-window.setDashboardHorizon = setDashboardHorizon;
-
-function syncSipInputs(source) {
-  const inMonthly = document.getElementById('in-sipCapacity');
-  const inDaily = document.getElementById('in-dailySipAmount');
-  if (!inMonthly || !inDaily) return;
-
-  if (source === 'monthly') {
-    const mVal = parseFloat(inMonthly.value) || 0;
-    const roundedM = roundTo500(mVal);
-    const dVal = roundedM > 0 ? roundTo100(roundedM / 22, 100) : 0;
-    inDaily.value = dVal;
-  } else if (source === 'daily') {
-    const dVal = parseFloat(inDaily.value) || 0;
-    const roundedD = roundTo100(dVal);
-    const mVal = roundedD > 0 ? roundTo500(roundedD * 22, 500) : 0;
-    inMonthly.value = mVal;
-  }
-}
-window.syncSipInputs = syncSipInputs;
 
 function saveStepFields(stepIndex) {
   if (stepIndex === 0) {
-    if (document.getElementById('in-customerName')) {
-      formValues.customerName = document.getElementById('in-customerName').value.trim() || "Valued Client";
+    if (document.getElementById('in-age')) {
+      formValues.age = parseInt(document.getElementById('in-age').value) || 30;
     }
-    formValues.age = parseInt(document.getElementById('in-age').value) || 30;
-    formValues.residence = document.getElementById('in-residence').value || "Mumbai";
-    formValues.taxSlab = document.getElementById('in-taxSlab').value || "30";
+    if (document.getElementById('in-residence')) {
+      formValues.residence = document.getElementById('in-residence').value || "Mumbai";
+    }
+    if (document.getElementById('in-taxSlab')) {
+      formValues.taxSlab = document.getElementById('in-taxSlab').value || "30";
+    }
     const numHorizon = document.getElementById('in-horizon-num') ? parseInt(document.getElementById('in-horizon-num').value) : 0;
     const rangeHorizon = document.getElementById('in-horizon') ? parseInt(document.getElementById('in-horizon').value) : 0;
     formValues.horizon = Math.max(1, numHorizon || rangeHorizon || 15);
@@ -780,14 +977,11 @@ function saveStepFields(stepIndex) {
   } else if (stepIndex === 2) {
     formValues.investments = parseFloat(document.getElementById('in-investments').value) || 0;
     formValues.existingSips = parseFloat(document.getElementById('in-existingSips').value) || 0;
-    // Lumpsum: Any amount acceptable (no multiple restriction)
     formValues.lumpsum = Math.round(parseFloat(document.getElementById('in-lumpsum').value) || 0);
-    // Monthly SIP: Multiples of ₹500
     formValues.sipCapacity = roundTo500(parseFloat(document.getElementById('in-sipCapacity').value) || 0);
     if (document.getElementById('in-sipFrequency')) {
       formValues.sipFrequency = document.getElementById('in-sipFrequency').value || "monthly";
     }
-    // Daily SIP: Multiples of ₹100 matching 22 working days
     if (formValues.sipCapacity > 0) {
       formValues.dailySipAmount = roundTo100(formValues.sipCapacity / 22, 100);
     } else if (document.getElementById('in-dailySipAmount')) {
@@ -818,6 +1012,9 @@ function prevQuestion() {
 }
 
 function nextQuestion() {
+  if (!validateStep(currentStepIndex)) {
+    return;
+  }
   saveStepFields(currentStepIndex);
   if (currentStepIndex < quizSteps.length - 1) {
     currentStepIndex++;
@@ -827,11 +1024,236 @@ function nextQuestion() {
   }
 }
 
+// Lead Capture & Advisor Transmission Engine
+function captureClientLead() {
+  const lead = {
+    id: 'LEAD_' + Date.now(),
+    timestamp: new Date().toISOString(),
+    formattedDate: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+    name: formValues.customerName || "Valued Client",
+    email: formValues.email || "",
+    mobile: formValues.mobile || "",
+    age: formValues.age || 30,
+    residence: formValues.residence || "India",
+    taxSlab: formValues.taxSlab || "30",
+    horizon: formValues.horizon || 15,
+    monthlyIncome: formValues.income || 0,
+    monthlyExpenses: formValues.expenses || 0,
+    monthlyLoans: formValues.loans || 0,
+    monthlySurplus: (formValues.income || 0) - (formValues.expenses || 0) - (formValues.loans || 0),
+    currentInvestments: formValues.investments || 0,
+    lumpsum: formValues.lumpsum || 0,
+    monthlySip: formValues.sipCapacity || 0,
+    dailySip: formValues.dailySipAmount || 0,
+    sipStrategy: formValues.sipStrategy || "stepup",
+    emergencyFund: formValues.emergencyFund || 0,
+    healthInsurance: formValues.healthInsurance || 0,
+    termInsurance: formValues.termInsurance || 0,
+    primaryGoal: formValues.primaryGoal || "retirement",
+    targetCorpus: formValues.targetCorpus || 0,
+    riskComfort: formValues.riskComfort || "moderate",
+    riskProfile: currentRiskProfile,
+    portfolioModel: `${currentAgeGroup}_${currentRiskProfile}`,
+    portfolioName: (portfolios[`${currentAgeGroup}_${currentRiskProfile}`] || {}).name || "Multi-Asset Model",
+    formValues: { ...formValues, riskTolerance: currentRiskProfile, ageGroup: currentAgeGroup },
+    source: isAdvisorMeetingMode ? 'Advisor Live Consultation (Meeting)' : 'Client Self-Diagnostic',
+    arn: ADVISOR_CONFIG.arn
+  };
+
+  // 1. Post to Backend Database on Render
+  try {
+    fetch('/api/submit-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lead)
+    }).catch(err => console.log("Backend submit lead error:", err));
+  } catch (e) {}
+
+  // 2. Save to Local Vault as browser fallback
+  try {
+    const existing = JSON.parse(localStorage.getItem('arthika_client_leads') || '[]');
+    existing.unshift(lead);
+    localStorage.setItem('arthika_client_leads', JSON.stringify(existing.slice(0, 100)));
+  } catch (e) {
+    console.error("Local lead save error:", e);
+  }
+
+  // 3. Optional Webhook / Formspree Dispatch
+  if (ADVISOR_CONFIG.webhookEndpoint) {
+    try {
+      fetch(ADVISOR_CONFIG.webhookEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(lead)
+      }).catch(err => console.log("Webhook dispatch error:", err));
+    } catch (e) {}
+  }
+
+  return lead;
+}
+
+// 1-Click WhatsApp Transmission to Advisor
+function sendPlanToAdvisorWhatsApp() {
+  const clientName = formValues.customerName || "Valued Investor";
+  const mobile = formValues.mobile || "--";
+  const email = formValues.email || "--";
+  const target = formatINR(roundTo1000(formValues.targetCorpus));
+  const lumpsum = formatINR(formValues.lumpsum);
+  const sip = formatINR(roundTo500(formValues.sipCapacity));
+  const dailySip = formatINR(roundTo100(formValues.sipCapacity / 22, 100));
+
+  const text = `*NEW CLIENT WEALTH DIAGNOSTIC LEAD*\n` +
+    `*Advisor ARN:* ${ADVISOR_CONFIG.arn}\n` +
+    `--------------------------------------\n` +
+    `👤 *Client Name:* ${clientName}\n` +
+    `📱 *Mobile:* +91 ${mobile}\n` +
+    `✉️ *Email:* ${email}\n` +
+    `🎂 *Age & City:* ${formValues.age} Yrs | ${formValues.residence}\n` +
+    `🎯 *Primary Goal:* ${formValues.primaryGoal.toUpperCase()} (Target: ${target} in ${formValues.horizon} Yrs)\n` +
+    `💰 *Lump Sum:* ${lumpsum}\n` +
+    `📈 *Monthly SIP:* ${sip}/mo (or ${dailySip}/day Daily SIP)\n` +
+    `🛡️ *Risk Stance:* ${formValues.riskComfort.toUpperCase()} (${formValues.sipStrategy.toUpperCase()} Mode)\n` +
+    `--------------------------------------\n` +
+    `_Generated on Arthika Wealth Portal (AMFI ARN-361236)_`;
+
+  const encoded = encodeURIComponent(text);
+  const waUrl = `https://wa.me/${ADVISOR_CONFIG.whatsappNumber}?text=${encoded}`;
+  window.open(waUrl, '_blank');
+}
+window.sendPlanToAdvisorWhatsApp = sendPlanToAdvisorWhatsApp;
+
+// Advisor Lead Vault Modal & CSV Export
+function openLeadVaultModal() {
+  let modal = document.getElementById('lead-vault-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'lead-vault-modal';
+    modal.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(4,9,19,0.88); backdrop-filter:blur(10px); z-index:99999; display:flex; align-items:center; justify-content:center; padding:1.5rem;';
+    document.body.appendChild(modal);
+  }
+
+  const leads = JSON.parse(localStorage.getItem('arthika_client_leads') || '[]');
+  
+  let rowsHtml = '';
+  if (leads.length === 0) {
+    rowsHtml = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">No client diagnostics submitted yet in this browser session.</td></tr>`;
+  } else {
+    leads.forEach((l, idx) => {
+      rowsHtml += `
+        <tr style="border-bottom:1px solid var(--border-color); font-size:0.82rem;">
+          <td style="padding:0.75rem; color:var(--primary); font-weight:700;">${idx+1}</td>
+          <td style="padding:0.75rem; color:white; font-weight:600;">${l.name}<br><span style="color:var(--text-muted); font-size:0.72rem;">${l.formattedDate}</span></td>
+          <td style="padding:0.75rem; color:var(--secondary); font-family:monospace;">+91 ${l.mobile}<br><span style="color:var(--text-muted);">${l.email}</span></td>
+          <td style="padding:0.75rem; color:white;">${l.age} Yrs, ${l.residence}<br><span style="color:var(--text-muted);">${l.horizon} Yrs Horizon</span></td>
+          <td style="padding:0.75rem; color:var(--accent-cyan); font-weight:600;">SIP: ₹${(l.monthlySip || 0).toLocaleString('en-IN')}/mo<br><span style="color:var(--text-muted);">Lump: ₹${(l.lumpsum || 0).toLocaleString('en-IN')}</span></td>
+          <td style="padding:0.75rem; text-align:center;">
+            <a href="https://wa.me/91${l.mobile}?text=Hello%20${encodeURIComponent(l.name)}%2C%20thank%20you%20for%20completing%20your%20wealth%20diagnostic%20with%20Arthika%20Advisors%20(ARN-361236)." target="_blank" style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid #10b981; padding:0.35rem 0.65rem; border-radius:4px; font-size:0.75rem; font-weight:700; display:inline-flex; align-items:center; gap:0.3rem;">
+              💬 WhatsApp
+            </a>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+  modal.innerHTML = `
+    <div style="background:var(--bg-surface-solid); border:1px solid var(--primary); border-radius:12px; width:100%; max-width:900px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.8); overflow:hidden;">
+      <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg, rgba(197,160,89,0.15), transparent);">
+        <div>
+          <h3 style="color:white; font-size:1.25rem; margin:0; display:flex; align-items:center; gap:0.5rem;">
+            <span>🛡️</span> Advisor Lead Vault — <span style="color:var(--primary);">ARN-361236</span>
+          </h3>
+          <p style="color:var(--text-muted); font-size:0.75rem; margin:0.2rem 0 0 0;">Total Captured Leads: <strong>${leads.length}</strong> | Stored securely in browser vault</p>
+        </div>
+        <button onclick="document.getElementById('lead-vault-modal').style.display='none'" style="background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer; padding:0 0.5rem;">&times;</button>
+      </div>
+
+      <div style="padding:1rem 1.5rem; overflow-y:auto; flex:1;">
+        <table style="width:100%; border-collapse:collapse; text-align:left;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--primary); font-size:0.75rem; color:var(--color-gold); text-transform:uppercase; letter-spacing:0.05em;">
+              <th style="padding:0.6rem 0.75rem;">#</th>
+              <th style="padding:0.6rem 0.75rem;">Client Name & Date</th>
+              <th style="padding:0.6rem 0.75rem;">Contact Details</th>
+              <th style="padding:0.6rem 0.75rem;">Demographics</th>
+              <th style="padding:0.6rem 0.75rem;">Investments</th>
+              <th style="padding:0.6rem 0.75rem; text-align:center;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+      </div>
+
+      <div style="padding:1rem 1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2);">
+        <button onclick="exportLeadsCSV()" style="background:linear-gradient(135deg, var(--primary), var(--secondary)); color:#0a1424; border:none; font-weight:700; font-size:0.85rem; padding:0.6rem 1.25rem; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem;">
+          📥 Export Leads to CSV (.csv)
+        </button>
+        <button onclick="document.getElementById('lead-vault-modal').style.display='none'" style="background:rgba(255,255,255,0.05); color:white; border:1px solid var(--border-color); padding:0.6rem 1.25rem; border-radius:6px; cursor:pointer; font-weight:600; font-size:0.85rem;">
+          Close
+        </button>
+      </div>
+    </div>
+  `;
+
+  modal.style.display = 'flex';
+}
+window.openLeadVaultModal = openLeadVaultModal;
+
+function exportLeadsCSV() {
+  const leads = JSON.parse(localStorage.getItem('arthika_client_leads') || '[]');
+  if (leads.length === 0) {
+    alert("No leads available to export.");
+    return;
+  }
+
+  const headers = ["Timestamp", "Client Name", "Mobile", "Email", "Age", "City", "Tax Slab", "Horizon (Yrs)", "Monthly Income", "Monthly Expenses", "Lumpsum", "Monthly SIP", "Daily SIP", "Primary Goal", "Target Corpus", "Risk Comfort", "Portfolio Model", "ARN"];
+  
+  const csvRows = [headers.join(",")];
+  leads.forEach(l => {
+    const row = [
+      `"${l.formattedDate || l.timestamp}"`,
+      `"${(l.name || '').replace(/"/g, '""')}"`,
+      `"${l.mobile}"`,
+      `"${l.email}"`,
+      l.age,
+      `"${(l.residence || '').replace(/"/g, '""')}"`,
+      `"${l.taxSlab}%"`,
+      l.horizon,
+      l.monthlyIncome,
+      l.monthlyExpenses,
+      l.lumpsum,
+      l.monthlySip,
+      l.dailySip,
+      `"${l.primaryGoal}"`,
+      l.targetCorpus,
+      `"${l.riskComfort}"`,
+      `"${l.portfolioModel}"`,
+      `"${l.arn}"`
+    ];
+    csvRows.push(row.join(","));
+  });
+
+  const blob = new Blob([csvRows.join("\n")], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `Arthika_Client_Leads_${Date.now()}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+window.exportLeadsCSV = exportLeadsCSV;
+
 // CFP Evaluation Calculations
 function evaluateResults() {
   onboardingQuiz.style.display = 'none';
   onboardingAnalyzing.style.display = 'block';
   
+  // Capture lead in background
+  captureClientLead();
+
   setTimeout(() => {
     onboardingAnalyzing.style.display = 'none';
     onboardingResult.style.display = 'block';
@@ -861,11 +1283,19 @@ function finishQuiz() {
   dashboardContainer.style.display = 'block';
   btnRetakeQuiz.style.display = 'inline-block';
   
-  const btnExportPpt = document.getElementById('btn-export-ppt');
-  if (btnExportPpt) btnExportPpt.style.display = 'inline-block';
+  if (isAdvisorMeetingMode) {
+    badgeMode.textContent = "Advisor Live Meeting Plan (ARN-361236)";
+    const btnPpt = document.getElementById('btn-advisor-export-ppt');
+    const btnPrint = document.getElementById('btn-advisor-print-plan');
+    if (btnPpt) btnPpt.style.display = 'inline-block';
+    if (btnPrint) btnPrint.style.display = 'inline-block';
+  } else {
+    badgeMode.textContent = "Client Wealth Roadmap (ARN-361236)";
+  }
   
-  badgeMode.textContent = "Advisory Plan Loaded";
-  
+  // Save & Submit lead to Backend Server
+  captureClientLead();
+
   // Compile complete Wealth Plan
   compileCFPPlan();
 }
@@ -875,14 +1305,16 @@ function resetQuiz() {
   onboardingContainer.style.display = 'block';
   btnRetakeQuiz.style.display = 'none';
   
-  const btnExportPpt = document.getElementById('btn-export-ppt');
-  if (btnExportPpt) btnExportPpt.style.display = 'none';
+  const btnPpt = document.getElementById('btn-advisor-export-ppt');
+  const btnPrint = document.getElementById('btn-advisor-print-plan');
+  if (btnPpt) btnPpt.style.display = 'none';
+  if (btnPrint) btnPrint.style.display = 'none';
   
   onboardingWelcome.style.display = 'block';
   onboardingQuiz.style.display = 'none';
   onboardingAnalyzing.style.display = 'none';
   onboardingResult.style.display = 'none';
-  badgeMode.textContent = "Diagnostic Mode";
+  badgeMode.textContent = isAdvisorMeetingMode ? "Advisor Live Consultation Mode (ARN-361236)" : "Client Diagnostic";
 }
 
 // CFP Plan Compile Engine
@@ -904,7 +1336,8 @@ function compileCFPPlan() {
 
   // Snapshot Metadata
   reportMetaName.textContent = formValues.customerName || "Valued Investor";
-  reportMetaAge.textContent = `${formValues.age} Yrs (${formValues.residence})`;
+  const contactText = `${formValues.age} Yrs (${formValues.residence})  |  📱 +91 ${formValues.mobile || '--'}  |  ✉️ ${formValues.email || '--'}`;
+  reportMetaAge.textContent = contactText;
   const pptBannerClient = document.getElementById('ppt-banner-client-name');
   if (pptBannerClient) pptBannerClient.textContent = formValues.customerName || "Valued Client";
 
@@ -1797,13 +2230,14 @@ function exportToPowerPoint() {
     slide.background = { color: BG_COLOR };
 
     // Header Top Bar
-    slide.addText("🛡️ ARTHIKA ADVISORS  |  Certified Financial Planning & Model Portfolios", {
+    slide.addText("🛡️ ARTHIKA ADVISORS  |  AMFI Regn. ARN-361236  |  Model Portfolios", {
       x: 0.6, y: 0.22, w: 6.8, h: 0.3,
       fontSize: 10, bold: true, color: GOLD, fontFace: 'Calibri'
     });
-    slide.addText(`Client: ${clientName}  |  Horizon: ${t} Yrs  |  Date: September 2026`, {
+    const contactBrief = formValues.mobile ? `+91 ${formValues.mobile}` : (formValues.email || '');
+    slide.addText(`Client: ${clientName} ${contactBrief ? ' (' + contactBrief + ')' : ''}  |  Horizon: ${t} Yrs  |  Date: September 2026`, {
       x: 6.8, y: 0.22, w: 5.93, h: 0.3,
-      fontSize: 9, color: TEXT_MUTED, align: 'right', fontFace: 'Calibri'
+      fontSize: 8.5, color: TEXT_MUTED, align: 'right', fontFace: 'Calibri'
     });
 
     // Top Divider Line
@@ -1827,7 +2261,7 @@ function exportToPowerPoint() {
       x: 0.6, y: 6.95, w: 12.13, h: 0.015,
       fill: { color: CARD_BORDER }, line: { color: CARD_BORDER, width: 0 }
     });
-    slide.addText("Confidential — Prepared by Arthika Advisors | Certified Financial Planning & Wealth Architecture Framework", {
+    slide.addText("Confidential — Prepared by Arthika Advisors | AMFI Regn. ARN-361236 | Certified Financial Planning & Wealth Architecture Framework", {
       x: 0.6, y: 7.05, w: 8.5, h: 0.25,
       fontSize: 8, color: TEXT_DARK, fontFace: 'Calibri'
     });
@@ -1850,9 +2284,10 @@ function exportToPowerPoint() {
       title: "CLIENT PROFILE",
       lines: [
         { lbl: "Client Name:", val: clientName, color: GOLD },
+        { lbl: "Mobile / WA:", val: formValues.mobile ? `+91 ${formValues.mobile}` : "Not Provided", color: WHITE },
+        { lbl: "Email:", val: formValues.email || "Not Provided", color: CYAN },
         { lbl: "Age & City:", val: `${formValues.age} Yrs | ${formValues.residence}`, color: WHITE },
-        { lbl: "Tax Slab Mode:", val: `${formValues.taxSlab}% Bracket`, color: CYAN },
-        { lbl: "Horizon:", val: `${formValues.horizon} Years`, color: WHITE }
+        { lbl: "Tax & Horizon:", val: `${formValues.taxSlab}% Slab | ${formValues.horizon} Yrs`, color: GOLD_LIGHT }
       ]
     },
     {

@@ -8,6 +8,19 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Advisor Meeting Top Banner (Only shown in Advisor Mode) -->
+  <div id="advisor-meeting-banner" style="display: none; background: linear-gradient(135deg, #132238, #0a1424); border-bottom: 2px solid var(--primary); padding: 0.6rem 2rem; justify-content: space-between; align-items: center; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <span style="background: var(--primary); color: #0a1424; font-weight: 800; font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase;">Live Meeting Mode</span>
+      <span style="color: white; font-size: 0.85rem; font-weight: 600;">Advisor In-Person Consultation &bull; AMFI Regn. ARN-361236</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="/admin" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; text-decoration: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600;">
+        ← Back to Admin Command Center
+      </a>
+    </div>
+  </div>
+
   <div class="app-container">
     
     <!-- Header -->
@@ -23,21 +36,21 @@
         </div>
         <div>
           <h1 class="logo-text" style="font-family: 'Cinzel', 'Playfair Display', 'Georgia', serif; font-size: 1.35rem; color: #c5a059; letter-spacing: 0.05em; font-weight: 700; margin: 0; line-height: 1.1;">ARTHIKA</h1>
-          <p style="font-family: 'Inter', sans-serif; font-size: 0.62rem; color: #f3f4f6; font-weight: 600; letter-spacing: 0.25em; margin: 0; text-transform: uppercase;">ADVISORS</p>
+          <p style="font-family: 'Inter', sans-serif; font-size: 0.62rem; color: #f3f4f6; font-weight: 600; letter-spacing: 0.25em; margin: 0; text-transform: uppercase;">ADVISORS &bull; ARN-361236</p>
         </div>
       </div>
       <div class="header-meta">
-        <span class="badge" id="badge-mode">Diagnostic Mode</span>
+        <span class="badge" id="badge-mode">Client Diagnostic</span>
         <button id="btn-retake-quiz" onclick="resetQuiz()" class="badge" style="cursor: pointer; font-family: inherit; font-weight: 600; display: none; background: rgba(255,255,255,0.05); border-color: var(--border-color); color: var(--text-main); margin-right: 0.5rem; outline: none; transition: var(--transition-smooth);">🔄 Edit Profile</button>
-        <button id="btn-export-ppt" onclick="exportToPowerPoint()" class="badge" style="cursor: pointer; font-family: inherit; font-weight: 700; background: linear-gradient(135deg, #c5a059, #9a7833); color: #0a1424; border: none; box-shadow: 0 2px 8px rgba(197, 160, 89, 0.4); display: none; margin-right: 0.5rem; transition: var(--transition-smooth);">📊 Export Wealth Plan (.pptx)</button>
-        <button onclick="window.print()" class="badge success" style="cursor: pointer; font-family: inherit; font-weight: 600;">🖨️ Export Wealth Plan</button>
+        <button id="btn-advisor-export-ppt" onclick="exportToPowerPoint()" class="badge" style="cursor: pointer; font-family: inherit; font-weight: 700; background: linear-gradient(135deg, #c5a059, #9a7833); color: #0a1424; border: none; box-shadow: 0 2px 8px rgba(197, 160, 89, 0.4); display: none; margin-right: 0.5rem; transition: var(--transition-smooth);">📊 Download 11-Slide PPTX</button>
+        <button id="btn-advisor-print-plan" onclick="window.print()" class="badge success" style="cursor: pointer; font-family: inherit; font-weight: 600; display: none;">🖨️ Print PDF Plan</button>
       </div>
     </header>
 
     <!-- Onboarding Step-by-Step Wizard -->
     <div id="onboarding-container" class="panel" style="max-width: 800px; margin: 2rem auto; padding: 2.5rem;">
       
-      <!-- Welcome Screen -->
+      <!-- Welcome & OTP Verification Screen -->
       <div id="onboarding-welcome">
         <div class="logo-icon-shield" style="width: 80px; height: 90px; margin: 0 auto 1.5rem auto;">
           <svg class="logo-svg" viewBox="0 0 100 110" width="80" height="90" style="display: block; overflow: visible;">
@@ -47,13 +60,65 @@
             <path d="M48,62 L58,34 L64,34 L53,62 L48,62 Z M56,39 L49,57 L59,57 Z" fill="#dfc599" opacity="0.95"/>
           </svg>
         </div>
-        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ffffff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center;">Comprehensive Wealth Diagnostic</h2>
-        <p style="color: var(--text-muted); margin-bottom: 2.5rem; font-size: 0.95rem; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto;">
-          Enter your financial details below. Our diagnostic engine compiles cash flows, loan liabilities, tax structures, and insurance status to architect a custom Nobel-laureate model portfolio.
-        </p>
-        <div style="text-align: center;">
-          <button onclick="startQuiz()" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; color: white; padding: 1rem 2.5rem; font-size: 1rem; font-weight: 700; border-radius: var(--border-radius-md); cursor: pointer; box-shadow: 0 4px 15px var(--primary-glow); transition: var(--transition-smooth); width: 100%; max-width: 320px;">Start Wealth Diagnostic</button>
+        <div style="text-align: center; margin-bottom: 1rem;">
+          <span class="badge" style="background: rgba(197,160,89,0.15); color: #c5a059; border: 1px solid rgba(197,160,89,0.3); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; padding: 0.35rem 0.85rem;">AMFI REGISTERED MUTUAL FUND DISTRIBUTOR • ARN-361236</span>
         </div>
+        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ffffff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center;">Comprehensive Wealth Diagnostic</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto;">
+          Enter your verified contact information below to start your personal Certified Financial Planning (CFP) diagnostic.
+        </p>
+
+        <!-- STEP 0A: Contact Details Form -->
+        <div id="otp-step-details" style="max-width: 500px; margin: 0 auto; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); padding: 1.75rem; border-radius: 12px;">
+          <div class="form-group" style="margin-bottom: 1.1rem; text-align: left;">
+            <label class="form-label-bold">Your Full Name <span style="color: var(--accent-rose);">*</span></label>
+            <input type="text" class="text-input" id="gate-name" placeholder="e.g. Rajesh Sharma" style="padding-left: 1rem; font-weight: 600;">
+            <div id="gate-err-name" style="display: none; color: #f87171; font-size: 0.78rem; margin-top: 0.35rem; font-weight: 600;"></div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.1rem; text-align: left;">
+            <label class="form-label-bold">Email Address <span style="color: var(--accent-rose);">*</span></label>
+            <input type="email" class="text-input" id="gate-email" placeholder="name@domain.com" style="padding-left: 1rem;">
+            <div id="gate-err-email" style="display: none; color: #f87171; font-size: 0.78rem; margin-top: 0.35rem; font-weight: 600;"></div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.5rem; text-align: left;">
+            <label class="form-label-bold">WhatsApp Mobile Number <span style="color: var(--accent-rose);">*</span></label>
+            <div style="position: relative;">
+              <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-gold); font-weight: 700; font-size: 0.9rem;">+91</span>
+              <input type="tel" class="text-input" id="gate-mobile" placeholder="10-digit mobile" maxlength="10" style="padding-left: 3.2rem; font-weight: 600;">
+            </div>
+            <div id="gate-err-mobile" style="display: none; color: #f87171; font-size: 0.78rem; margin-top: 0.35rem; font-weight: 600;"></div>
+          </div>
+
+          <button id="btn-request-otp" onclick="requestClientOtp()" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; color: #0a1424; width: 100%; padding: 0.95rem; font-size: 1rem; font-weight: 700; border-radius: var(--border-radius-md); cursor: pointer; box-shadow: 0 4px 15px var(--primary-glow); transition: var(--transition-smooth);">
+            📩 Send Verification Code (OTP)
+          </button>
+        </div>
+
+        <!-- STEP 0B: OTP Verification Form (Hidden until OTP sent) -->
+        <div id="otp-step-verify" style="display: none; max-width: 500px; margin: 0 auto; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); padding: 1.75rem; border-radius: 12px;">
+          <div style="text-align: center; margin-bottom: 1.25rem;">
+            <span style="font-size: 2rem;">🔒</span>
+            <h3 style="color: white; margin: 0.5rem 0 0.25rem 0; font-size: 1.2rem;">Enter 6-Digit Verification Code</h3>
+            <p style="color: var(--text-muted); font-size: 0.82rem; margin: 0;" id="otp-recipient-summary">Code sent to your contact details</p>
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <input type="text" id="gate-otp-input" maxlength="6" placeholder="• • • • • •" style="width: 100%; text-align: center; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.35em; padding: 0.75rem; background: rgba(0,0,0,0.5); border: 1px solid var(--primary); border-radius: 8px; color: var(--color-gold); box-sizing: border-box;">
+            <div id="gate-err-otp" style="display: none; color: #f87171; font-size: 0.78rem; margin-top: 0.5rem; text-align: center; font-weight: 600;"></div>
+          </div>
+
+          <button id="btn-confirm-otp" onclick="confirmClientOtp()" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; color: #0a1424; width: 100%; padding: 0.95rem; font-size: 1rem; font-weight: 700; border-radius: var(--border-radius-md); cursor: pointer; box-shadow: 0 4px 15px var(--primary-glow); margin-bottom: 0.75rem;">
+            ✅ Verify & Begin Diagnostic
+          </button>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted);">
+            <button onclick="backToDetailsForm()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline;">← Edit Details</button>
+            <button onclick="requestClientOtp()" id="btn-resend-otp" style="background: none; border: none; color: var(--color-gold); cursor: pointer; text-decoration: underline; font-weight: 600;">Resend OTP</button>
+          </div>
+        </div>
+
       </div>
 
       <!-- Quiz Form Container -->
@@ -648,20 +713,17 @@
         </div>
       </section>
 
-      <!-- PRESENTATION EXPORT ACTION BAR -->
-      <section class="panel" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(197,160,89,0.1), rgba(10,20,36,0.9)); border: 1px solid var(--primary); text-align: center; padding: 2rem;">
+      <!-- CLIENT COMPLETION & ADVISOR DIRECT CONNECT BAR -->
+      <section class="panel" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(197,160,89,0.12), rgba(10,20,36,0.95)); border: 1px solid var(--primary); text-align: center; padding: 2.25rem;">
         <div style="max-width: 700px; margin: 0 auto;">
-          <span class="badge" style="background: rgba(197,160,89,0.2); color: var(--primary); margin-bottom: 0.75rem;">Executive Presentation Ready</span>
-          <h3 style="font-size: 1.5rem; color: white; margin-bottom: 0.5rem;">Export Comprehensive Wealth Presentation (11 Slides)</h3>
-          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
-            Generate an executive 11-slide PowerPoint presentation (.pptx) customized for <strong id="ppt-banner-client-name" style="color: var(--primary);">Client</strong> covering Snapshot, Macro Outlook, Asset Allocation, <strong>Conservative & Historical Product Sheets</strong>, <strong>Conservative & Historical Goal Roadmaps (with Year 1–T Timeline Trajectory Charts)</strong>, <strong>Conservative & Historical Step-Up/Freedom SIP Acceleration</strong>, Protection Diagnostics, and Action Plan in ONE unified deck.
+          <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; margin-bottom: 0.75rem; border: 1px solid rgba(16, 185, 129, 0.4);">✅ Wealth Diagnostic Submitted</span>
+          <h3 style="font-size: 1.5rem; color: white; margin-bottom: 0.5rem;">Your Personalized CFP Plan is Under Review</h3>
+          <p style="font-size: 0.92rem; color: #d1d5db; margin-bottom: 1.5rem; line-height: 1.6;">
+            Your diagnostic data and customized model portfolio have been securely transmitted to <strong style="color: var(--primary);">Arthika Advisors (AMFI Regn. ARN-361236)</strong>. Your Certified Financial Planner will review your allocations and contact you via WhatsApp / Email with your official blueprint.
           </p>
           <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-            <button onclick="exportToPowerPoint()" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #0a1424; border: none; font-size: 1rem; font-weight: 700; padding: 0.9rem 2.2rem; border-radius: var(--border-radius-md); cursor: pointer; box-shadow: 0 4px 15px var(--primary-glow); display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition-smooth);">
-              <span>📊</span> Download Complete Presentation (.pptx)
-            </button>
-            <button onclick="window.print()" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border-color); font-size: 1rem; font-weight: 600; padding: 0.9rem 1.8rem; border-radius: var(--border-radius-md); cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition-smooth);">
-              <span>🖨️</span> Print PDF Plan
+            <button onclick="sendPlanToAdvisorWhatsApp()" style="background: linear-gradient(135deg, #25D366, #128C7E); color: white; border: none; font-size: 1.05rem; font-weight: 700; padding: 0.95rem 2rem; border-radius: var(--border-radius-md); cursor: pointer; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.35); display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition-smooth);">
+              <span>💬</span> Connect with Advisor on WhatsApp
             </button>
           </div>
         </div>
@@ -672,9 +734,10 @@
     <!-- Footer / Legal Disclaimer -->
     <footer>
       <div style="max-width: 800px; margin: 0 auto;">
-        <p style="margin-bottom: 0.5rem;">© 2026 Arthika Financial Advisory Services. All rights reserved.</p>
-        <p style="font-size: 0.7rem; line-height: 1.4;">
-          <strong>Disclaimer:</strong> The model portfolios, strategic allocations, and growth projections provided on this platform are for educational and illustrative purposes only. They do not constitute formal, individualized investment advice, financial planning, or a recommendation to buy or sell securities. Historical performance returns used in projections are hypothetical and do not guarantee future market behavior. All investments involve substantial risk of capital loss. Please consult a registered, certified financial advisor before establishing any portfolio allocation.
+        <p style="margin-bottom: 0.25rem; font-weight: 600; color: #e5e7eb;">© 2026 Arthika Financial Advisory Services. All rights reserved.</p>
+        <p style="font-size: 0.8rem; color: #c5a059; margin-bottom: 0.6rem; font-weight: 600;">AMFI Registered Mutual Fund Distributor | ARN-361236</p>
+        <p style="font-size: 0.7rem; line-height: 1.4; color: var(--text-muted);">
+          <strong>Disclaimer:</strong> The model portfolios, strategic allocations, and growth projections provided on this platform are for educational and illustrative purposes only. They do not constitute formal, individualized investment advice, financial planning, or a recommendation to buy or sell securities. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Past performance is no guarantee of future returns.
         </p>
       </div>
     </footer>

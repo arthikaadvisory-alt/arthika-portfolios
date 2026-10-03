@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advisor Command Center | Arthika Advisors (ARN-361236)</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="pptxgen.bundle.js"></script>
+  <style>
+    :root {
+      --admin-bg: #070d18;
+      --admin-panel: #0d1829;
+      --admin-gold: #c5a059;
+      --admin-gold-light: #dfc599;
+      --admin-border: rgba(197, 160, 89, 0.25);
+      --admin-emerald: #10b981;
+      --admin-rose: #f43f5e;
+      --admin-cyan: #06b6d4;
+    }
+    body {
+      background-color: var(--admin-bg);
+      color: #f3f4f6;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .admin-header {
+      background: rgba(10, 20, 36, 0.95);
+      border-bottom: 1px solid var(--admin-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    .admin-container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .kpi-card {
+      background: var(--admin-panel);
+      border: 1px solid var(--admin-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .kpi-title {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    .kpi-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .table-panel {
+      background: var(--admin-panel);
+      border: 1px solid var(--admin-border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+    }
+    .table-header-bar {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--admin-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .leads-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+    .leads-table th {
+      background: #11223b;
+      color: var(--admin-gold);
+      padding: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--admin-border);
+    }
+    .leads-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #e5e7eb;
+      vertical-align: middle;
+    }
+    .leads-table tr:hover {
+      background: rgba(197, 160, 89, 0.03);
+    }
+    .btn-action {
+      background: linear-gradient(135deg, var(--admin-gold), #9a7833);
+      color: #0a1424;
+      font-weight: 700;
+      border: none;
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+    .btn-action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(197, 160, 89, 0.4);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .btn-whatsapp {
+      background: #25D366;
+      color: #ffffff;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .btn-delete {
+      background: rgba(244, 63, 94, 0.15);
+      color: #f43f5e;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      padding: 0.45rem 0.65rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .btn-delete:hover {
+      background: #f43f5e;
+      color: white;
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-card {
+      background: var(--admin-panel);
+      border: 1px solid var(--admin-border);
+      border-radius: 14px;
+      max-width: 750px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    }
+    .login-container {
+      max-width: 440px;
+      margin: 8rem auto;
+      background: var(--admin-panel);
+      border: 1px solid var(--admin-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ADMIN LOGIN VIEW (shown if not logged in) -->
+  <div id="view-login" style="display: none;">
+    <div class="login-container">
+      <div style="margin-bottom: 1.5rem;">
+        <svg viewBox="0 0 100 110" width="55" height="60" style="display: block; margin: 0 auto 0.75rem auto;">
+          <path d="M50,5 L85,15 C85,60 50,90 50,90 C50,90 15,60 15,15 Z" fill="#0a1424" stroke="#c5a059" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M38,62 L48,34 L54,34 L43,62 L38,62 Z M46,39 L39,57 L49,57 Z" fill="#c5a059"/>
+          <path d="M48,62 L58,34 L64,34 L53,62 L48,62 Z M56,39 L49,57 L59,57 Z" fill="#dfc599"/>
+        </svg>
+        <h2 style="color: var(--admin-gold); margin: 0; font-size: 1.4rem;">ARTHIKA ADVISORS</h2>
+        <p style="color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.15em; margin: 0.25rem 0 0 0; text-transform: uppercase;">AMFI Registered MFD • ARN-361236</p>
+      </div>
+
+      <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.15rem;">Advisor Command Center</h3>
+      <p style="color: #9ca3af; font-size: 0.82rem; margin-bottom: 1.5rem;">Enter your confidential credentials to access client leads and presentation engine.</p>
+
+      <form id="admin-login-form" onsubmit="handleAdminLogin(event)">
+        <div style="text-align: left; margin-bottom: 1rem;">
+          <label style="font-size: 0.8rem; color: #d1d5db; font-weight: 600; display: block; margin-bottom: 0.35rem;">Username / ID</label>
+          <input type="text" id="admin-user-input" placeholder="e.g. admin" required style="width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; box-sizing: border-box; font-size: 0.9rem;">
+        </div>
+
+        <div style="text-align: left; margin-bottom: 1.5rem;">
+          <label style="font-size: 0.8rem; color: #d1d5db; font-weight: 600; display: block; margin-bottom: 0.35rem;">Password</label>
+          <input type="password" id="admin-pass-input" placeholder="••••••••••••" required style="width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; box-sizing: border-box; font-size: 0.9rem;">
+        </div>
+
+        <div id="login-error-msg" style="color: var(--admin-rose); font-size: 0.82rem; margin-bottom: 1rem; display: none;"></div>
+
+        <button type="submit" id="btn-login-submit" style="width: 100%; padding: 0.85rem; background: linear-gradient(135deg, var(--admin-gold), #9a7833); color: #0a1424; font-weight: 700; border: none; border-radius: 8px; font-size: 0.95rem; cursor: pointer;">
+          🔓 Authenticate & Access
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATED ADVISOR DASHBOARD -->
+  <div id="view-dashboard" style="display: none;">
+    <!-- Top Nav -->
+    <header class="admin-header">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <svg viewBox="0 0 100 110" width="36" height="40">
+          <path d="M50,5 L85,15 C85,60 50,90 50,90 C50,90 15,60 15,15 Z" fill="#0a1424" stroke="#c5a059" stroke-width="4"/>
+          <path d="M38,62 L48,34 L54,34 L43,62 L38,62 Z M46,39 L39,57 L49,57 Z" fill="#c5a059"/>
+          <path d="M48,62 L58,34 L64,34 L53,62 L48,62 Z M56,39 L49,57 L59,57 Z" fill="#dfc599"/>
+        </svg>
+        <div>
+          <h2 style="font-size: 1.15rem; color: var(--admin-gold); margin: 0; font-family: serif; font-weight: 700;">ARTHIKA ADVISORS</h2>
+          <p style="font-size: 0.65rem; color: #9ca3af; margin: 0; letter-spacing: 0.1em;">AMFI REGN. ARN-361236 &bull; ADVISOR COMMAND CENTER</p>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <button onclick="startAdvisorConsultation()" class="btn-action" style="font-size: 0.85rem; padding: 0.55rem 1.1rem; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.35);">
+          <span>💼</span> New Client Consultation (Live Meeting)
+        </button>
+        <span style="font-size: 0.82rem; color: #9ca3af; margin-left: 0.5rem;">Logged in as: <strong id="admin-user-display" style="color: white;">Advisor</strong></span>
+        <button onclick="openChangePasswordModal()" class="btn-secondary" style="font-size: 0.75rem;">⚙️ Change Password</button>
+        <button onclick="handleAdminLogout()" class="btn-delete" style="font-size: 0.75rem;">🚪 Logout</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="admin-container">
+      
+      <!-- KPI Stats -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">Total Client Leads</div>
+          <div class="kpi-value" id="kpi-total-leads">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Monthly SIP Pipeline</div>
+          <div class="kpi-value" id="kpi-total-sip" style="color: var(--admin-emerald);">₹0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Lump Sum Pipeline</div>
+          <div class="kpi-value" id="kpi-total-lumpsum" style="color: var(--admin-cyan);">₹0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">High Net Worth (>₹10L)</div>
+          <div class="kpi-value" id="kpi-hnw-leads" style="color: var(--admin-gold);">0</div>
+        </div>
+      </div>
+
+      <!-- Leads Table Container -->
+      <div class="table-panel">
+        <div class="table-header-bar">
+          <div>
+            <h3 style="margin: 0 0 0.25rem 0; font-size: 1.15rem; color: white;">Captured Client Diagnostic Leads</h3>
+            <p style="margin: 0; font-size: 0.8rem; color: #9ca3af;">Every verified lead submitted by clients with full balance sheet analytics.</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <input type="text" id="lead-search-input" onkeyup="filterLeadsTable()" placeholder="🔍 Search Name, Mobile, City..." style="padding: 0.45rem 0.85rem; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; font-size: 0.82rem; width: 220px;">
+            <button onclick="exportAllLeadsCSV()" class="btn-action">
+              <span>⬇️</span> Export Excel / CSV
+            </button>
+            <button onclick="fetchAdminLeads()" class="btn-secondary">
+              <span>🔄</span> Refresh
+            </button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="leads-table">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Client Details</th>
+                <th>Monthly Surplus</th>
+                <th>Lumpsum / SIP</th>
+                <th>Horizon & Risk</th>
+                <th>Allocated Portfolio</th>
+                <th style="text-align: right;">Advisor Actions</th>
+              </tr>
+            </thead>
+            <tbody id="leads-tbody">
+              <tr>
+                <td colspan="7" style="text-align: center; color: #9ca3af; padding: 3rem;">Loading leads...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: Full Diagnostic Sheet Details -->
+  <div id="modal-lead-detail" class="modal-overlay" onclick="if(event.target === this) closeLeadDetailModal()">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--admin-border); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+        <div>
+          <h3 id="mdl-client-name" style="margin: 0; color: var(--admin-gold); font-size: 1.3rem;">Client Name</h3>
+          <p id="mdl-client-sub" style="margin: 0.2rem 0 0 0; font-size: 0.82rem; color: #9ca3af;">Lead ID: LD-12345</p>
+        </div>
+        <button onclick="closeLeadDetailModal()" style="background: none; border: none; color: #9ca3af; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <div id="mdl-detail-content" style="font-size: 0.88rem; line-height: 1.6;">
+        <!-- Injected dynamically -->
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; border-top: 1px solid var(--admin-border); padding-top: 1rem;">
+        <button id="mdl-btn-download-ppt" class="btn-action" style="padding: 0.6rem 1.25rem;">
+          📊 Download 11-Slide PPTX Deck
+        </button>
+        <button onclick="closeLeadDetailModal()" class="btn-secondary" style="padding: 0.6rem 1.25rem;">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Change Password -->
+  <div id="modal-change-pwd" class="modal-overlay" onclick="if(event.target === this) closeChangePasswordModal()">
+    <div class="modal-card" style="max-width: 440px;">
+      <h3 style="color: var(--admin-gold); margin-top: 0;">⚙️ Change Advisor Credentials</h3>
+      <p style="font-size: 0.82rem; color: #9ca3af; margin-bottom: 1.25rem;">Update your Admin Login Username or confidential Password.</p>
+
+      <form onsubmit="handleChangePassword(event)">
+        <div style="margin-bottom: 1rem;">
+          <label style="font-size: 0.8rem; color: #d1d5db; display: block; margin-bottom: 0.35rem;">Current Password</label>
+          <input type="password" id="cp-current-pwd" required style="width: 100%; padding: 0.65rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label style="font-size: 0.8rem; color: #d1d5db; display: block; margin-bottom: 0.35rem;">New Username (Optional)</label>
+          <input type="text" id="cp-new-user" placeholder="Leave blank to keep same" style="width: 100%; padding: 0.65rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+          <label style="font-size: 0.8rem; color: #d1d5db; display: block; margin-bottom: 0.35rem;">New Password</label>
+          <input type="password" id="cp-new-pwd" minlength="6" required placeholder="Min 6 characters" style="width: 100%; padding: 0.65rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; box-sizing: border-box;">
+        </div>
+        <div id="cp-status-msg" style="font-size: 0.82rem; margin-bottom: 1rem; display: none;"></div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" onclick="closeChangePasswordModal()" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-action">Update Credentials</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    let allLeads = [];
+    let currentAuthToken = localStorage.getItem('arthika_admin_token') || '';
+
+    // Currency Formatter
+    function formatINR(val) {
+      if (val === undefined || val === null || isNaN(val)) return '₹0';
+      return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
+    }
+
+    // Check Authentication on Load
+    document.addEventListener('DOMContentLoaded', () => {
+      if (currentAuthToken) {
+        verifySession();
+      } else {
+        showLoginView();
+      }
+    });
+
+    async function verifySession() {
+      try {
+        const res = await fetch('/api/admin/check-auth', {
+          headers: { 'Authorization': `Bearer ${currentAuthToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('admin-user-display').textContent = data.username || 'Advisor';
+          showDashboardView();
+          fetchAdminLeads();
+        } else {
+          showLoginView();
+        }
+      } catch (err) {
+        showLoginView();
+      }
+    }
+
+    function showLoginView() {
+      document.getElementById('view-login').style.display = 'block';
+      document.getElementById('view-dashboard').style.display = 'none';
+    }
+
+    function showDashboardView() {
+      document.getElementById('view-login').style.display = 'none';
+      document.getElementById('view-dashboard').style.display = 'block';
+    }
+
+    function startAdvisorConsultation() {
+      sessionStorage.setItem('advisor_meeting_mode', 'true');
+      sessionStorage.setItem('advisor_token', currentAuthToken);
+      window.location.href = '/?mode=advisor';
+    }
+    window.startAdvisorConsultation = startAdvisorConsultation;
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('admin-user-input').value.trim();
+      const pass = document.getElementById('admin-pass-input').value;
+      const errBox = document.getElementById('login-error-msg');
+      const btn = document.getElementById('btn-login-submit');
+
+      errBox.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: user, password: pass })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          currentAuthToken = data.token;
+          localStorage.setItem('arthika_admin_token', data.token);
+          document.getElementById('admin-user-display').textContent = data.username || user;
+          showDashboardView();
+          fetchAdminLeads();
+        } else {
+          errBox.textContent = data.message || 'Invalid credentials.';
+          errBox.style.display = 'block';
+        }
+      } catch (err) {
+        errBox.textContent = 'Connection error. Please try again.';
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🔓 Authenticate & Access';
+      }
+    }
+
+    async function handleAdminLogout() {
+      if (confirm('Are you sure you want to log out of the Advisor Command Center?')) {
+        try {
+          await fetch('/api/admin/logout', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${currentAuthToken}` }
+          });
+        } catch (e) {}
+        currentAuthToken = '';
+        localStorage.removeItem('arthika_admin_token');
+        showLoginView();
+      }
+    }
+
+    async function fetchAdminLeads() {
+      try {
+        const res = await fetch('/api/admin/leads', {
+          headers: { 'Authorization': `Bearer ${currentAuthToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          allLeads = data.leads || [];
+          renderLeadsTable(allLeads);
+          updateKpis(allLeads);
+        }
+      } catch (err) {
+        console.error('Error fetching leads:', err);
+      }
+    }
+
+    function updateKpis(leads) {
+      document.getElementById('kpi-total-leads').textContent = leads.length;
+
+      let totalSip = 0;
+      let totalLump = 0;
+      let hnwCount = 0;
+
+      leads.forEach(l => {
+        const fv = l.formValues || {};
+        const sip = Number(fv.sipCapacity || l.monthlySip || 0);
+        const lump = Number(fv.lumpsum || l.lumpsum || 0);
+        const surplus = Number(l.monthlySurplus || 0);
+
+        totalSip += sip;
+        totalLump += lump;
+        if (lump >= 1000000 || surplus >= 50000) {
+          hnwCount++;
+        }
+      });
+
+      document.getElementById('kpi-total-sip').textContent = formatINR(totalSip) + '/mo';
+      document.getElementById('kpi-total-lumpsum').textContent = formatINR(totalLump);
+      document.getElementById('kpi-hnw-leads').textContent = hnwCount;
+    }
+
+    function renderLeadsTable(leads) {
+      const tbody = document.getElementById('leads-tbody');
+      if (!leads || leads.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; color: #9ca3af; padding: 3rem;">
+              No client leads submitted yet. When clients complete the wealth diagnostic, they will appear here instantly.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = leads.map((lead, idx) => {
+        const fv = lead.formValues || {};
+        const clientName = lead.name || fv.name || 'Client';
+        const mobile = lead.mobile || fv.mobile || '--';
+        const email = lead.email || fv.email || '--';
+        const surplus = Number(lead.monthlySurplus || (Number(fv.income || 0) - Number(fv.expenses || 0) - Number(fv.loans || 0)));
+        const lump = Number(fv.lumpsum || lead.lumpsum || 0);
+        const sip = Number(fv.sipCapacity || lead.monthlySip || 0);
+        const horizon = fv.horizon || 15;
+        const risk = (lead.riskProfile || 'Balanced').toUpperCase();
+        const portfolio = lead.portfolioName || 'Growth Multi-Asset Model';
+        const dateStr = lead.submittedAt ? new Date(lead.submittedAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '--';
+
+        const cleanMobile = mobile.replace(/\D/g, '');
+        const waLink = cleanMobile.length === 10 ? `https://wa.me/91${cleanMobile}?text=${encodeURIComponent('Hello ' + clientName + ', this is Arthika Advisors (ARN-361236). We have reviewed your CFP Wealth Diagnostic report.')}` : '#';
+
+        return `
+          <tr>
+            <td style="font-size: 0.8rem; color: #9ca3af; white-space: nowrap;">
+              <strong>${dateStr}</strong><br>
+              <span style="font-size: 0.72rem; color: var(--admin-gold);">${lead.id || 'LD-' + idx}</span>
+            </td>
+            <td>
+              <strong style="color: white; font-size: 0.95rem;">${clientName}</strong><br>
+              <span style="font-size: 0.8rem; color: #d1d5db;">📱 +91 ${cleanMobile}</span>
+              ${cleanMobile.length === 10 ? `<a href="${waLink}" target="_blank" class="btn-whatsapp" style="margin-left: 0.35rem;">💬 WA</a>` : ''}<br>
+              <span style="font-size: 0.75rem; color: var(--admin-cyan);">✉️ ${email}</span>
+            </td>
+            <td>
+              <strong style="color: ${surplus > 0 ? 'var(--admin-emerald)' : 'var(--admin-rose)'};">${formatINR(surplus)}/mo</strong><br>
+              <span style="font-size: 0.75rem; color: #9ca3af;">Age: ${fv.age || 35} | ${fv.residence || 'India'}</span>
+            </td>
+            <td>
+              <span style="color: white;">SIP: <strong>${formatINR(sip)}/mo</strong></span><br>
+              <span style="color: var(--admin-gold-light); font-size: 0.8rem;">Lump: ${formatINR(lump)}</span>
+            </td>
+            <td>
+              <span style="badge; color: var(--admin-cyan); font-weight: 600;">${horizon} Years</span><br>
+              <span style="font-size: 0.75rem; color: #9ca3af;">Stance: ${risk}</span>
+            </td>
+            <td>
+              <strong style="color: var(--admin-gold); font-size: 0.85rem;">${portfolio}</strong>
+            </td>
+            <td style="text-align: right; white-space: nowrap;">
+              <button onclick="downloadLeadPPTX(${idx})" class="btn-action" style="margin-bottom: 0.25rem;">
+                📊 Download PPTX
+              </button><br>
+              <button onclick="viewLeadDetail(${idx})" class="btn-secondary" style="margin-right: 0.25rem;">
+                👁️ View Sheet
+              </button>
+              <button onclick="deleteLead('${lead.id}')" class="btn-delete">
+                🗑️
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterLeadsTable() {
+      const q = document.getElementById('lead-search-input').value.toLowerCase();
+      const filtered = allLeads.filter(l => {
+        const name = (l.name || (l.formValues && l.formValues.name) || '').toLowerCase();
+        const mobile = (l.mobile || (l.formValues && l.formValues.mobile) || '').toLowerCase();
+        const email = (l.email || (l.formValues && l.formValues.email) || '').toLowerCase();
+        const city = ((l.formValues && l.formValues.residence) || '').toLowerCase();
+        return name.includes(q) || mobile.includes(q) || email.includes(q) || city.includes(q);
+      });
+      renderLeadsTable(filtered);
+    }
+
+    function viewLeadDetail(idx) {
+      const lead = allLeads[idx];
+      if (!lead) return;
+
+      const fv = lead.formValues || {};
+      document.getElementById('mdl-client-name').textContent = lead.name || fv.name || 'Client';
+      document.getElementById('mdl-client-sub').textContent = `Lead ID: ${lead.id} • Submitted on ${new Date(lead.submittedAt).toLocaleString()}`;
+
+      const content = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+          <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+            <h4 style="color: var(--admin-gold); margin: 0 0 0.5rem 0; font-size: 0.9rem;">Client Profile & Contact</h4>
+            <p style="margin: 0.2rem 0;"><strong>Mobile:</strong> +91 ${lead.mobile || fv.mobile || '--'}</p>
+            <p style="margin: 0.2rem 0;"><strong>Email:</strong> ${lead.email || fv.email || '--'}</p>
+            <p style="margin: 0.2rem 0;"><strong>Age & City:</strong> ${fv.age || '--'} Yrs | ${fv.residence || '--'}</p>
+            <p style="margin: 0.2rem 0;"><strong>Tax Bracket:</strong> ${fv.taxSlab || 30}%</p>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+            <h4 style="color: var(--admin-emerald); margin: 0 0 0.5rem 0; font-size: 0.9rem;">Cash Flow & Balance Sheet</h4>
+            <p style="margin: 0.2rem 0;"><strong>Take-Home:</strong> ${formatINR(fv.income)}/mo</p>
+            <p style="margin: 0.2rem 0;"><strong>Expenses + Debt:</strong> ${formatINR(Number(fv.expenses || 0) + Number(fv.loans || 0))}/mo</p>
+            <p style="margin: 0.2rem 0;"><strong>Net Surplus:</strong> ${formatINR(lead.monthlySurplus)}/mo</p>
+            <p style="margin: 0.2rem 0;"><strong>Existing Investments:</strong> ${formatINR(fv.investments)}</p>
+          </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; border: 1px solid var(--admin-border); margin-bottom: 1.25rem;">
+          <h4 style="color: var(--admin-cyan); margin: 0 0 0.5rem 0; font-size: 0.9rem;">Protection Diagnostics</h4>
+          <p style="margin: 0.2rem 0;"><strong>Emergency Fund:</strong> ${formatINR(fv.emergencyFund)} (6-Mo Target: ${formatINR((Number(fv.expenses || 0) + Number(fv.loans || 0)) * 6)})</p>
+          <p style="margin: 0.2rem 0;"><strong>Life Cover:</strong> ${formatINR(fv.termInsurance)} (Target: ${formatINR(Number(fv.income || 0) * 120)})</p>
+          <p style="margin: 0.2rem 0;"><strong>Health Floater:</strong> ${formatINR(fv.healthInsurance)}</p>
+        </div>
+
+        <div style="background: rgba(197, 160, 89, 0.08); padding: 1rem; border-radius: 8px; border: 1px dashed var(--admin-gold);">
+          <h4 style="color: var(--admin-gold); margin: 0 0 0.5rem 0; font-size: 0.9rem;">Target Strategy & Model Portfolio</h4>
+          <p style="margin: 0.2rem 0;"><strong>Model:</strong> ${lead.portfolioName || 'Multi-Asset Growth Model'}</p>
+          <p style="margin: 0.2rem 0;"><strong>Target Horizon:</strong> ${fv.horizon || 15} Years</p>
+          <p style="margin: 0.2rem 0;"><strong>SIP Allocation:</strong> ${formatINR(fv.sipCapacity)}/mo (${fv.sipFrequency || 'monthly'})</p>
+          <p style="margin: 0.2rem 0;"><strong>Lump Sum Allocation:</strong> ${formatINR(fv.lumpsum)}</p>
+        </div>
+      `;
+
+      document.getElementById('mdl-detail-content').innerHTML = content;
+      document.getElementById('mdl-btn-download-ppt').onclick = () => downloadLeadPPTX(idx);
+      document.getElementById('modal-lead-detail').style.display = 'flex';
+    }
+
+    function closeLeadDetailModal() {
+      document.getElementById('modal-lead-detail').style.display = 'none';
+    }
+
+    // 1-Click PPT Download for a specific client
+    function downloadLeadPPTX(idx) {
+      const lead = allLeads[idx];
+      if (!lead) return;
+
+      // Hydrate global formValues & risk state from lead data
+      if (typeof formValues !== 'undefined' && lead.formValues) {
+        Object.assign(formValues, lead.formValues);
+        if (lead.formValues.ageGroup) currentAgeGroup = lead.formValues.ageGroup;
+        if (lead.formValues.riskTolerance) currentRiskProfile = lead.formValues.riskTolerance;
+      }
+
+      // Trigger pptx generator with client specific data
+      if (typeof exportToPowerPoint === 'function') {
+        exportToPowerPoint();
+      } else {
+        alert('PowerPoint generator loaded. Exporting client presentation...');
+      }
+    }
+
+    async function deleteLead(leadId) {
+      if (!confirm('Are you sure you want to permanently delete this lead?')) return;
+      try {
+        const res = await fetch(`/api/admin/leads/${leadId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${currentAuthToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          fetchAdminLeads();
+        } else {
+          alert(data.message || 'Error deleting lead.');
+        }
+      } catch (err) {
+        alert('Failed to connect to server.');
+      }
+    }
+
+    function exportAllLeadsCSV() {
+      if (!allLeads || allLeads.length === 0) {
+        alert('No leads available to export.');
+        return;
+      }
+
+      const headers = ['Lead ID', 'Date', 'Name', 'Mobile', 'Email', 'Age', 'City', 'Income', 'Expenses', 'Surplus', 'Lumpsum', 'Monthly SIP', 'Horizon (Yrs)', 'Risk Profile', 'Portfolio'];
+      const rows = allLeads.map(l => {
+        const fv = l.formValues || {};
+        return [
+          l.id || '',
+          l.submittedAt || '',
+          `"${(l.name || fv.name || '').replace(/"/g, '""')}"`,
+          `"${l.mobile || fv.mobile || ''}"`,
+          `"${l.email || fv.email || ''}"`,
+          fv.age || '',
+          `"${fv.residence || ''}"`,
+          fv.income || 0,
+          fv.expenses || 0,
+          l.monthlySurplus || 0,
+          fv.lumpsum || 0,
+          fv.sipCapacity || 0,
+          fv.horizon || 15,
+          `"${l.riskProfile || ''}"`,
+          `"${(l.portfolioName || '').replace(/"/g, '""')}"`
+        ];
+      });
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `Arthika_Advisors_Client_Leads_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function openChangePasswordModal() {
+      document.getElementById('modal-change-pwd').style.display = 'flex';
+    }
+
+    function closeChangePasswordModal() {
+      document.getElementById('modal-change-pwd').style.display = 'none';
+      document.getElementById('cp-status-msg').style.display = 'none';
+    }
+
+    async function handleChangePassword(e) {
+      e.preventDefault();
+      const currentPassword = document.getElementById('cp-current-pwd').value;
+      const newUsername = document.getElementById('cp-new-user').value.trim();
+      const newPassword = document.getElementById('cp-new-pwd').value;
+      const msgBox = document.getElementById('cp-status-msg');
+
+      try {
+        const res = await fetch('/api/admin/change-credentials', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentAuthToken}`
+          },
+          body: JSON.stringify({ currentPassword, newUsername, newPassword })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          msgBox.style.color = 'var(--admin-emerald)';
+          msgBox.textContent = 'Credentials updated successfully!';
+          msgBox.style.display = 'block';
+          if (newUsername) document.getElementById('admin-user-display').textContent = newUsername;
+          setTimeout(() => {
+            closeChangePasswordModal();
+          }, 1500);
+        } else {
+          msgBox.style.color = 'var(--admin-rose)';
+          msgBox.textContent = data.message || 'Failed to update credentials.';
+          msgBox.style.display = 'block';
+        }
+      } catch (err) {
+        msgBox.style.color = 'var(--admin-rose)';
+        msgBox.textContent = 'Server connection error.';
+        msgBox.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
