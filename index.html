@@ -104,6 +104,11 @@
             <p style="color: var(--text-muted); font-size: 0.82rem; margin: 0;" id="otp-recipient-summary">Code sent to your contact details</p>
           </div>
 
+          <div id="otp-live-display-banner" style="display: none; background: rgba(197, 160, 89, 0.15); border: 1px dashed var(--primary); padding: 0.65rem 1rem; border-radius: 8px; margin-bottom: 1.25rem; text-align: center;">
+            <span style="font-size: 0.75rem; color: #d1d5db;">Verification Code:</span><br>
+            <strong id="otp-live-code" style="font-size: 1.4rem; color: var(--color-gold); letter-spacing: 0.2em; font-family: monospace;">------</strong>
+          </div>
+
           <div style="margin-bottom: 1.25rem;">
             <input type="text" id="gate-otp-input" maxlength="6" placeholder="• • • • • •" style="width: 100%; text-align: center; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.35em; padding: 0.75rem; background: rgba(0,0,0,0.5); border: 1px solid var(--primary); border-radius: 8px; color: var(--color-gold); box-sizing: border-box;">
             <div id="gate-err-otp" style="display: none; color: #f87171; font-size: 0.78rem; margin-top: 0.5rem; text-align: center; font-weight: 600;"></div>
@@ -113,9 +118,9 @@
             ✅ Verify & Begin Diagnostic
           </button>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted);">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem;">
             <button onclick="backToDetailsForm()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline;">← Edit Details</button>
-            <button onclick="requestClientOtp()" id="btn-resend-otp" style="background: none; border: none; color: var(--color-gold); cursor: pointer; text-decoration: underline; font-weight: 600;">Resend OTP</button>
+            <button onclick="requestClientOtp()" id="btn-resend-otp" style="background: none; border: none; color: var(--color-gold); cursor: pointer; text-decoration: underline; font-weight: 600;">Resend Code</button>
           </div>
         </div>
 

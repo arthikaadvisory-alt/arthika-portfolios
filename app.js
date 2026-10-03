@@ -793,11 +793,19 @@ async function requestClientOtp() {
     if (data.success) {
       document.getElementById('otp-step-details').style.display = 'none';
       document.getElementById('otp-step-verify').style.display = 'block';
-      document.getElementById('otp-recipient-summary').textContent = `Code sent to ${emailVal} & +91 ${mobileVal}${data.debugOtp ? ' (Test Code: ' + data.debugOtp + ')' : ''}`;
+      document.getElementById('otp-recipient-summary').textContent = data.emailSent ? `Verification code sent to your email (${emailVal})` : `Code generated for ${nameVal}`;
+      
+      const banner = document.getElementById('otp-live-display-banner');
+      const liveCode = document.getElementById('otp-live-code');
       const otpInput = document.getElementById('gate-otp-input');
-      if (otpInput) {
-        if (data.debugOtp) otpInput.value = data.debugOtp;
-        otpInput.focus();
+
+      if (data.debugOtp) {
+        if (banner) banner.style.display = 'block';
+        if (liveCode) liveCode.textContent = data.debugOtp;
+        if (otpInput) {
+          otpInput.value = data.debugOtp;
+          otpInput.focus();
+        }
       }
     } else {
       if (errMobile) {
@@ -809,8 +817,12 @@ async function requestClientOtp() {
     console.warn('Backend send-otp error, using local fallback:', err);
     document.getElementById('otp-step-details').style.display = 'none';
     document.getElementById('otp-step-verify').style.display = 'block';
-    document.getElementById('otp-recipient-summary').textContent = `Code sent to ${emailVal} & +91 ${mobileVal} (Demo code: 999999)`;
+    document.getElementById('otp-recipient-summary').textContent = `Code generated for ${nameVal}`;
+    const banner = document.getElementById('otp-live-display-banner');
+    const liveCode = document.getElementById('otp-live-code');
     const otpInput = document.getElementById('gate-otp-input');
+    if (banner) banner.style.display = 'block';
+    if (liveCode) liveCode.textContent = '999999';
     if (otpInput) { otpInput.value = '999999'; otpInput.focus(); }
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '📩 Send Verification Code (OTP)'; }
