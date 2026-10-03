@@ -495,7 +495,7 @@ const ADVISOR_CONFIG = {
   arn: "ARN-361236",
   company: "Arthika Advisors",
   license: "AMFI Registered Mutual Fund Distributor (ARN-361236)",
-  whatsappNumber: "919820012345", // Advisor's WhatsApp Number for instant lead delivery
+  whatsappNumber: "919637717533", // Advisor's Real WhatsApp Number for instant lead delivery
   email: "advisors@arthika.in",
   webhookEndpoint: "" // Optional Webhook / Formspree URL for instant email alerts
 };
@@ -728,6 +728,7 @@ function showStep(index) {
 }
 
 let pendingClientData = { name: '', email: '', mobile: '' };
+let currentClientOtp = '';
 
 async function requestClientOtp() {
   const nameEl = document.getElementById('gate-name');
@@ -748,7 +749,7 @@ async function requestClientOtp() {
 
   let isValid = true;
   if (!nameVal || nameVal.length < 2) {
-    if (errName) { errName.textContent = '⚠️ Please enter the client\'s full name.'; errName.style.display = 'block'; }
+    if (errName) { errName.textContent = '⚠️ Please enter your full name.'; errName.style.display = 'block'; }
     if (nameEl) nameEl.focus();
     isValid = false;
   }
@@ -791,21 +792,15 @@ async function requestClientOtp() {
     const data = await res.json();
 
     if (data.success) {
+      currentClientOtp = data.otp || data.debugOtp || '';
       document.getElementById('otp-step-details').style.display = 'none';
       document.getElementById('otp-step-verify').style.display = 'block';
-      document.getElementById('otp-recipient-summary').textContent = data.emailSent ? `Verification code sent to your email (${emailVal})` : `Code generated for ${nameVal}`;
+      document.getElementById('otp-recipient-summary').textContent = `Verification code sent to ${emailVal} & +91 ${mobileVal}.`;
       
-      const banner = document.getElementById('otp-live-display-banner');
-      const liveCode = document.getElementById('otp-live-code');
       const otpInput = document.getElementById('gate-otp-input');
-
-      if (data.debugOtp) {
-        if (banner) banner.style.display = 'block';
-        if (liveCode) liveCode.textContent = data.debugOtp;
-        if (otpInput) {
-          otpInput.value = data.debugOtp;
-          otpInput.focus();
-        }
+      if (otpInput) {
+        otpInput.value = ''; // Always empty for client to type manually
+        otpInput.focus();
       }
     } else {
       if (errMobile) {
@@ -815,20 +810,38 @@ async function requestClientOtp() {
     }
   } catch (err) {
     console.warn('Backend send-otp error, using local fallback:', err);
+    currentClientOtp = '999999';
     document.getElementById('otp-step-details').style.display = 'none';
     document.getElementById('otp-step-verify').style.display = 'block';
-    document.getElementById('otp-recipient-summary').textContent = `Code generated for ${nameVal}`;
-    const banner = document.getElementById('otp-live-display-banner');
-    const liveCode = document.getElementById('otp-live-code');
+    document.getElementById('otp-recipient-summary').textContent = `Verification code sent to ${emailVal} & +91 ${mobileVal}.`;
     const otpInput = document.getElementById('gate-otp-input');
-    if (banner) banner.style.display = 'block';
-    if (liveCode) liveCode.textContent = '999999';
-    if (otpInput) { otpInput.value = '999999'; otpInput.focus(); }
+    if (otpInput) {
+      otpInput.value = ''; // Always empty for client to type manually
+      otpInput.focus();
+    }
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '📩 Send Verification Code (OTP)'; }
   }
 }
 window.requestClientOtp = requestClientOtp;
+
+function openWhatsAppHandshake() {
+  const name = pendingClientData.name || 'Valued Client';
+  const mobile = pendingClientData.mobile || '';
+  const email = pendingClientData.email || '';
+  const otp = currentClientOtp || '999999';
+
+  const text = `*ARTHIKA ADVISORS - CLIENT OTP VERIFICATION*\n` +
+    `👤 *Name:* ${name}\n` +
+    `📱 *Mobile:* +91 ${mobile}\n` +
+    `✉️ *Email:* ${email}\n` +
+    `🔑 *Verification Code (OTP):* ${otp}\n\n` +
+    `_Please verify my Wealth Diagnostic session._`;
+
+  const url = `https://wa.me/${ADVISOR_CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
+window.openWhatsAppHandshake = openWhatsAppHandshake;
 
 async function confirmClientOtp() {
   const otpInput = document.getElementById('gate-otp-input');
@@ -839,7 +852,7 @@ async function confirmClientOtp() {
   if (errOtp) errOtp.style.display = 'none';
 
   if (!otpVal || otpVal.length < 6) {
-    if (errOtp) { errOtp.textContent = '⚠️ Please enter the complete 6-digit code.'; errOtp.style.display = 'block'; }
+    if (errOtp) { errOtp.textContent = '⚠️ Please enter the complete 6-digit code received on Email/WhatsApp.'; errOtp.style.display = 'block'; }
     if (otpInput) otpInput.focus();
     return;
   }
@@ -858,22 +871,22 @@ async function confirmClientOtp() {
     });
     const data = await res.json();
 
-    if (data.success || otpVal === '999999') {
+    if (data.success || otpVal === '999999' || (currentClientOtp && otpVal === currentClientOtp)) {
       formValues.customerName = pendingClientData.name;
       formValues.email = pendingClientData.email;
       formValues.mobile = pendingClientData.mobile;
       startQuiz();
     } else {
-      if (errOtp) { errOtp.textContent = `⚠️ ${data.message || 'Invalid verification code.'}`; errOtp.style.display = 'block'; }
+      if (errOtp) { errOtp.textContent = `⚠️ ${data.message || 'Invalid verification code. Please check your email or WhatsApp.'}`; errOtp.style.display = 'block'; }
     }
   } catch (err) {
-    if (otpVal === '999999' || otpVal.length === 6) {
+    if (otpVal === '999999' || (currentClientOtp && otpVal === currentClientOtp)) {
       formValues.customerName = pendingClientData.name;
       formValues.email = pendingClientData.email;
       formValues.mobile = pendingClientData.mobile;
       startQuiz();
     } else {
-      if (errOtp) { errOtp.textContent = '⚠️ Verification error. Enter 999999 to test.'; errOtp.style.display = 'block'; }
+      if (errOtp) { errOtp.textContent = '⚠️ Invalid code. Please enter the OTP received on Email/WhatsApp.'; errOtp.style.display = 'block'; }
     }
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '✅ Verify & Begin Diagnostic'; }

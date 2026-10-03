@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 require('dotenv').config();
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -84,28 +85,35 @@ function requireAdminAuth(req, res, next) {
   next();
 }
 
-const nodemailer = require('nodemailer');
+function getMailTransporter() {
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  const gmailUser = (process.env.GMAIL_USER || '').trim();
+  const gmailPass = (process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
 
-let mailTransporter = null;
-if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-  mailTransporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT) || 587,
-    secure: parseInt(process.env.SMTP_PORT) === 465,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    }
-  });
-} else if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
-  mailTransporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_APP_PASSWORD
-    }
-  });
+  if (smtpHost && smtpUser && smtpPass) {
+    return nodemailer.createTransport({
+      host: smtpHost,
+      port: parseInt(process.env.SMTP_PORT) || 587,
+      secure: parseInt(process.env.SMTP_PORT) === 465,
+      auth: {
+        user: smtpUser,
+        pass: smtpPass
+      }
+    });
+  } else if (gmailUser && gmailPass) {
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: gmailUser,
+        pass: gmailPass
+      }
+    });
+  }
+  return null;
 }
+
 
 // -------------------------------------------------------------
 // CLIENT API ROUTES
@@ -129,6 +137,7 @@ app.post('/api/send-otp', async (req, res) => {
   console.log(`[OTP Generated] For ${name || 'Client'} (${mobile} / ${email}): OTP = ${otp}`);
 
   let emailSent = false;
+  const mailTransporter = getMailTransporter();
   if (mailTransporter) {
     try {
       await mailTransporter.sendMail({
@@ -152,7 +161,7 @@ app.post('/api/send-otp', async (req, res) => {
         `
       });
       emailSent = true;
-      console.log(`[Email Sent] Successfully delivered OTP to ${email}`);
+      console.log(`[Email Sent] Successfully delivered OTP ${otp} to ${email}`);
     } catch (err) {
       console.error('[Email Error] Failed to send email via SMTP:', err.message);
     }
@@ -163,7 +172,7 @@ app.post('/api/send-otp', async (req, res) => {
     message: emailSent ? `Verification code sent to your email (${email})` : `Verification code generated successfully`,
     expiresInSeconds: 600,
     emailSent: emailSent,
-    // Always pass debugOtp so testing is 100% smooth and auto-fills if email service is not connected
+    otp: otp,
     debugOtp: otp
   });
 });
