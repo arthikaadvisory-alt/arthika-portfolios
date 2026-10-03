@@ -150,7 +150,7 @@ app.post('/api/send-otp', async (req, res) => {
             <p style="font-size:0.8rem; color:#9ca3af; text-transform:uppercase; letter-spacing:0.1em; margin-top:-0.5rem;">AMFI Registered Mutual Fund Distributor • ARN-361236</p>
             <hr style="border:0; border-top:1px solid rgba(197,160,89,0.3); margin:1.5rem 0;" />
             <p>Dear <strong>${name || 'Valued Investor'}</strong>,</p>
-            <p>Your one-time verification code to access the Certified Financial Planning (CFP) diagnostic portal is:</p>
+            <p>Your one-time verification code to access the Financial Planning diagnostic portal is:</p>
             <div style="background:rgba(197,160,89,0.15); border:1px solid #c5a059; color:#c5a059; font-size:2.2rem; font-weight:bold; letter-spacing:0.3em; text-align:center; padding:1rem; border-radius:8px; margin:1.5rem 0;">
               ${otp}
             </div>

@@ -1424,7 +1424,7 @@ function compileProtectionAlarms(surplus, savingsRate) {
       type: "danger",
       icon: "🚨",
       title: "Critical Emergency Buffer Deficit",
-      desc: `Your current emergency buffer of ${formatINR(formValues.emergencyFund)} is below the minimum CFP target of 6 months expenses (${formatINR(emergencyTarget)}). Immediate action: Pause new SIPs until this buffer is filled.`
+      desc: `Your current emergency buffer of ${formatINR(formValues.emergencyFund)} is below the minimum financial planning target of 6 months expenses (${formatINR(emergencyTarget)}). Immediate action: Pause new SIPs until this buffer is filled.`
     });
   } else {
     alarms.push({
@@ -1900,7 +1900,7 @@ function compileContingencyChecklist() {
   emCard.style.setProperty('--card-border-color', emPercent >= 100 ? 'var(--accent-emerald)' : 'var(--accent-rose)');
   emCard.innerHTML = `
     <div class="allocation-header">
-      <span class="allocation-name">Emergency Buffer Reserve (CFP Target: ${formatINR(emergencyTarget)})</span>
+      <span class="allocation-name">Emergency Buffer Reserve (Target: ${formatINR(emergencyTarget)})</span>
       <span class="allocation-pct">${emPercent.toFixed(0)}%</span>
     </div>
     <div class="progress-bar-bg">
@@ -3034,7 +3034,7 @@ function exportToPowerPoint() {
     },
     {
       title: "3. STEP-UP SIP (+10%/YR)",
-      tag: "CFP Growth Booster",
+      tag: "Growth Booster",
       tagColor: '065f46',
       lines: [
         { lbl: "Starting Monthly SIP:", val: `${formatINR(monthly)}/mo`, color: WHITE },
@@ -3131,7 +3131,7 @@ function exportToPowerPoint() {
     },
     {
       title: "3. STEP-UP SIP (+10%/YR)",
-      tag: "CFP Growth Booster",
+      tag: "Growth Booster",
       tagColor: '065f46',
       lines: [
         { lbl: "Starting Monthly SIP:", val: `${formatINR(monthly)}/mo`, color: WHITE },
@@ -3196,7 +3196,7 @@ function exportToPowerPoint() {
       title: "🛡️ PILLAR 1: EMERGENCY BUFFER DEFENSE",
       status: emPercent >= 100 ? "STATUS: BUFFER SECURED (✅ 100% Adequate)" : "STATUS: CRITICAL DEFICIT (🚨 Action Required)",
       statusColor: emPercent >= 100 ? EMERALD : ROSE,
-      benchmark: `CFP Benchmark: 6–12 months expenses (${formatINR(emergencyTarget)})`,
+      benchmark: `Benchmark: 6–12 months expenses (${formatINR(emergencyTarget)})`,
       current: `Current Liquid Reserve: ${formatINR(formValues.emergencyFund)}`,
       action: "Advisory Protocol: Maintain liquid buffer in ABSL Liquid Fund or bank sweep accounts. Never invest emergency capital into equity or high-volatility products."
     },
@@ -3204,7 +3204,7 @@ function exportToPowerPoint() {
       title: "👨‍👩‍👧 PILLAR 2: LIFE INSURANCE & INCOME REPLACEMENT",
       status: formValues.termInsurance >= termTarget ? "STATUS: FULLY INSURED (✅ 10x–12x Income Covered)" : "STATUS: COVERAGE GAP (⚠️ Urgent Term Cover Needed)",
       statusColor: formValues.termInsurance >= termTarget ? EMERALD : ROSE,
-      benchmark: `CFP Benchmark: 10x–12x gross annual income (${formatINR(termTarget)})`,
+      benchmark: `Benchmark: 10x–12x gross annual income (${formatINR(termTarget)})`,
       current: `Current Term Life Cover: ${formatINR(formValues.termInsurance)}`,
       action: "Advisory Protocol: Secure pure online term insurance covering your earning horizon up to age 65–70. Surrender high-cost traditional endowment/ULIP policies."
     },
@@ -3212,7 +3212,7 @@ function exportToPowerPoint() {
       title: "🏥 PILLAR 3: HEALTH & MEDICAL SHIELD",
       status: formValues.healthInsurance >= 500000 ? "STATUS: BASE HEALTH COVER ACTIVE (✅ Protected)" : "STATUS: SHORTFALL DETECTED (🚨 High Vulnerability)",
       statusColor: formValues.healthInsurance >= 500000 ? EMERALD : ROSE,
-      benchmark: "CFP Benchmark: ₹5–₹10 Lakhs Base Floater + ₹25 Lakhs Super Top-Up",
+      benchmark: "Benchmark: ₹5–₹10 Lakhs Base Floater + ₹25 Lakhs Super Top-Up",
       current: `Current Health Policy: ${formatINR(formValues.healthInsurance)}`,
       action: "Advisory Protocol: Never rely solely on corporate employer insurance. Maintain an independent family floater with comprehensive restoration and no room-rent capping."
     },
@@ -3220,7 +3220,7 @@ function exportToPowerPoint() {
       title: "📜 PILLAR 4: ESTATE & NOMINEE GOVERNANCE",
       status: "STATUS: COMPLIANCE AUDIT RECOMMENDED (📋 Periodic Review)",
       statusColor: CYAN,
-      benchmark: "CFP Benchmark: 100% folios registered with primary and secondary nominees",
+      benchmark: "Benchmark: 100% folios registered with primary and secondary nominees",
       current: "Audit Scope: Mutual fund folios, bank accounts, demat accounts & property deeds",
       action: "Advisory Protocol: Ensure all folio nominations are actively updated. Create a registered Will if holding real estate or private business assets. Maintain an encrypted emergency vault."
     }
@@ -3294,7 +3294,7 @@ function exportToPowerPoint() {
         { head: "1. 5% Rebalance Band Trigger:", desc: "Review portfolio annually; rebalance asset weights if Core Equity, Satellite, or Stability drift by >5% from target allocation." },
         { head: "2. Step-Up SIP Verification:", desc: "Verify that the +10% annual escalation executes smoothly aligned with your annual appraisal/salary increment cycle." },
         { head: "3. Annual LTCG Tax Harvesting:", desc: "Harvest Long-Term Capital Gains annually up to the statutory IT exemption limit to boost compounding efficiency." },
-        { head: "4. Annual Comprehensive CFP Audit:", desc: "Schedule annual review with Arthika Advisors to adjust for life milestones, career shifts, and goal revisions." }
+        { head: "4. Annual Comprehensive Portfolio Audit:", desc: "Schedule annual review with Arthika Advisors to adjust for life milestones, career shifts, and goal revisions." }
       ]
     }
   ];

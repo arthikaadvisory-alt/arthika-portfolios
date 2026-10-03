@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arthika - Premium CFP Wealth Planner & Diagnostic Portal</title>
-  <meta name="description" content="A premium SEBI-aware Certified Financial Planner wealth diagnostic portal. Collects cash flows, assets, liabilities, and insurance gaps, generating a full Nobel-driven wealth roadmap with Indian mutual fund recommendations.">
+  <title>Arthika - Wealth Planner & Financial Planning Portal</title>
+  <meta name="description" content="A wealth diagnostic portal by Arthika Advisors (ARN-361236). Collects cash flows, assets, liabilities, and insurance gaps, generating a complete Nobel-driven wealth roadmap with Indian mutual fund recommendations.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -65,7 +65,7 @@
         </div>
         <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ffffff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center;">Comprehensive Wealth Diagnostic</h2>
         <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto;">
-          Enter your verified contact information below to start your personal Certified Financial Planning (CFP) diagnostic.
+          Enter your verified contact information below to start your personal Financial Planning diagnostic.
         </p>
 
         <!-- STEP 0A: Contact Details Form -->
@@ -101,16 +101,15 @@
           <div style="text-align: center; margin-bottom: 1.25rem;">
             <span style="font-size: 2rem;">🔒</span>
             <h3 style="color: white; margin: 0.5rem 0 0.25rem 0; font-size: 1.2rem;">Enter 6-Digit Verification Code</h3>
-            <p style="color: var(--text-muted); font-size: 0.82rem; margin: 0;" id="otp-recipient-summary">Code sent to your contact details</p>
-          </div>
-
-          <div id="otp-live-display-banner" style="display: none; background: rgba(197, 160, 89, 0.15); border: 1px dashed var(--primary); padding: 0.65rem 1rem; border-radius: 8px; margin-bottom: 1.25rem; text-align: center;">
-            <span style="font-size: 0.75rem; color: #d1d5db;">Verification Code:</span><br>
-            <strong id="otp-live-code" style="font-size: 1.4rem; color: var(--color-gold); letter-spacing: 0.2em; font-family: monospace;">------</strong>
+            <p style="color: var(--text-muted); font-size: 0.82rem; margin: 0 0 0.75rem 0;" id="otp-recipient-summary">Code sent to your Email & WhatsApp</p>
+            
+            <button type="button" onclick="openWhatsAppHandshake()" style="background: rgba(37, 211, 102, 0.15); border: 1px solid #25D366; color: #25D366; padding: 0.45rem 0.9rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s;">
+              <span>📲</span> Open WhatsApp to Receive / Verify Code
+            </button>
           </div>
 
           <div style="margin-bottom: 1.25rem;">
-            <input type="text" id="gate-otp-input" maxlength="6" placeholder="• • • • • •" style="width: 100%; text-align: center; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.35em; padding: 0.75rem; background: rgba(0,0,0,0.5); border: 1px solid var(--primary); border-radius: 8px; color: var(--color-gold); box-sizing: border-box;">
+            <input type="text" id="gate-otp-input" maxlength="6" placeholder="• • • • • •" autocomplete="one-time-code" style="width: 100%; text-align: center; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.35em; padding: 0.75rem; background: rgba(0,0,0,0.5); border: 1px solid var(--primary); border-radius: 8px; color: var(--color-gold); box-sizing: border-box;">
             <div id="gate-err-otp" style="display: none; color: #f87171; font-size: 0.78rem; margin-top: 0.5rem; text-align: center; font-weight: 600;"></div>
           </div>
 
@@ -722,9 +721,9 @@
       <section class="panel" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(197,160,89,0.12), rgba(10,20,36,0.95)); border: 1px solid var(--primary); text-align: center; padding: 2.25rem;">
         <div style="max-width: 700px; margin: 0 auto;">
           <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; margin-bottom: 0.75rem; border: 1px solid rgba(16, 185, 129, 0.4);">✅ Wealth Diagnostic Submitted</span>
-          <h3 style="font-size: 1.5rem; color: white; margin-bottom: 0.5rem;">Your Personalized CFP Plan is Under Review</h3>
+          <h3 style="font-size: 1.5rem; color: white; margin-bottom: 0.5rem;">Your Personalized Financial Plan is Under Review</h3>
           <p style="font-size: 0.92rem; color: #d1d5db; margin-bottom: 1.5rem; line-height: 1.6;">
-            Your diagnostic data and customized model portfolio have been securely transmitted to <strong style="color: var(--primary);">Arthika Advisors (AMFI Regn. ARN-361236)</strong>. Your Certified Financial Planner will review your allocations and contact you via WhatsApp / Email with your official blueprint.
+            Your diagnostic data and customized model portfolio have been securely transmitted to <strong style="color: var(--primary);">Arthika Advisors (AMFI Regn. ARN-361236)</strong>. Your Financial Advisor will review your allocations and contact you via WhatsApp / Email with your official blueprint.
           </p>
           <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
             <button onclick="sendPlanToAdvisorWhatsApp()" style="background: linear-gradient(135deg, #25D366, #128C7E); color: white; border: none; font-size: 1.05rem; font-weight: 700; padding: 0.95rem 2rem; border-radius: var(--border-radius-md); cursor: pointer; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.35); display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition-smooth);">
