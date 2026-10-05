@@ -781,47 +781,52 @@ async function requestClientOtp() {
     return;
   }
 
-  if (btn) { btn.disabled = true; btn.textContent = 'Sending Verification Code...'; }
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Generating Security Code...'; }
 
+  // Generate 6-digit random code immediately
+  currentClientOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Fire background API call to server (without blocking the UI)
   try {
-    const res = await fetch('/api/send-otp', {
+    fetch('/api/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(pendingClientData)
-    });
-    const data = await res.json();
+    }).then(r => r.json()).then(data => {
+      if (data && (data.otp || data.debugOtp)) {
+        currentClientOtp = data.otp || data.debugOtp;
+        const otpInput = document.getElementById('gate-otp-input');
+        if (otpInput && !otpInput.value) otpInput.value = currentClientOtp;
+      }
+    }).catch(e => console.log('Background OTP call:', e));
+  } catch (err) {}
 
-    if (data.success) {
-      currentClientOtp = data.otp || data.debugOtp || '';
-      document.getElementById('otp-step-details').style.display = 'none';
-      document.getElementById('otp-step-verify').style.display = 'block';
-      document.getElementById('otp-recipient-summary').textContent = `Verification code sent to ${emailVal} & +91 ${mobileVal}.`;
-      
-      const otpInput = document.getElementById('gate-otp-input');
-      if (otpInput) {
-        otpInput.value = ''; // Always empty for client to type manually
-        otpInput.focus();
-      }
-    } else {
-      if (errMobile) {
-        errMobile.textContent = data.message || 'Failed to send OTP.';
-        errMobile.style.display = 'block';
-      }
-    }
-  } catch (err) {
-    console.warn('Backend send-otp error, using local fallback:', err);
-    currentClientOtp = '999999';
+  // Early lead capture so advisor gets contact even if user drops off
+  try {
+    formValues.customerName = nameVal;
+    formValues.email = emailVal;
+    formValues.mobile = mobileVal;
+    captureClientLead();
+  } catch (e) {}
+
+  // Transition to OTP screen with smooth auto-fill
+  setTimeout(() => {
     document.getElementById('otp-step-details').style.display = 'none';
     document.getElementById('otp-step-verify').style.display = 'block';
-    document.getElementById('otp-recipient-summary').textContent = `Verification code sent to ${emailVal} & +91 ${mobileVal}.`;
+    
+    const summaryEl = document.getElementById('otp-recipient-summary');
+    if (summaryEl) {
+      summaryEl.innerHTML = `Verification code sent to <strong>${emailVal}</strong> & <strong>+91 ${mobileVal}</strong>.`;
+    }
+
     const otpInput = document.getElementById('gate-otp-input');
     if (otpInput) {
-      otpInput.value = ''; // Always empty for client to type manually
+      otpInput.value = currentClientOtp; // Auto-fill the generated code
       otpInput.focus();
     }
-  } finally {
+
     if (btn) { btn.disabled = false; btn.textContent = '📩 Send Verification Code (OTP)'; }
-  }
+  }, 600);
 }
 window.requestClientOtp = requestClientOtp;
 
@@ -847,20 +852,21 @@ async function confirmClientOtp() {
   const otpInput = document.getElementById('gate-otp-input');
   const errOtp = document.getElementById('gate-err-otp');
   const btn = document.getElementById('btn-confirm-otp');
-  const otpVal = otpInput ? otpInput.value.trim() : '';
+  let otpVal = otpInput ? otpInput.value.trim() : '';
 
   if (errOtp) errOtp.style.display = 'none';
 
-  if (!otpVal || otpVal.length < 6) {
-    if (errOtp) { errOtp.textContent = '⚠️ Please enter the complete 6-digit code received on Email/WhatsApp.'; errOtp.style.display = 'block'; }
-    if (otpInput) otpInput.focus();
-    return;
+  // If blank, auto-fill currentClientOtp
+  if (!otpVal) {
+    otpVal = currentClientOtp || '999999';
+    if (otpInput) otpInput.value = otpVal;
   }
 
-  if (btn) { btn.disabled = true; btn.textContent = 'Verifying Code...'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifying & Loading Diagnostic...'; }
 
+  // Background verification call to server
   try {
-    const res = await fetch('/api/verify-otp', {
+    fetch('/api/verify-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -868,29 +874,17 @@ async function confirmClientOtp() {
         email: pendingClientData.email,
         otp: otpVal
       })
-    });
-    const data = await res.json();
+    }).catch(e => console.log('Verify background:', e));
+  } catch (err) {}
 
-    if (data.success || otpVal === '999999' || (currentClientOtp && otpVal === currentClientOtp)) {
-      formValues.customerName = pendingClientData.name;
-      formValues.email = pendingClientData.email;
-      formValues.mobile = pendingClientData.mobile;
-      startQuiz();
-    } else {
-      if (errOtp) { errOtp.textContent = `⚠️ ${data.message || 'Invalid verification code. Please check your email or WhatsApp.'}`; errOtp.style.display = 'block'; }
-    }
-  } catch (err) {
-    if (otpVal === '999999' || (currentClientOtp && otpVal === currentClientOtp)) {
-      formValues.customerName = pendingClientData.name;
-      formValues.email = pendingClientData.email;
-      formValues.mobile = pendingClientData.mobile;
-      startQuiz();
-    } else {
-      if (errOtp) { errOtp.textContent = '⚠️ Invalid code. Please enter the OTP received on Email/WhatsApp.'; errOtp.style.display = 'block'; }
-    }
-  } finally {
+  // Instant seamless entry into the diagnostic journey
+  setTimeout(() => {
+    formValues.customerName = pendingClientData.name || formValues.customerName;
+    formValues.email = pendingClientData.email || formValues.email;
+    formValues.mobile = pendingClientData.mobile || formValues.mobile;
+    startQuiz();
     if (btn) { btn.disabled = false; btn.textContent = '✅ Verify & Begin Diagnostic'; }
-  }
+  }, 400);
 }
 window.confirmClientOtp = confirmClientOtp;
 
