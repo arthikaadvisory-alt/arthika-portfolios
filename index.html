@@ -6,7 +6,7 @@
   <title>Arthika Advisors | Complete Wealth Solutions & Financial Planning</title>
   <meta name="description" content="Arthika Advisors (ARN-361236) - Complete Wealth Solutions & Goal-Based Financial Planning. Mutual Funds, Corporate FDs, Bonds, PMS/AIF, SIF, Unlisted Shares, GIFT City, Complete Loans & Interactive Diagnostic.">
   <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="icon" href="logo.png" type="image/png">
 </head>
 <body>
 
@@ -48,7 +48,7 @@
   <header class="site-navbar">
     <div class="navbar-inner">
       <a href="#home" class="brand-wrapper">
-        <img src="assets/logo.png" alt="Arthika Advisors Logo" class="brand-logo-img">
+        <img src="logo.png" alt="Arthika Advisors Logo" class="brand-logo-img" onerror="this.onerror=null; this.src='assets/logo.png';">
         <div class="brand-text-block">
           <span class="brand-title">ARTHIKA ADVISORS</span>
           <span class="brand-tagline">Your Wealth, Our Priority</span>
@@ -62,6 +62,7 @@
         <li><a href="#calculators-section" class="nav-link-item">Smart Calculators</a></li>
         <li><a href="#diagnostic-section" class="nav-link-item">3-Min Diagnostic</a></li>
         <li><a href="#about-section" class="nav-link-item">About Us</a></li>
+        <li><a href="#founder-section" class="nav-link-item">Founder</a></li>
         <li><a href="#contact-section" class="nav-link-item">Contact</a></li>
       </ul>
 
@@ -133,7 +134,7 @@
             </div>
             <span class="badge" style="background: rgba(197,160,89,0.15); color: var(--primary);">ARN-361236</span>
           </div>
-          <img src="assets/product_wheel.jpg" alt="Arthika Advisors Complete Wealth Solutions Wheel" class="showcase-wheel-img">
+          <img src="product_wheel.jpg" alt="Arthika Advisors Complete Wealth Solutions Wheel" class="showcase-wheel-img" onerror="this.onerror=null; this.src='assets/product_wheel.jpg';">
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; color: var(--text-muted);">
             <span>Mutual Funds &bull; FDs &bull; Bonds &bull; Loans &bull; AIF</span>
             <a href="#products-section" style="color: var(--primary); font-weight: 700;">Explore All 12 Products →</a>
@@ -169,8 +170,8 @@
               <li>Freedom SIP for retirement monthly SWP</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('Mutual Funds & SIPs', 'Investment Planning')" class="btn-product-enquire">
-            <span>📩</span> Enquire & Start SIP
+          <button onclick="connectWithExpert('Mutual Funds & Smart SIPs')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -189,8 +190,8 @@
               <li>Special higher rates for Senior Citizens (+0.50%)</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('Corporate Fixed Deposits', 'Fixed Income')" class="btn-product-enquire">
-            <span>📩</span> View FD Rates & Apply
+          <button onclick="connectWithExpert('Corporate Fixed Deposits')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -209,8 +210,8 @@
               <li>Listed on BSE/NSE for demat liquidity</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('NCDs & Corporate Bonds', 'Bonds & Fixed Income')" class="btn-product-enquire">
-            <span>📩</span> Explore Active NCDs
+          <button onclick="connectWithExpert('NCDs & Corporate Bonds')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -229,8 +230,8 @@
               <li>Guaranteed 5-year lock-in with annual interest</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('54EC Capital Gain Bonds', 'Tax Planning')" class="btn-product-enquire">
-            <span>📩</span> Calculate Tax Savings
+          <button onclick="connectWithExpert('54EC Capital Gain Bonds')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -249,8 +250,8 @@
               <li>Direct stock ownership & quarterly performance calls</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('AIF & PMS Wealth Strategies', 'HNI Solutions')" class="btn-product-enquire">
-            <span>📩</span> Request HNI Portfolio Deck
+          <button onclick="connectWithExpert('AIF & PMS Strategies')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -269,8 +270,8 @@
               <li>Asymmetric upside with defined downside armor</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('SIF Specialized Investment Funds', 'Advanced Solutions')" class="btn-product-enquire">
-            <span>📩</span> Consult on SIF Options
+          <button onclick="connectWithExpert('SIF (Specialized Funds)')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -289,8 +290,8 @@
               <li>Rigorous financial due diligence & research</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('Unlisted Shares & Pre-IPO', 'Equity Growth')" class="btn-product-enquire">
-            <span>📩</span> View Available Unlisted Stocks
+          <button onclick="connectWithExpert('Unlisted Shares & Pre-IPO')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -309,8 +310,8 @@
               <li>Simplified digital onboarding for NRIs/OCIs</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('GIFT City & Global Diversification', 'NRI Solutions')" class="btn-product-enquire">
-            <span>📩</span> NRI / Global Consultation
+          <button onclick="connectWithExpert('GIFT City & NRI Solutions')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -329,8 +330,8 @@
               <li>60% tax-free lump sum + 40% lifelong monthly pension</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('National Pension System (NPS)', 'Retirement Planning')" class="btn-product-enquire">
-            <span>📩</span> Open / Optimize NPS Tier 1
+          <button onclick="connectWithExpert('National Pension System (NPS)')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -349,8 +350,8 @@
               <li>100% digital pledge with zero foreclosure charges</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('Loan Against Securities (LAS)', 'Loans & Liquidity')" class="btn-product-enquire">
-            <span>📩</span> Check LAS Overdraft Limit
+          <button onclick="connectWithExpert('Loan Against Securities (LAS)')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -369,8 +370,8 @@
               <li>Restructure into pure term cover + equity compounding</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('Policy Exchange & Insurance Audit', 'Protection')" class="btn-product-enquire">
-            <span>📩</span> Request Free Policy Audit
+          <button onclick="connectWithExpert('Policy Exchange & Insurance Audit')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -389,8 +390,8 @@
               <li>Hassle-free claims guidance from Arthika Advisors</li>
             </ul>
           </div>
-          <button onclick="openUniversalModal('Life & Health Insurance Defense', 'Insurance')" class="btn-product-enquire">
-            <span>📩</span> Get Best Protection Quote
+          <button onclick="connectWithExpert('Life & Health Protection')" class="btn-product-enquire">
+            <span>📩</span> Click here to know more and connect with our expert.
           </button>
         </div>
 
@@ -417,8 +418,8 @@
           <p class="loan-card-desc">
             New home purchase, resale, plot + construction, and home balance transfer to slash your current EMI with zero hidden processing charges.
           </p>
-          <button onclick="openUniversalModal('Home Loan Solution', 'Loans')" class="btn-product-enquire">
-            <span>Apply Home Loan</span> →
+          <button onclick="connectLoanExpert('Home Loans')" class="btn-product-enquire">
+            <span>📩</span> Connect with our expert to apply
           </button>
         </div>
 
@@ -430,8 +431,8 @@
           <p class="loan-card-desc">
             Unlock the hidden market value of your residential, commercial, or industrial properties for business expansion or debt consolidation.
           </p>
-          <button onclick="openUniversalModal('Loan Against Property (LAP)', 'Loans')" class="btn-product-enquire">
-            <span>Apply LAP Loan</span> →
+          <button onclick="connectLoanExpert('Loan Against Property (LAP)')" class="btn-product-enquire">
+            <span>📩</span> Connect with our expert to apply
           </button>
         </div>
 
@@ -443,8 +444,8 @@
           <p class="loan-card-desc">
             Working capital limits, term loans, machinery financing, and overdraft lines designed to accelerate cash flow for MSMEs and enterprises.
           </p>
-          <button onclick="openUniversalModal('Business Loan Solution', 'Loans')" class="btn-product-enquire">
-            <span>Apply Business Loan</span> →
+          <button onclick="connectLoanExpert('Business Loans & Working Capital')" class="btn-product-enquire">
+            <span>📩</span> Connect with our expert to apply
           </button>
         </div>
 
@@ -456,8 +457,8 @@
           <p class="loan-card-desc">
             Instant collateral-free personal financing for medical emergencies, weddings, higher education, or international travel.
           </p>
-          <button onclick="openUniversalModal('Personal Loan Solution', 'Loans')" class="btn-product-enquire">
-            <span>Apply Personal Loan</span> →
+          <button onclick="connectLoanExpert('Personal Loans')" class="btn-product-enquire">
+            <span>📩</span> Connect with our expert to apply
           </button>
         </div>
 
@@ -469,8 +470,8 @@
           <p class="loan-card-desc">
             Keep your long-term equity compounding intact while enjoying an instant emergency credit line against your demat portfolio.
           </p>
-          <button onclick="openUniversalModal('Loan Against Securities (LAS)', 'Loans')" class="btn-product-enquire">
-            <span>Apply LAS Overdraft</span> →
+          <button onclick="connectLoanExpert('Loan Against Securities (LAS)')" class="btn-product-enquire">
+            <span>📩</span> Connect with our expert to apply
           </button>
         </div>
 
@@ -482,8 +483,8 @@
           <p class="loan-card-desc">
             Specialized loan structuring, builder tie-ups, loan balance transfer, and loan restructuring for complex financial profiles.
           </p>
-          <button onclick="openUniversalModal('Customized Financing & Debt Restructuring', 'Loans')" class="btn-product-enquire">
-            <span>Consult Loan Advisor</span> →
+          <button onclick="connectLoanExpert('All Custom Loans & Financing')" class="btn-product-enquire">
+            <span>📩</span> Connect with our expert to apply
           </button>
         </div>
 
@@ -819,7 +820,7 @@
         <!-- Welcome & Verification Screen -->
         <div id="onboarding-welcome">
           <div class="logo-icon-shield" style="width: 80px; height: 90px; margin: 0 auto 1.5rem auto;">
-            <img src="assets/logo.png" alt="Arthika Advisors" style="width: 80px; height: auto;">
+            <img src="logo.png" alt="Arthika Advisors" style="width: 80px; height: auto;" onerror="this.onerror=null; this.src='assets/logo.png';">
           </div>
           <div style="text-align: center; margin-bottom: 1rem;">
             <span class="badge" style="background: rgba(197,160,89,0.15); color: #c5a059; border: 1px solid rgba(197,160,89,0.3); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; padding: 0.35rem 0.85rem;">AMFI REGISTERED MUTUAL FUND DISTRIBUTOR • ARN-361236</span>
@@ -917,7 +918,7 @@
         <!-- Analyzing view -->
         <div id="onboarding-analyzing" style="display: none; padding: 3rem 0; text-align: center;">
           <div class="logo-icon-shield animate-pulse" style="width: 60px; height: 70px; margin: 0 auto 1.5rem auto;">
-            <img src="assets/logo.png" alt="Arthika Advisors" style="width: 60px; height: auto;">
+            <img src="logo.png" alt="Arthika Advisors" style="width: 60px; height: auto;" onerror="this.onerror=null; this.src='assets/logo.png';">
           </div>
           <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: white;">Compiling Wealth Architecture...</h3>
           <p style="color: var(--text-muted); font-size: 0.85rem;">Calculating cash flow surplus, identifying insurance gaps, and generating Markowitz asset allocations...</p>
@@ -1044,45 +1045,262 @@
       </div>
     </section>
 
-    <!-- ==================== SECTION: WHY CHOOSE ARTHIKA ADVISORS ==================== -->
-    <section id="about-section" style="padding: 3.5rem 0; border-top: 1px solid var(--border-color);">
+    <!-- ==================== SECTION: ABOUT ARTHIKA ADVISORS ==================== -->
+    <section id="about-section" style="padding: 4rem 0; border-top: 1px solid var(--border-color);">
       <div class="section-header-center">
-        <span class="section-tag">WHY ARTHIKA ADVISORS</span>
-        <h2 class="section-title">Institutional Discipline. Unbiased Fiduciary Care.</h2>
-        <p class="section-subtitle">
-          We combine mathematical Nobel-laureate portfolio theory with rigorous risk mitigation to shield and multiply your wealth across market cycles.
+        <span class="section-tag">ABOUT US</span>
+        <h2 class="section-title">About Arthika Advisors</h2>
+        <p class="section-subtitle" style="font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--primary); font-weight: 700;">
+          Your Wealth. Our Priority.
         </p>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3.5rem;">
-        <div class="product-card">
-          <div class="product-card-icon">🏛️</div>
-          <h3 class="product-card-title">1. Nobel Markowitz Architecture</h3>
-          <p class="product-card-desc">
-            We avoid emotional stock picking. Instead, we allocate assets across uncorrelated classes (Nifty Index Core, Factor Satellites, Corporate FDs, SGBs) to deliver maximum compounding with lowest drawdown.
+      <div style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem;">
+        
+        <!-- Founder Highlight Card -->
+        <div class="panel" style="padding: 2.25rem; background: linear-gradient(135deg, rgba(197,160,89,0.12), rgba(10,20,36,0.95)); border: 1px solid var(--border-glow); border-radius: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+            <div>
+              <span class="section-tag" style="margin-bottom: 0.25rem;">LEADERSHIP</span>
+              <h3 style="color: white; font-size: 1.5rem; margin: 0; font-family: 'Outfit', sans-serif;">Founded by Gaurav Gokhale</h3>
+              <p style="color: var(--primary); font-weight: 700; font-size: 0.88rem; margin-top: 0.25rem;">Founder | Arthika Advisors</p>
+            </div>
+            <a href="#founder-section" class="btn-hero-secondary" style="font-size: 0.85rem; padding: 0.6rem 1.25rem; border-color: var(--primary); color: var(--primary) !important;">
+              Meet the Founder →
+            </a>
+          </div>
+          <p style="font-size: 1rem; line-height: 1.8; color: #f1f5f9; margin-bottom: 1rem;">
+            With <strong>14+ years of experience in banking and financial services</strong>. Gaurav founded Arthika Advisors with a simple belief: financial advice should begin with understanding the client rather than selling a product.
+          </p>
+          <p style="font-size: 0.95rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 1.5rem;">
+            His approach combines financial experience with personalised guidance to help individuals families and businesses make informed decisions about wealth creation protection and financial planning.
+          </p>
+          <a href="#founder-section" class="btn-hero-primary" style="font-size: 0.9rem; padding: 0.75rem 1.5rem;">
+            <span>👤</span> Meet the Founder →
+          </a>
+        </div>
+
+        <!-- Intro & Overview -->
+        <div class="panel" style="padding: 2.25rem; background: var(--bg-surface-solid); border: 1px solid var(--border-glow); border-radius: 16px;">
+          <p style="font-size: 1.05rem; line-height: 1.8; color: #f1f5f9; margin-bottom: 1.25rem;">
+            At <strong style="color: var(--primary);">Arthika Advisors</strong>, we believe wealth management is not about simply choosing financial products. It is about making the right financial decisions at the right stage of life.
+          </p>
+          <p style="font-size: 1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 1.25rem;">
+            Founded with a vision to make professional financial guidance more accessible and transparent, Arthika Advisors helps individuals families and businesses plan build protect and manage their wealth with greater clarity.
+          </p>
+          <p style="font-size: 1.05rem; line-height: 1.8; color: #f1f5f9; margin-bottom: 0;">
+            With <strong style="color: var(--primary);">14+ years of experience in banking and financial services</strong>, we bring together financial expertise and a client first approach to help you make informed decisions across your financial journey.
           </p>
         </div>
-        <div class="product-card">
-          <div class="product-card-icon">🛡️</div>
-          <h3 class="product-card-title">2. Downside Defense & Buffer</h3>
-          <p class="product-card-desc">
-            We lock in 6–12 months emergency liquidity and family insurance protection first. You will never need to liquidate your long-term equity SIPs during temporary market panics.
+
+        <!-- What We Do -->
+        <div class="panel" style="padding: 2.25rem; background: var(--bg-surface-solid); border: 1px solid var(--border-color); border-radius: 16px;">
+          <h3 style="color: var(--primary); font-size: 1.4rem; margin-top: 0; margin-bottom: 1rem; font-family: 'Outfit', sans-serif;">What We Do</h3>
+          <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 1.25rem;">We provide solutions across:</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #f8fafc; font-size: 0.92rem;"><span style="color: var(--primary);">•</span> Mutual Funds and SIPs</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #f8fafc; font-size: 0.92rem;"><span style="color: var(--primary);">•</span> Investment Planning</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #f8fafc; font-size: 0.92rem;"><span style="color: var(--primary);">•</span> Unlisted Shares</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #f8fafc; font-size: 0.92rem;"><span style="color: var(--primary);">•</span> Bonds and NCDs</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #f8fafc; font-size: 0.92rem;"><span style="color: var(--primary);">•</span> Fixed Deposits</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #f8fafc; font-size: 0.92rem;"><span style="color: var(--primary);">•</span> Capital Gain Bonds</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #f8fafc; font-size: 0.92rem;"><span style="color: var(--primary);">•</span> NPS</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #f8fafc; font-size: 0.92rem;"><span style="color: var(--primary);">•</span> AIF and PMS solutions</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #f8fafc; font-size: 0.92rem;"><span style="color: var(--primary);">•</span> Life Health and Motor Insurance</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #f8fafc; font-size: 0.92rem;"><span style="color: var(--primary);">•</span> Home Personal and Business Loans</div>
+          </div>
+          <p style="font-size: 0.95rem; line-height: 1.7; color: var(--text-muted); margin: 0;">
+            Our approach starts with understanding your goals risk profile time horizon and existing financial position. We then help you identify suitable solutions rather than pushing products.
           </p>
         </div>
-        <div class="product-card">
-          <div class="product-card-icon">📈</div>
-          <h3 class="product-card-title">3. Automated Compounding Boosters</h3>
-          <p class="product-card-desc">
-            We activate high-frequency Daily Micro-SIPs (₹100/day) and +10% Annual Step-Up mandates, generating 50%–70% higher terminal wealth compared to static monthly investments.
+
+        <!-- Our Philosophy -->
+        <div class="panel" style="padding: 2.25rem; background: linear-gradient(135deg, rgba(197,160,89,0.08), rgba(10,20,36,0.95)); border: 1px solid var(--border-glow); border-radius: 16px;">
+          <h3 style="color: var(--primary); font-size: 1.4rem; margin-top: 0; margin-bottom: 0.75rem; font-family: 'Outfit', sans-serif;">Our Philosophy</h3>
+          <h4 style="color: #ffffff; font-size: 1.15rem; margin-bottom: 1rem;">Understand first. Recommend second.</h4>
+          <p style="font-size: 0.95rem; line-height: 1.7; color: #cbd5e1; margin-bottom: 1rem;">
+            Every investor has different goals and circumstances. A solution that works for one person may not be appropriate for another.
+          </p>
+          <p style="font-size: 0.95rem; line-height: 1.7; color: #cbd5e1; margin-bottom: 1.25rem;">
+            That is why we focus on goal based planning risk awareness diversification and disciplined investing.
+          </p>
+          <div style="border-left: 3px solid var(--primary); padding-left: 1.25rem; margin-top: 1.25rem;">
+            <p style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 0.25rem; letter-spacing: 0.05em;">Our objective is simple:</p>
+            <p style="color: #ffffff; font-weight: 700; font-size: 1.05rem; line-height: 1.6; margin: 0;">
+              To help you make better financial decisions today so you can build stronger financial security for tomorrow.
+            </p>
+          </div>
+        </div>
+
+        <!-- Why Arthika Advisors? -->
+        <div>
+          <h3 style="color: var(--primary); font-size: 1.4rem; margin-bottom: 1.25rem; text-align: center; font-family: 'Outfit', sans-serif;">Why Arthika Advisors?</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+            
+            <div class="product-card" style="padding: 1.5rem;">
+              <h4 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Experience</h4>
+              <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                14+ years of experience across banking and financial services.
+              </p>
+            </div>
+
+            <div class="product-card" style="padding: 1.5rem;">
+              <h4 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Personalised Guidance</h4>
+              <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                Recommendations based on your goals and financial situation.
+              </p>
+            </div>
+
+            <div class="product-card" style="padding: 1.5rem;">
+              <h4 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem;">One Financial Partner</h4>
+              <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                Investment insurance and lending solutions under one roof.
+              </p>
+            </div>
+
+            <div class="product-card" style="padding: 1.5rem;">
+              <h4 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Long Term Approach</h4>
+              <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                We focus on sustainable wealth creation rather than short term market noise.
+              </p>
+            </div>
+
+            <div class="product-card" style="padding: 1.5rem;">
+              <h4 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Transparency</h4>
+              <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                Clear communication and straightforward financial conversations.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Our Commitment -->
+        <div class="panel" style="padding: 2.25rem; background: var(--bg-surface-solid); border: 1px solid var(--border-glow); border-radius: 16px; text-align: center;">
+          <h3 style="color: var(--primary); font-size: 1.4rem; margin-top: 0; margin-bottom: 1rem; font-family: 'Outfit', sans-serif;">Our Commitment</h3>
+          <p style="font-size: 1.05rem; color: #ffffff; font-weight: 600; margin-bottom: 1rem;">
+            Your financial journey does not end after an investment is made.
+          </p>
+          <p style="font-size: 0.95rem; color: var(--secondary); margin-bottom: 1.25rem; letter-spacing: 0.05em; font-weight: 600;">
+            Markets change. Goals change. Income changes. Life changes.
+          </p>
+          <p style="font-size: 0.95rem; line-height: 1.7; color: #cbd5e1; max-width: 750px; margin: 0 auto 1.5rem auto;">
+            We aim to be there through those changes by regularly reviewing your financial strategy and helping you stay aligned with your long term goals.
+          </p>
+          <div style="border-top: 1px solid var(--border-color); padding-top: 1.25rem; margin-top: 1.25rem;">
+            <div style="font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 800; color: var(--primary);">Arthika Advisors</div>
+            <div style="font-size: 0.9rem; color: #f8fafc; font-weight: 600; margin-top: 0.25rem;">Your Wealth. Our Priority.</div>
+          </div>
+        </div>
+
+        <!-- Official Social Media Channels -->
+        <div class="panel" style="padding: 1.75rem 2.25rem; background: var(--bg-surface-solid); border: 1px solid var(--border-glow); border-radius: 16px; text-align: center;">
+          <h4 style="color: var(--primary); font-size: 1.1rem; margin: 0 0 1rem 0; font-family: 'Outfit', sans-serif;">Connect with Arthika Advisors on Official Social Channels</h4>
+          <div style="display: flex; justify-content: center; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
+            <a href="https://www.instagram.com/arthikaadvisors/" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; padding: 0.65rem 1.35rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: 0 4px 15px rgba(220,39,67,0.3); transition: transform 0.2s;">
+              <span>📸</span> Instagram @arthikaadvisors
+            </a>
+            <a href="https://www.youtube.com/@ArthikaAdvisory" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #FF0000; color: white; padding: 0.65rem 1.35rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: 0 4px 15px rgba(255,0,0,0.3); transition: transform 0.2s;">
+              <span>▶️</span> YouTube @ArthikaAdvisory
+            </a>
+            <a href="https://www.linkedin.com/in/gaurav-gokhale-8907bb62" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #0077b5; color: white; padding: 0.65rem 1.35rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: 0 4px 15px rgba(0,119,181,0.3); transition: transform 0.2s;">
+              <span>💼</span> LinkedIn (Founder)
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SECTION: MEET THE FOUNDER ==================== -->
+    <section id="founder-section" style="padding: 4rem 0; border-top: 1px solid var(--border-color);">
+      <div class="section-header-center">
+        <span class="section-tag">LEADERSHIP PROFILE</span>
+        <h2 class="section-title">Meet the Founder</h2>
+        <p class="section-subtitle" style="font-family: 'Cinzel', serif; font-size: 1.15rem; color: var(--primary); font-weight: 700;">
+          Gaurav Gokhale &bull; Founder | Arthika Advisors
+        </p>
+      </div>
+
+      <div style="max-width: 950px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem;">
+        
+        <!-- Bio Card -->
+        <div class="panel" style="padding: 2.5rem; background: var(--bg-surface-solid); border: 1px solid var(--border-glow); border-radius: 16px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+            <div>
+              <h3 style="color: white; font-size: 1.8rem; margin: 0; font-family: 'Outfit', sans-serif;">Gaurav Gokhale</h3>
+              <div style="color: var(--primary); font-weight: 700; font-size: 1rem; margin-top: 0.25rem;">Founder | Arthika Advisors</div>
+            </div>
+            <a href="https://www.linkedin.com/in/gaurav-gokhale-8907bb62" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #0077b5; color: white; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; text-decoration: none; box-shadow: 0 4px 15px rgba(0,119,181,0.3);">
+              <span>🔗</span> Founder's LinkedIn Profile
+            </a>
+          </div>
+
+          <p style="font-size: 1.05rem; line-height: 1.8; color: #f1f5f9; margin-bottom: 1.25rem;">
+            Gaurav Gokhale is a financial services professional with <strong style="color: var(--primary);">14+ years of experience in banking and financial services</strong>.
+          </p>
+
+          <p style="font-size: 0.98rem; line-height: 1.8; color: #cbd5e1; margin-bottom: 1.25rem;">
+            His professional journey has given him experience across wealth management banking investments insurance and lending. Over the years he has worked closely with individuals families and business owners to understand their financial goals and make informed financial decisions.
+          </p>
+
+          <p style="font-size: 0.98rem; line-height: 1.8; color: #cbd5e1; margin-bottom: 1.25rem;">
+            After spending years in the banking industry Gaurav founded <strong style="color: var(--primary);">Arthika Advisors</strong> with a clear objective: to build a more personalised and transparent approach to financial guidance.
+          </p>
+
+          <p style="font-size: 1.05rem; line-height: 1.8; color: #f8fafc; margin-bottom: 0.5rem; font-weight: 600;">
+            He believes that financial planning should not begin with a product.
+          </p>
+
+          <p style="font-size: 1.15rem; line-height: 1.8; color: var(--primary); font-weight: 800; margin-bottom: 1.25rem; font-family: 'Cinzel', serif;">
+            It should begin with a conversation.
+          </p>
+
+          <p style="font-size: 0.98rem; line-height: 1.8; color: #cbd5e1; margin-bottom: 0;">
+            Understanding where a client is today. Understanding where they want to go. Then creating a financial strategy around their goals risk profile time horizon and circumstances.
           </p>
         </div>
-        <div class="product-card">
-          <div class="product-card-icon">⚖️</div>
-          <h3 class="product-card-title">4. 100% Regulatory Transparency</h3>
-          <p class="product-card-desc">
-            AMFI Registered Mutual Fund Distributor (ARN-361236). Zero hidden fees, continuous portfolio governance, and annual tax-harvesting reviews.
+
+        <!-- His Approach -->
+        <div class="panel" style="padding: 2.25rem; background: linear-gradient(135deg, rgba(197,160,89,0.08), rgba(10,20,36,0.95)); border: 1px solid var(--border-glow); border-radius: 16px;">
+          <h3 style="color: var(--primary); font-size: 1.4rem; margin-top: 0; margin-bottom: 0.75rem; font-family: 'Outfit', sans-serif;">His Approach</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem;">Gaurav's philosophy is simple:</p>
+          <div style="background: rgba(0,0,0,0.3); border-left: 4px solid var(--primary); padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 1.25rem;">
+            <p style="color: white; font-size: 1.15rem; font-weight: 800; margin: 0;">Understand first. Recommend second.</p>
+          </div>
+          <p style="font-size: 0.98rem; line-height: 1.8; color: #cbd5e1; margin-bottom: 1.25rem;">
+            Whether the objective is building long term wealth planning for a child's future preparing for retirement protecting a family through insurance or managing surplus capital, the focus is on helping clients make informed decisions rather than simply selling financial products.
+          </p>
+          <p style="font-size: 0.98rem; line-height: 1.8; color: #cbd5e1; margin-bottom: 0;">
+            At Arthika Advisors he brings together his experience in banking and financial services with a long term client focused approach to wealth management.
           </p>
         </div>
+
+        <!-- Building Arthika Advisors -->
+        <div class="panel" style="padding: 2.25rem; background: var(--bg-surface-solid); border: 1px solid var(--border-color); border-radius: 16px;">
+          <h3 style="color: var(--primary); font-size: 1.4rem; margin-top: 0; margin-bottom: 1rem; font-family: 'Outfit', sans-serif;">Building Arthika Advisors</h3>
+          <p style="font-size: 0.98rem; line-height: 1.8; color: #cbd5e1; margin-bottom: 1rem;">
+            Arthika Advisors was founded with a long term vision of becoming a trusted financial partner for individuals families and businesses.
+          </p>
+          <p style="font-size: 0.98rem; line-height: 1.8; color: #cbd5e1; margin-bottom: 1.25rem;">
+            The goal is not just to help clients invest.
+          </p>
+          <p style="font-size: 1.1rem; line-height: 1.8; color: white; font-weight: 700; margin-bottom: 1.5rem; background: rgba(197,160,89,0.1); padding: 1rem 1.25rem; border-radius: 8px; border: 1px solid rgba(197,160,89,0.25);">
+            It is to help them <strong style="color: var(--primary);">plan better. invest with discipline. manage risk. and build lasting financial security.</strong>
+          </p>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+            <div>
+              <div style="font-size: 1.2rem; font-weight: 800; color: white;">Gaurav Gokhale</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted);">Founder &bull; <strong style="color: var(--primary);">Arthika Advisors</strong></div>
+              <div style="font-size: 0.85rem; color: #f8fafc; font-weight: 600; margin-top: 0.25rem;">Your Wealth. Our Priority.</div>
+            </div>
+            <a href="https://www.linkedin.com/in/gaurav-gokhale-8907bb62" target="_blank" style="color: #38bdf8; font-weight: 700; font-size: 0.9rem; text-decoration: none;">
+              www.linkedin.com/in/gaurav-gokhale-8907bb62 ↗
+            </a>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -1166,11 +1384,26 @@
     <footer style="margin-top: 4rem; padding-top: 2.5rem; border-top: 1px solid var(--border-color); text-align: center;">
       <div style="max-width: 900px; margin: 0 auto;">
         <div style="display: flex; justify-content: center; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-          <img src="assets/logo.png" alt="Arthika Advisors" style="height: 36px;">
+          <img src="logo.png" alt="Arthika Advisors" style="height: 36px;" onerror="this.onerror=null; this.src='assets/logo.png';">
           <span style="font-family: 'Cinzel', serif; font-weight: 700; color: var(--primary); font-size: 1.2rem;">ARTHIKA ADVISORS</span>
         </div>
         <p style="font-size: 0.85rem; color: #cbd5e1; font-weight: 600; margin-bottom: 0.35rem;">"Your Wealth, Our Priority"</p>
         <p style="font-size: 0.8rem; color: var(--primary); font-weight: 700; margin-bottom: 1.25rem;">AMFI Registered Mutual Fund Distributor | ARN-361236</p>
+        
+        <!-- Footer Social Links -->
+        <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+          <a href="https://www.instagram.com/arthikaadvisors/" target="_blank" style="color: #e6683c; font-weight: 700; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+            <span>📸</span> Instagram
+          </a>
+          <span style="color: rgba(255,255,255,0.2);">&bull;</span>
+          <a href="https://www.youtube.com/@ArthikaAdvisory" target="_blank" style="color: #ff4444; font-weight: 700; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+            <span>▶️</span> YouTube
+          </a>
+          <span style="color: rgba(255,255,255,0.2);">&bull;</span>
+          <a href="https://www.linkedin.com/in/gaurav-gokhale-8907bb62" target="_blank" style="color: #38bdf8; font-weight: 700; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+            <span>💼</span> Founder's LinkedIn
+          </a>
+        </div>
         
         <p style="font-size: 0.72rem; line-height: 1.55; color: var(--text-muted); margin-bottom: 1.5rem;">
           <strong>Regulatory Disclaimer:</strong> Mutual Fund investments are subject to market risks, read all scheme related documents carefully. Past performance is no guarantee of future returns. The calculations, model portfolios, and asset allocations provided on this platform are for educational and illustrative purposes only and do not constitute formal, individualized investment advice. Arthika Advisors is an AMFI registered distributor (ARN-361236).

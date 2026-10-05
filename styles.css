@@ -1927,13 +1927,15 @@ footer {
   color: var(--primary);
   font-weight: 700;
   font-size: 0.82rem;
-  padding: 0.55rem 1rem;
+  padding: 0.65rem 1rem;
   border-radius: 6px;
   cursor: pointer;
   width: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  line-height: 1.35;
   gap: 0.4rem;
   transition: all 0.2s;
 }

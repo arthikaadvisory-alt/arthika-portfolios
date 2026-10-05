@@ -3767,12 +3767,20 @@ async function handleDirectContact(evt) {
     `📌 *Subject of Interest:* ${subjectVal}\n\n` +
     `_Hello Arthika Advisors, I am contacting you directly through your website contact form._`;
 
-  const waUrl = `https://wa.me/${ADVISOR_CONFIG.whatsappNumber}?text=${encodeURIComponent(waMsg)}`;
-  window.open(waUrl, '_blank');
-
-  alert("Thank you! Your enquiry has been received. Connecting you with our advisor on WhatsApp.");
+// Direct WhatsApp Connect Handlers for Product & Loan cards
+function connectWithExpert(productName) {
+  const text = `Hello Arthika Advisors, I would like to know more and connect with an expert regarding *${productName}*.`;
+  const url = `https://wa.me/${ADVISOR_CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
 }
-window.handleDirectContact = handleDirectContact;
+window.connectWithExpert = connectWithExpert;
+
+function connectLoanExpert(loanType) {
+  const text = `Hello Arthika Advisors, I would like to connect with your expert to apply for *${loanType}*.`;
+  const url = `https://wa.me/${ADVISOR_CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
+window.connectLoanExpert = connectLoanExpert;
 
 // Start
 window.addEventListener('DOMContentLoaded', init);

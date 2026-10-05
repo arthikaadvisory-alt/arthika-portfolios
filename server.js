@@ -359,6 +359,10 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
+// Serve Static Assets (support both /assets subfolder and root repository files)
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/assets', express.static(__dirname));
+
 // Serve Static Files for Client Portal
 app.use(express.static(__dirname));
 
