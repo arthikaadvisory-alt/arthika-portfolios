@@ -1967,11 +1967,14 @@ footer {
   text-align: center;
   line-height: 1.35;
   gap: 0.4rem;
+  text-decoration: none;
+  box-sizing: border-box;
   transition: all 0.2s;
 }
 .btn-product-enquire:hover {
   background: var(--primary);
   color: #0a1424;
+  text-decoration: none;
 }
 
 /* Loan Suite Section */

@@ -3767,6 +3767,11 @@ async function handleDirectContact(evt) {
     `📌 *Subject of Interest:* ${subjectVal}\n\n` +
     `_Hello Arthika Advisors, I am contacting you directly through your website contact form._`;
 
+  const waUrl = `https://wa.me/${ADVISOR_CONFIG.whatsappNumber}?text=${encodeURIComponent(waMsg)}`;
+  window.open(waUrl, '_blank');
+}
+window.handleDirectContact = handleDirectContact;
+
 // Direct WhatsApp Connect Handlers for Product & Loan cards
 function connectWithExpert(productName) {
   const text = `Hello Arthika Advisors, I would like to know more and connect with an expert regarding *${productName}*.`;
