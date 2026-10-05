@@ -688,6 +688,17 @@ function init() {
   }
   checkAdvisorMeetingMode();
   resetQuiz();
+
+  // Initialize interactive smart calculators
+  try {
+    runSipCalculator();
+    runRetirementCalculator();
+    runLoanCalculator();
+    runLasCalculator();
+    run54ecCalculator();
+  } catch (e) {
+    console.warn("Calculators init error:", e);
+  }
 }
 
 // Onboarding Navigation
@@ -3333,8 +3344,439 @@ function exportToPowerPoint() {
 
 window.exportToPowerPoint = exportToPowerPoint;
 
+// =========================================================================
+// SECTION: INTERACTIVE SMART CALCULATORS ENGINE
+// =========================================================================
+
+// Calculator Tab Switcher
+function switchCalcTab(evt, tabId) {
+  const tabContents = document.querySelectorAll('.calc-content-panel');
+  tabContents.forEach(content => content.classList.remove('active'));
+
+  const tabButtons = document.querySelectorAll('.calc-tab-btn');
+  tabButtons.forEach(btn => btn.classList.remove('active'));
+
+  const targetPanel = document.getElementById(tabId);
+  if (targetPanel) targetPanel.classList.add('active');
+
+  if (evt && evt.currentTarget) {
+    evt.currentTarget.classList.add('active');
+  }
+}
+window.switchCalcTab = switchCalcTab;
+
+// TAB 1: SIP & Step-Up Compounding Calculator
+function runSipCalculator() {
+  const inMonthly = document.getElementById('csip-in-monthly');
+  const inYears = document.getElementById('csip-in-years');
+  const inCagr = document.getElementById('csip-in-cagr');
+  const inStepup = document.getElementById('csip-in-stepup');
+
+  if (!inMonthly || !inYears || !inCagr || !inStepup) return;
+
+  const monthly = parseFloat(inMonthly.value) || 25000;
+  const years = parseInt(inYears.value) || 15;
+  const cagr = parseFloat(inCagr.value) || 12.5;
+  const stepup = parseFloat(inStepup.value) || 10;
+
+  // Update slider labels
+  const lblMonthly = document.getElementById('csip-lbl-monthly');
+  const lblYears = document.getElementById('csip-lbl-years');
+  const lblCagr = document.getElementById('csip-lbl-cagr');
+  const lblStepup = document.getElementById('csip-lbl-stepup');
+
+  if (lblMonthly) lblMonthly.textContent = `${formatINR(monthly)} / mo`;
+  if (lblYears) lblYears.textContent = `${years} Year${years > 1 ? 's' : ''}`;
+  if (lblCagr) lblCagr.textContent = `${cagr.toFixed(1)}% p.a.`;
+  if (lblStepup) lblStepup.textContent = stepup > 0 ? `+${stepup}% / Year` : `0% (Fixed SIP)`;
+
+  // Calculations
+  const r = (cagr / 100) / 12;
+  const totalMonths = years * 12;
+
+  // Regular Fixed SIP
+  const regCorpus = monthly * ((Math.pow(1 + r, totalMonths) - 1) / r) * (1 + r);
+  const regInvested = monthly * totalMonths;
+
+  // Step-Up SIP (Escalated every 12 months)
+  let stepupCorpus = 0;
+  let stepupInvested = 0;
+  let curMonthly = monthly;
+
+  for (let y = 1; y <= years; y++) {
+    for (let m = 1; m <= 12; m++) {
+      const monthsRemaining = totalMonths - ((y - 1) * 12 + m) + 1;
+      stepupCorpus += curMonthly * Math.pow(1 + r, monthsRemaining);
+      stepupInvested += curMonthly;
+    }
+    curMonthly = curMonthly * (1 + stepup / 100);
+  }
+
+  const extraWealth = Math.max(0, stepupCorpus - regCorpus);
+  const extraPct = regCorpus > 0 ? Math.round((extraWealth / regCorpus) * 100) : 0;
+  const dailySip = roundTo100(monthly / 22, 100);
+
+  // Update DOM Outputs
+  const outStepupCorpus = document.getElementById('csip-out-stepup-corpus');
+  const outInvested = document.getElementById('csip-out-invested');
+  const outRegCorpus = document.getElementById('csip-out-regular-corpus');
+  const outExtraWealth = document.getElementById('csip-out-extra-wealth');
+  const outDaily = document.getElementById('csip-out-daily');
+
+  if (outStepupCorpus) outStepupCorpus.textContent = formatINR(Math.round(stepupCorpus));
+  if (outInvested) outInvested.textContent = formatINR(Math.round(stepupInvested));
+  if (outRegCorpus) outRegCorpus.textContent = formatINR(Math.round(regCorpus));
+  if (outExtraWealth) outExtraWealth.textContent = `+${formatINR(Math.round(extraWealth))} (+${extraPct}%)`;
+  if (outDaily) outDaily.textContent = `${formatINR(dailySip)} / day (22 Days)`;
+}
+window.runSipCalculator = runSipCalculator;
+
+// TAB 2: Retirement Freedom SWP Calculator
+function runRetirementCalculator() {
+  const inPension = document.getElementById('cret-in-pension');
+  const inYears = document.getElementById('cret-in-years');
+  const inInflation = document.getElementById('cret-in-inflation');
+
+  if (!inPension || !inYears || !inInflation) return;
+
+  const todayPension = parseFloat(inPension.value) || 75000;
+  const years = parseInt(inYears.value) || 15;
+  const inflation = parseFloat(inInflation.value) || 6.0;
+
+  // Update labels
+  const lblPension = document.getElementById('cret-lbl-pension');
+  const lblYears = document.getElementById('cret-lbl-years');
+  const lblInflation = document.getElementById('cret-lbl-inflation');
+
+  if (lblPension) lblPension.textContent = `${formatINR(todayPension)} / mo`;
+  if (lblYears) lblYears.textContent = `${years} Year${years > 1 ? 's' : ''}`;
+  if (lblInflation) lblInflation.textContent = `${inflation.toFixed(1)}% p.a.`;
+
+  // Future monthly pension needed with inflation
+  const futureMonthlyPension = todayPension * Math.pow(1 + inflation / 100, years);
+  const futureAnnualPension = futureMonthlyPension * 12;
+
+  // Perpetual SWP Corpus @ 7.0% safe withdrawal yield
+  const requiredCorpus = futureAnnualPension / 0.07;
+
+  // Monthly SIP needed today to build this corpus at 12% CAGR
+  const r = 0.12 / 12;
+  const n = years * 12;
+  const requiredSip = requiredCorpus / (((Math.pow(1 + r, n) - 1) / r) * (1 + r));
+
+  // Update DOM Outputs
+  const outCorpus = document.getElementById('cret-out-corpus');
+  const outFuturePension = document.getElementById('cret-out-future-pension');
+  const outMonthlySip = document.getElementById('cret-out-monthly-sip');
+
+  if (outCorpus) outCorpus.textContent = formatINR(Math.round(requiredCorpus));
+  if (outFuturePension) outFuturePension.textContent = `${formatINR(Math.round(futureMonthlyPension))} / mo`;
+  if (outMonthlySip) outMonthlySip.textContent = `${formatINR(roundTo500(requiredSip))} / mo`;
+}
+window.runRetirementCalculator = runRetirementCalculator;
+
+// TAB 3: Loan EMI Calculator
+function runLoanCalculator() {
+  const inAmount = document.getElementById('cln-in-amount');
+  const inRoi = document.getElementById('cln-in-roi');
+  const inTenure = document.getElementById('cln-in-tenure');
+
+  if (!inAmount || !inRoi || !inTenure) return;
+
+  const amount = parseFloat(inAmount.value) || 5000000;
+  const roi = parseFloat(inRoi.value) || 8.5;
+  const tenureYears = parseInt(inTenure.value) || 20;
+
+  // Update labels
+  const lblAmount = document.getElementById('cln-lbl-amount');
+  const lblRoi = document.getElementById('cln-lbl-roi');
+  const lblTenure = document.getElementById('cln-lbl-tenure');
+
+  if (lblAmount) lblAmount.textContent = formatINR(amount);
+  if (lblRoi) lblRoi.textContent = `${roi.toFixed(2)}%`;
+  if (lblTenure) lblTenure.textContent = `${tenureYears} Years (${tenureYears * 12} Mos)`;
+
+  // Math
+  const r = (roi / 100) / 12;
+  const n = tenureYears * 12;
+  const emi = (amount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  const totalPayment = emi * n;
+  const totalInterest = totalPayment - amount;
+
+  // Update DOM Outputs
+  const outEmi = document.getElementById('cln-out-emi');
+  const outPrincipal = document.getElementById('cln-out-principal');
+  const outInterest = document.getElementById('cln-out-interest');
+  const outTotal = document.getElementById('cln-out-total');
+
+  if (outEmi) outEmi.textContent = `${formatINR(Math.round(emi))} / mo`;
+  if (outPrincipal) outPrincipal.textContent = formatINR(Math.round(amount));
+  if (outInterest) outInterest.textContent = formatINR(Math.round(totalInterest));
+  if (outTotal) outTotal.textContent = formatINR(Math.round(totalPayment));
+}
+window.runLoanCalculator = runLoanCalculator;
+
+// TAB 4: Loan Against Securities (LAS) Overdraft Calculator
+function runLasCalculator() {
+  const inMf = document.getElementById('clas-in-mf');
+  const inDebt = document.getElementById('clas-in-debt');
+
+  if (!inMf || !inDebt) return;
+
+  const mfVal = parseFloat(inMf.value) || 2500000;
+  const debtVal = parseFloat(inDebt.value) || 1000000;
+
+  // Update labels
+  const lblMf = document.getElementById('clas-lbl-mf');
+  const lblDebt = document.getElementById('clas-lbl-debt');
+
+  if (lblMf) lblMf.textContent = formatINR(mfVal);
+  if (lblDebt) lblDebt.textContent = formatINR(debtVal);
+
+  // LTV: 50% on Equity MFs, 80% on Debt MFs & FDs
+  const eqLimit = mfVal * 0.50;
+  const debtLimit = debtVal * 0.80;
+  const totalLimit = eqLimit + debtLimit;
+
+  // Update DOM Outputs
+  const outLimit = document.getElementById('clas-out-limit');
+  const outEqLimit = document.getElementById('clas-out-eq-limit');
+  const outDebtLimit = document.getElementById('clas-out-debt-limit');
+
+  if (outLimit) outLimit.textContent = formatINR(Math.round(totalLimit));
+  if (outEqLimit) outEqLimit.textContent = formatINR(Math.round(eqLimit));
+  if (outDebtLimit) outDebtLimit.textContent = formatINR(Math.round(debtLimit));
+}
+window.runLasCalculator = runLasCalculator;
+
+// TAB 5: 54EC Capital Gain Tax Savings Calculator
+function run54ecCalculator() {
+  const inGains = document.getElementById('c54-in-gains');
+  if (!inGains) return;
+
+  const gains = parseFloat(inGains.value) || 4000000;
+
+  // Update label
+  const lblGains = document.getElementById('c54-lbl-gains');
+  if (lblGains) lblGains.textContent = formatINR(gains);
+
+  // Statutory limit ₹50 Lakhs per financial year
+  const bondInvestment = Math.min(gains, 5000000);
+  const taxSaved = bondInvestment * 0.208; // 20.8% statutory LTCG rate with cess
+  const annualInterest = bondInvestment * 0.0525; // 5.25% fixed coupon
+
+  // Update DOM Outputs
+  const outTaxSaved = document.getElementById('c54-out-tax-saved');
+  const outBondAmt = document.getElementById('c54-out-bond-amt');
+  const outInterest = document.getElementById('c54-out-annual-interest');
+
+  if (outTaxSaved) outTaxSaved.textContent = formatINR(Math.round(taxSaved));
+  if (outBondAmt) outBondAmt.textContent = `${formatINR(bondInvestment)} (REC / PFC / IRFC)`;
+  if (outInterest) outInterest.textContent = `${formatINR(Math.round(annualInterest))} / year`;
+}
+window.run54ecCalculator = run54ecCalculator;
+
+// =========================================================================
+// UNIVERSAL LEAD CAPTURE MODAL & ADVISOR WHATSAPP HANDLERS
+// =========================================================================
+
+let activeCalculatorSummary = "";
+
+function openUniversalModal(productName, category, customSummary = "") {
+  const modal = document.getElementById('universal-lead-modal');
+  if (!modal) return;
+
+  const nameInput = document.getElementById('um-client-name');
+  const mobileInput = document.getElementById('um-client-mobile');
+  const emailInput = document.getElementById('um-client-email');
+  const prodInput = document.getElementById('um-product-name');
+  const catInput = document.getElementById('um-product-category');
+  const titleEl = document.getElementById('um-modal-title');
+  const subEl = document.getElementById('um-modal-subtitle');
+
+  if (prodInput) prodInput.value = productName || 'Wealth Solution';
+  if (catInput) catInput.value = category || 'General';
+  if (titleEl) titleEl.textContent = productName || 'Product Enquiry';
+  if (subEl) subEl.textContent = category ? `Category: ${category} | Arthika Advisors` : "Connect with Arthika Advisors";
+
+  activeCalculatorSummary = customSummary || "";
+
+  // Pre-fill from existing form data if available
+  if (nameInput && !nameInput.value) {
+    nameInput.value = pendingClientData.name || formValues.customerName || '';
+  }
+  if (mobileInput && !mobileInput.value) {
+    mobileInput.value = pendingClientData.mobile || (formValues.mobile !== '9820012345' ? formValues.mobile : '') || '';
+  }
+  if (emailInput && !emailInput.value) {
+    emailInput.value = pendingClientData.email || (formValues.email !== 'rajesh.sharma@gmail.com' ? formValues.email : '') || '';
+  }
+
+  modal.classList.add('active');
+}
+window.openUniversalModal = openUniversalModal;
+
+function closeUniversalModal() {
+  const modal = document.getElementById('universal-lead-modal');
+  if (modal) modal.classList.remove('active');
+  activeCalculatorSummary = "";
+}
+window.closeUniversalModal = closeUniversalModal;
+
+function requestCalculatorReport(calcName, summaryText) {
+  openUniversalModal(calcName, 'Calculators', summaryText);
+}
+window.requestCalculatorReport = requestCalculatorReport;
+
+async function handleUniversalLeadSubmit(evt) {
+  if (evt) evt.preventDefault();
+
+  const nameVal = (document.getElementById('um-client-name')?.value || '').trim();
+  const mobileVal = (document.getElementById('um-client-mobile')?.value || '').trim();
+  const emailVal = (document.getElementById('um-client-email')?.value || '').trim();
+  const productName = document.getElementById('um-product-name')?.value || 'Wealth Solution';
+  const category = document.getElementById('um-product-category')?.value || 'General';
+
+  if (!nameVal || !mobileVal || !emailVal) {
+    alert("Please fill in your Name, Mobile Number, and Email Address.");
+    return;
+  }
+
+  const mobRes = validateMobileNumber(mobileVal);
+  if (!mobRes.valid) {
+    alert(mobRes.error);
+    return;
+  }
+
+  const emailRes = validateEmailAddress(emailVal);
+  if (!emailRes.valid) {
+    alert(emailRes.error);
+    return;
+  }
+
+  const leadPayload = {
+    name: nameVal,
+    mobile: mobileVal,
+    email: emailVal,
+    product: productName,
+    category: category,
+    summary: activeCalculatorSummary,
+    timestamp: new Date().toISOString(),
+    source: "Website Modal"
+  };
+
+  // 1. Submit lead to server in background
+  try {
+    fetch('/api/submit-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(leadPayload)
+    }).catch(e => console.log('Lead submission background:', e));
+  } catch (err) {}
+
+  // 2. Save locally
+  try {
+    const existing = JSON.parse(localStorage.getItem('arthika_client_leads') || '[]');
+    existing.unshift({
+      ...leadPayload,
+      formattedDate: new Date().toLocaleString('en-IN')
+    });
+    localStorage.setItem('arthika_client_leads', JSON.stringify(existing.slice(0, 500)));
+  } catch (e) {}
+
+  // 3. Launch WhatsApp Handshake
+  let waMsg = `*ARTHIKA ADVISORS - PRODUCT ENQUIRY*\n` +
+    `👤 *Name:* ${nameVal}\n` +
+    `📱 *Mobile:* +91 ${mobileVal}\n` +
+    `✉️ *Email:* ${emailVal}\n` +
+    `💼 *Product / Service:* ${productName}\n` +
+    `📁 *Category:* ${category}\n`;
+
+  if (activeCalculatorSummary) {
+    waMsg += `📊 *Calculation Summary:* ${activeCalculatorSummary}\n`;
+  }
+
+  waMsg += `\n_I would like to receive detailed information and advisory assistance from Arthika Advisors._`;
+
+  const waUrl = `https://wa.me/${ADVISOR_CONFIG.whatsappNumber}?text=${encodeURIComponent(waMsg)}`;
+  
+  closeUniversalModal();
+  window.open(waUrl, '_blank');
+}
+window.handleUniversalLeadSubmit = handleUniversalLeadSubmit;
+
+async function handleDirectContact(evt) {
+  if (evt) evt.preventDefault();
+
+  const nameVal = (document.getElementById('cf-name')?.value || '').trim();
+  const mobileVal = (document.getElementById('cf-mobile')?.value || '').trim();
+  const emailVal = (document.getElementById('cf-email')?.value || '').trim();
+  const subjectVal = document.getElementById('cf-subject')?.value || 'General Consultation';
+
+  if (!nameVal || !mobileVal || !emailVal) {
+    alert("Please fill in your Name, Mobile Number, and Email Address.");
+    return;
+  }
+
+  const mobRes = validateMobileNumber(mobileVal);
+  if (!mobRes.valid) {
+    alert(mobRes.error);
+    return;
+  }
+
+  const emailRes = validateEmailAddress(emailVal);
+  if (!emailRes.valid) {
+    alert(emailRes.error);
+    return;
+  }
+
+  const leadPayload = {
+    name: nameVal,
+    mobile: mobileVal,
+    email: emailVal,
+    product: subjectVal,
+    category: "Direct Contact Form",
+    timestamp: new Date().toISOString(),
+    source: "Contact Section"
+  };
+
+  // Submit lead to server in background
+  try {
+    fetch('/api/submit-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(leadPayload)
+    }).catch(e => console.log('Contact lead submission background:', e));
+  } catch (err) {}
+
+  // Save locally
+  try {
+    const existing = JSON.parse(localStorage.getItem('arthika_client_leads') || '[]');
+    existing.unshift({
+      ...leadPayload,
+      formattedDate: new Date().toLocaleString('en-IN')
+    });
+    localStorage.setItem('arthika_client_leads', JSON.stringify(existing.slice(0, 500)));
+  } catch (e) {}
+
+  // Launch WhatsApp Handshake
+  const waMsg = `*ARTHIKA ADVISORS - DIRECT CONTACT INQUIRY*\n` +
+    `👤 *Name:* ${nameVal}\n` +
+    `📱 *Mobile:* +91 ${mobileVal}\n` +
+    `✉️ *Email:* ${emailVal}\n` +
+    `📌 *Subject of Interest:* ${subjectVal}\n\n` +
+    `_Hello Arthika Advisors, I am contacting you directly through your website contact form._`;
+
+  const waUrl = `https://wa.me/${ADVISOR_CONFIG.whatsappNumber}?text=${encodeURIComponent(waMsg)}`;
+  window.open(waUrl, '_blank');
+
+  alert("Thank you! Your enquiry has been received. Connecting you with our advisor on WhatsApp.");
+}
+window.handleDirectContact = handleDirectContact;
+
 // Start
 window.addEventListener('DOMContentLoaded', init);
+
 
 
 
