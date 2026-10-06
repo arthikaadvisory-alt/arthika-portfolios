@@ -1,131 +1,140 @@
 /* app.js */
 
-// Portfolio Allocations Database (Academic Nobel Laureate Model)
+// Portfolio Allocations Database (Academic Nobel Laureate Model with Multi-Asset Gold & Silver Overlay)
 const portfolios = {
   young_conservative: {
     name: "Defensive Preservation Phase",
     target: "Young Accumulators (Ages 20s-30s)",
-    description: "Prioritizes capital stability using G-Secs, AAA debt, and a low-volatility equity factor overlay.",
-    rationale: "Even at a young age, this conservative posture utilizes key diversification principles by placing 75% in Stability assets (Corporate FDs, NCDs, Debt MFs, G-Secs) and 25% in low-cost market indexes and low-volatility factor satellites to buffer returns.",
-    estimatedReturn: 7.5,
+    description: "Prioritizes capital stability using G-Secs, AAA debt, precious metals multi-commodity hedge, and a low-volatility equity factor overlay.",
+    rationale: "Even at a young age, this conservative posture utilizes key diversification principles by placing 65% in Stability assets (Corporate FDs, NCDs, Debt MFs), 10% in Motilal Oswal & Mirae Asset Gold and Silver Passive FoFs as an inflation/currency hedge, and 25% in low-cost market indexes and factor satellites to buffer returns.",
+    estimatedReturn: 8.2,
     volatility: "Low",
     equityPct: 25,
     allocations: [
-      { key: "core_equity", pct: 20, desc: "Nifty 50 Index funds providing standard market Beta." },
-      { key: "satellite", pct: 5, desc: "Low Volatility 30 factors to capture quiet excess returns." },
-      { key: "stability", pct: 75, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (AA+ Sammaan/Muthoot), Debt MFs, and Sovereign Bonds." }
+      { key: "core_equity", pct: 20, desc: "Nifty 50 & Nifty 500 index funds providing core domestic market Beta." },
+      { key: "satellite", pct: 5, desc: "Low Volatility & Momentum smart beta factor satellites to capture quiet excess returns." },
+      { key: "precious_metals", pct: 10, desc: "Motilal Oswal Gold and Silver Passive FoF & Mirae Asset Gold Silver Passive FoF for inflation & currency defense." },
+      { key: "stability", pct: 65, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (AA+ Sammaan/Muthoot), Debt MFs, and Sovereign Bonds." }
     ]
   },
   young_moderate: {
     name: "Balanced Consolidation Phase",
     target: "Young Accumulators (Ages 20s-30s)",
-    description: "Captures steady Smart Beta factor returns balanced with a solid fixed-income shock absorber.",
-    rationale: "Following a balanced Core-Satellite model, it allocates 45% to Nifty 50 index funds for core market exposure, 15% to smart beta factor satellites (Quality/Value), and 40% to AAA Corporate FDs, Secured NCDs, and Sovereign Gold Bonds (SGBs) for volatility defense.",
-    estimatedReturn: 10.2,
+    description: "Captures steady Smart Beta factor returns balanced with Gold & Silver multi-commodity hedge and solid fixed-income shock absorbers.",
+    rationale: "Following a balanced Core-Satellite model, it allocates 45% to broad Nifty 50/500 index funds for core equity exposure, 15% to high-conviction factor satellites (Momentum/Mid-Small Cap), 10% to Motilal Oswal & Mirae Asset Gold and Silver Passive FoFs for non-correlated crisis protection, and 30% to AAA Corporate FDs, Secured NCDs, and Debt MFs.",
+    estimatedReturn: 11.2,
     volatility: "Medium",
     equityPct: 60,
     allocations: [
-      { key: "core_equity", pct: 45, desc: "Nifty 50 Index funds capturing cheap domestic market Beta." },
-      { key: "satellite", pct: 15, desc: "Nifty100 Quality 30 / Nifty Value 20 factor index funds." },
-      { key: "stability", pct: 40, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (8.7%-10.3% YTM), Debt MFs, and SGBs." }
+      { key: "core_equity", pct: 45, desc: "Nifty 50 & Nifty 500 Index funds capturing cheap domestic market Beta." },
+      { key: "satellite", pct: 15, desc: "Nifty200 Momentum 30 factor index funds and high-conviction Mid/Small Cap mutual funds." },
+      { key: "precious_metals", pct: 10, desc: "Motilal Oswal Gold and Silver Passive FoF & Mirae Asset Gold Silver Passive FoF (50:50 Dual Commodity Hedge)." },
+      { key: "stability", pct: 30, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (8.7%-10.3% YTM), and Short Term Debt MFs." }
     ]
   },
   young_aggressive: {
     name: "Aggressive Accumulation Phase",
     target: "Young Accumulators (Ages 20s-30s)",
-    description: "Maximizes smart factor premiums and broad market growth over a long-term compounding horizon.",
-    rationale: "Using smart factor premiums and an enhanced return satellite, this allocates 50% to broad Nifty 500 / LargeMid 250 indices, 30% to high-momentum factors/swing setups, and 20% to liquid reserves and AAA Corporate FDs to act as a dry powder buffer.",
-    estimatedReturn: 13.5,
+    description: "Maximizes smart factor premiums, active mid/small cap alpha, and multi-commodity Gold & Silver hedge over a long-term compounding horizon.",
+    rationale: "Using smart factor premiums and enhanced return satellites, this allocates 50% to broad Nifty 500 / LargeMid 250 indices, 25% to high-momentum factor index funds and top-tier Small/Midcap mutual funds, 10% to Motilal Oswal / Mirae Asset Gold & Silver Passive FoFs to absorb equity shocks, and 15% to liquid reserves and AAA Corporate FDs as a dry powder buffer.",
+    estimatedReturn: 14.2,
     volatility: "High",
-    equityPct: 80,
+    equityPct: 75,
     allocations: [
-      { key: "core_equity", pct: 50, desc: "Nifty 500 / LargeMid 250 index funds for broad market exposure." },
-      { key: "satellite", pct: 30, desc: "Nifty200 Momentum 30, Mid/Smallcap mutual funds, and Swing Trading setups." },
-      { key: "stability", pct: 20, desc: "AAA Corporate FDs, Liquid Cash Buffers, and Sovereign Gold Bonds (SGBs) for shock absorption." }
+      { key: "core_equity", pct: 50, desc: "Nifty 500 / LargeMid 250 index funds and high-growth Flexi Cap funds for broad market exposure." },
+      { key: "satellite", pct: 25, desc: "Nifty200 Momentum 30, Active Small/Midcap mutual funds (Invesco/ITI/Mahindra Manulife), and Multi Cap strategies." },
+      { key: "precious_metals", pct: 10, desc: "Motilal Oswal Gold and Silver Passive FoF & Mirae Asset Gold Silver Passive FoF for macroeconomic crisis hedge." },
+      { key: "stability", pct: 15, desc: "AAA Corporate FDs, Liquid Cash Buffers, and Short Duration Debt MFs for liquidity and rebalancing." }
     ]
   },
   mid_conservative: {
     name: "Defensive Consolidation Phase",
     target: "Mid-Career Builders (Ages 40s-50s)",
-    description: "Protects accumulated retirement nests using high-grade G-Secs and low-volatility indices.",
-    rationale: "Designed to secure your growing net worth. It weights 75% in AAA Corporate FDs, Senior Secured NCDs, and G-Secs to guarantee stability, and allocates 25% to core market indexes and low-volatility satellites to outpace tax and inflation.",
-    estimatedReturn: 7.5,
+    description: "Protects accumulated wealth using high-grade fixed income, Gold & Silver hedge, and low-volatility indices.",
+    rationale: "Designed to secure your growing net worth. It weights 65% in AAA Corporate FDs, Senior Secured NCDs, and Short Term Debt MFs to guarantee stability, 10% in Motilal Oswal / Mirae Asset Gold & Silver Passive FoFs to protect against currency depreciation, and allocates 25% to core market indexes and factor satellites to outpace tax and inflation.",
+    estimatedReturn: 8.2,
     volatility: "Low",
     equityPct: 25,
     allocations: [
-      { key: "core_equity", pct: 20, desc: "Nifty 50 Index funds for core inflation-beating protection." },
-      { key: "satellite", pct: 5, desc: "Low Volatility 30 factors to isolate alpha with minimal price swings." },
-      { key: "stability", pct: 75, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (AA+ Sammaan/Muthoot), Debt MFs, and Sovereign Bonds." }
+      { key: "core_equity", pct: 20, desc: "Nifty 50 & Nifty 500 Index funds for core inflation-beating growth." },
+      { key: "satellite", pct: 5, desc: "Low Volatility & Quality factor index funds to isolate alpha with minimal price swings." },
+      { key: "precious_metals", pct: 10, desc: "Motilal Oswal Gold and Silver Passive FoF & Mirae Asset Gold Silver Passive FoF (dual precious metal hedge)." },
+      { key: "stability", pct: 65, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (AA+ Sammaan/Muthoot), Debt MFs, and Sovereign Bonds." }
     ]
   },
   mid_moderate: {
     name: "Moderate Consolidation Phase",
     target: "Mid-Career Builders (Ages 40s-50s)",
-    description: "Maintains balanced growth to secure purchasing power while mitigating market crashes.",
-    rationale: "The core transition portfolio. Keeps 45% in low-cost index funds to capture market appreciation, 15% in Quality and Value factors to optimize alpha, and 40% in AAA Corporate FDs, NCDs, and Debt MFs to lock in stability.",
-    estimatedReturn: 10.2,
+    description: "Maintains balanced growth to secure purchasing power while mitigating market crashes with Gold & Silver FoFs.",
+    rationale: "The core transition portfolio. Keeps 45% in low-cost index funds to capture market appreciation, 15% in Momentum and Mid/Small Cap funds, 10% in Motilal Oswal & Mirae Asset Gold and Silver Passive FoFs as an essential volatility shock absorber, and 30% in AAA Corporate FDs, NCDs, and Debt MFs to lock in stability.",
+    estimatedReturn: 11.2,
     volatility: "Medium",
     equityPct: 60,
     allocations: [
-      { key: "core_equity", pct: 45, desc: "Nifty 50 Index funds capturing cheap domestic market Beta." },
-      { key: "satellite", pct: 15, desc: "Nifty100 Quality 30 / Nifty Value 20 factor index funds." },
-      { key: "stability", pct: 40, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (8.7%-10.3% YTM), Debt MFs, and SGBs." }
+      { key: "core_equity", pct: 45, desc: "Nifty 50 & Nifty 500 Index funds capturing cheap domestic market Beta." },
+      { key: "satellite", pct: 15, desc: "Nifty200 Momentum 30 factor index funds and curated Mid/Small Cap mutual funds." },
+      { key: "precious_metals", pct: 10, desc: "Motilal Oswal Gold and Silver Passive FoF & Mirae Asset Gold Silver Passive FoF (Multi-Asset Commodity Protection)." },
+      { key: "stability", pct: 30, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (8.7%-10.3% YTM), and Debt MFs." }
     ]
   },
   mid_aggressive: {
     name: "Active Consolidation Phase",
     target: "Mid-Career Builders (Ages 40s-50s)",
-    description: "Sustains a high growth trajectory for professionals with strong career stability.",
-    rationale: "Keeps a robust 80% growth footprint. Puts 50% in broad market indices, 30% in Momentum ETFs and active satellites to boost compounding velocity, and uses a 20% liquid cash and AAA Corporate FD buffer to absorb sudden market crashes.",
-    estimatedReturn: 13.5,
+    description: "Sustains a high growth trajectory for established professionals with strong career stability.",
+    rationale: "Keeps a robust 75% growth footprint. Puts 50% in broad market indices, 25% in Momentum and High-Conviction Small/Midcap satellites, 10% in Motilal Oswal & Mirae Asset Gold and Silver Passive FoFs for dual-metal hedging, and uses a 15% liquid cash and AAA Corporate FD buffer to absorb sudden market corrections.",
+    estimatedReturn: 14.2,
     volatility: "High",
-    equityPct: 80,
+    equityPct: 75,
     allocations: [
-      { key: "core_equity", pct: 50, desc: "Nifty 500 / LargeMid 250 index funds for broad market exposure." },
-      { key: "satellite", pct: 30, desc: "Nifty200 Momentum 30, Mid/Smallcap mutual funds, and Swing Trading setups." },
-      { key: "stability", pct: 20, desc: "AAA Corporate FDs, Liquid Cash Buffers, and Sovereign Gold Bonds (SGBs) for shock absorption." }
+      { key: "core_equity", pct: 50, desc: "Nifty 500 / LargeMid 250 index funds and multi-cap funds for broad compounding." },
+      { key: "satellite", pct: 25, desc: "Nifty200 Momentum 30, Top Active Small/Midcap funds (Invesco/ITI/Bandhan), and Thematic setups." },
+      { key: "precious_metals", pct: 10, desc: "Motilal Oswal Gold and Silver Passive FoF & Mirae Asset Gold Silver Passive FoF for non-correlated crisis buffer." },
+      { key: "stability", pct: 15, desc: "AAA Corporate FDs, Liquid Cash Buffers, and Short Duration Debt MFs." }
     ]
   },
   retired_conservative: {
     name: "Conservative Distribution Phase",
     target: "Wealth Preservers (Ages 60s+)",
-    description: "Maximized wealth preservation and income stability for systematic withdrawals (SWP).",
-    rationale: "Under a structured behavioral glide path, we secure your corpus from emotional decision-making. We place 75% in AAA Corporate FDs (up to 8% p.a.), Monthly Payout NCDs, G-Secs, and liquid cash for income liquidity, allocating 25% to core Nifty 50.",
-    estimatedReturn: 7.5,
+    description: "Maximized wealth preservation, Gold & Silver purchasing power hedge, and income stability for systematic withdrawals (SWP).",
+    rationale: "Under a structured behavioral glide path, we secure your corpus from emotional decision-making. We place 65% in AAA Corporate FDs (up to 8.40% p.a.), Monthly Payout NCDs, and Debt MFs for income liquidity, 10% in Motilal Oswal & Mirae Asset Gold and Silver Passive FoFs to protect against currency debasement, and 25% in core Nifty 50 index funds.",
+    estimatedReturn: 8.2,
     volatility: "Low",
     equityPct: 25,
     allocations: [
-      { key: "core_equity", pct: 20, desc: "Nifty 50 Index funds for core inflation-beating protection." },
-      { key: "satellite", pct: 5, desc: "Low Volatility 30 factors to isolate alpha with minimal price swings." },
-      { key: "stability", pct: 75, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (AA+ Sammaan/Muthoot), Debt MFs, and Sovereign Bonds." }
+      { key: "core_equity", pct: 20, desc: "Nifty 50 Index funds for core inflation-beating capital preservation." },
+      { key: "satellite", pct: 5, desc: "Low Volatility factor index funds to isolate alpha with minimal price swings." },
+      { key: "precious_metals", pct: 10, desc: "Motilal Oswal Gold and Silver Passive FoF & Mirae Asset Gold Silver Passive FoF for real purchasing power defense." },
+      { key: "stability", pct: 65, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (AA+ Sammaan/Muthoot), Debt MFs, and Sovereign Bonds." }
     ]
   },
   retired_moderate: {
     name: "Moderate Distribution Phase",
     target: "Wealth Preservers (Ages 60s+)",
-    description: "Generates secure retirement payouts while growing the underlying principal.",
-    rationale: "Balances cash distributions with growth. We dedicate 40% to AAA Corporate FDs, NCDs, and Debt MFs for payout safety, 45% to broad indices, and 15% to high-ROE Quality factors to grow your remaining estate.",
-    estimatedReturn: 10.2,
+    description: "Generates secure retirement payouts while growing the underlying principal with Gold & Silver FoF buffers.",
+    rationale: "Balances cash distributions with growth. We dedicate 30% to AAA Corporate FDs, NCDs, and Debt MFs for payout safety, 10% to Motilal Oswal & Mirae Asset Gold and Silver Passive FoFs for inflation hedging, 45% to broad indices, and 15% to high-conviction factor satellites to grow your remaining estate.",
+    estimatedReturn: 11.2,
     volatility: "Medium",
     equityPct: 60,
     allocations: [
-      { key: "core_equity", pct: 45, desc: "Nifty 50 Index funds capturing cheap domestic market Beta." },
-      { key: "satellite", pct: 15, desc: "Nifty100 Quality 30 / Nifty Value 20 factor index funds." },
-      { key: "stability", pct: 40, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (8.7%-10.3% YTM), Debt MFs, and SGBs." }
+      { key: "core_equity", pct: 45, desc: "Nifty 50 & Nifty 500 Index funds capturing steady domestic market Beta." },
+      { key: "satellite", pct: 15, desc: "Nifty200 Momentum 30 and Quality factor index funds for alpha expansion." },
+      { key: "precious_metals", pct: 10, desc: "Motilal Oswal Gold and Silver Passive FoF & Mirae Asset Gold Silver Passive FoF (dual metal asset protection)." },
+      { key: "stability", pct: 30, desc: "AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (8.7%-10.3% YTM), and Debt MFs." }
     ]
   },
   retired_aggressive: {
     name: "Active Estate Growth Phase",
     target: "Wealth Preservers (Ages 60s+)",
-    description: "For retirees with substantial estates wishing to optimize legacy compounding.",
-    rationale: "For high net worth retirees who do not rely on this capital for core living costs. It holds a high-growth 80% equity weight (50% Core, 30% Momentum/satellite) to build long-term legacy value, leaving 20% in gold/liquid cash.",
-    estimatedReturn: 13.5,
+    description: "For retirees with substantial estates wishing to optimize multi-generational legacy compounding with precious metals.",
+    rationale: "For high net worth retirees who do not rely on this capital for core living costs. It holds a high-growth 75% equity weight (50% Core, 25% Momentum/satellite) to build long-term legacy value, 10% in Motilal Oswal & Mirae Asset Gold and Silver Passive FoFs, and 15% in AAA Corporate FDs and liquid buffers.",
+    estimatedReturn: 14.2,
     volatility: "High",
-    equityPct: 80,
+    equityPct: 75,
     allocations: [
-      { key: "core_equity", pct: 50, desc: "Nifty 500 / LargeMid 250 index funds for broad market exposure." },
-      { key: "satellite", pct: 30, desc: "Nifty200 Momentum 30, Mid/Smallcap mutual funds, and Swing Trading setups." },
-      { key: "stability", pct: 20, desc: "AAA Corporate FDs, Liquid Cash Buffers, and Sovereign Gold Bonds (SGBs) for shock absorption." }
+      { key: "core_equity", pct: 50, desc: "Nifty 500 / LargeMid 250 index funds and flexicap funds for multi-generational growth." },
+      { key: "satellite", pct: 25, desc: "Nifty200 Momentum 30 and High-Alpha Small/Midcap mutual funds." },
+      { key: "precious_metals", pct: 10, desc: "Motilal Oswal Gold and Silver Passive FoF & Mirae Asset Gold Silver Passive FoF for generational wealth preservation." },
+      { key: "stability", pct: 15, desc: "AAA Corporate FDs, Liquid Cash Buffers, and Short Duration Debt MFs." }
     ]
   }
 };
@@ -133,68 +142,137 @@ const portfolios = {
 const assetClassesMeta = {
   core_equity: { name: "Core Equity (Market Index)", color: "var(--color-core)" },
   satellite: { name: "Satellite (Enhanced Returns)", color: "var(--color-satellite)" },
+  precious_metals: { name: "Gold & Silver Multi-Commodity FoF", color: "#eab308" },
   stability: { name: "Stability (Risk Mitigation)", color: "var(--color-stability)" }
 };
 
-// Top Curated Investment Recommendations from Nivesh (September 2026 Data)
+// Top Curated Investment Recommendations from Nivesh (October 2026 Data Sheet)
 const recommendedFunds = {
   core_equity: [
     { 
-      name: "SBI Nifty Index Fund", 
-      type: "Index Core", 
+      name: "SBI Nifty Index Fund - Growth", 
+      type: "Nifty 50 Index Core", 
       badge: "mf", 
       category: "equity", 
       cagr: 12.0, 
-      histYield: 13.80, 
-      metric1: "3Y CAGR: 13.80%", 
-      metric2: "1Y Return: 9.66%", 
-      desc: "Nifty 50 passive index tracking cheap domestic market Beta." 
+      histYield: 12.87, 
+      metric1: "3Y CAGR: 5.20%", 
+      metric2: "Inception: 12.87%", 
+      desc: "Nifty 50 passive index tracking cheap domestic market Beta with minimal tracking error (QAAUM: ₹2,102 Cr)." 
     },
     { 
-      name: "Motilal Oswal Nifty 500 Index Fund", 
-      type: "Index Core", 
+      name: "Motilal Oswal Nifty 500 Index Fund - Reg - Growth", 
+      type: "Nifty 500 Index Core", 
       badge: "mf", 
       category: "equity", 
       cagr: 12.0, 
-      histYield: 15.73, 
-      metric1: "3Y CAGR: 15.73%", 
-      metric2: "1Y Return: 5.82%", 
-      desc: "BSE/Nifty 500 passive core tracking broad Indian market cap growth." 
+      histYield: 13.41, 
+      metric1: "3Y CAGR: 8.09%", 
+      metric2: "Inception: 13.41%", 
+      desc: "Broad Indian market cap exposure across top 500 companies (QAAUM: ₹490 Cr)." 
+    },
+    { 
+      name: "Bandhan Large Cap Fund - Reg - Growth", 
+      type: "Active Large Cap", 
+      badge: "mf", 
+      category: "equity", 
+      cagr: 12.0, 
+      histYield: 10.34, 
+      metric1: "3Y CAGR: 10.17%", 
+      metric2: "6M Return: 4.68%", 
+      desc: "Active large cap portfolio with 80%+ large cap allocation for steady blue-chip compounding (QAAUM: ₹1,616 Cr)." 
+    },
+    { 
+      name: "360 ONE Flexicap Fund - Reg - Growth", 
+      type: "Active Flexi Cap", 
+      badge: "mf", 
+      category: "equity", 
+      cagr: 13.5, 
+      histYield: 15.23, 
+      metric1: "3Y CAGR: 14.42%", 
+      metric2: "6M Return: 18.27%", 
+      desc: "Dynamic multi-cap strategy with high alpha generation (QAAUM: ₹1,213 Cr)." 
     }
   ],
   satellite: [
     { 
-      name: "Motilal Oswal Nifty 200 Momentum 30 Index Fund", 
-      type: "Smart Beta Factor", 
+      name: "Motilal Oswal Nifty 200 Momentum 30 Index Fund - Reg - Growth", 
+      type: "Momentum Smart Beta", 
       badge: "mf", 
       category: "equity", 
       cagr: 15.0, 
-      histYield: 16.91, 
-      metric1: "3Y CAGR: 16.91%", 
-      metric2: "1Y Return: -6.62%", 
-      desc: "Captures momentum premium to ride price trendwaves." 
+      histYield: 16.50, 
+      metric1: "3Y CAGR: 7.39%", 
+      metric2: "6M Return: 4.95%", 
+      desc: "Rule-based smart beta factor riding strong upward price momentum trends (QAAUM: ₹251 Cr)." 
     },
     { 
-      name: "HSBC Midcap Fund", 
+      name: "Invesco India Small Cap Fund - Reg - Growth", 
+      type: "Active Small Cap", 
+      badge: "mf", 
+      category: "equity", 
+      cagr: 16.5, 
+      histYield: 21.37, 
+      metric1: "3Y CAGR: 19.91%", 
+      metric2: "6M Return: 23.20%", 
+      desc: "Top-performing high conviction small-cap fund with 66% small cap allocation (QAAUM: ₹7,814 Cr)." 
+    },
+    { 
+      name: "ITI Small Cap Fund - Reg - Growth", 
+      type: "Active Small Cap", 
+      badge: "mf", 
+      category: "equity", 
+      cagr: 16.5, 
+      histYield: 19.79, 
+      metric1: "3Y CAGR: 21.21%", 
+      metric2: "6M Return: 29.15%", 
+      desc: "High-growth small cap compounding with 29%+ 6M rally (QAAUM: ₹1,343 Cr)." 
+    },
+    { 
+      name: "Bandhan Mid Cap Fund - Reg - Growth", 
       type: "Active Mid Cap", 
       badge: "mf", 
       category: "equity", 
       cagr: 15.0, 
-      histYield: 23.26, 
-      metric1: "3Y CAGR: 23.26%", 
-      metric2: "1Y Return: 21.74%", 
-      desc: "Active mid-cap fund targeted to capture structural alpha on Dalal Street." 
+      histYield: 16.00, 
+      metric1: "3Y CAGR: 15.03%", 
+      metric2: "6M Return: 17.14%", 
+      desc: "Focused mid-cap compounder capturing emerging industry market leaders (QAAUM: ₹2,035 Cr)." 
     },
     { 
-      name: "Bandhan Small Cap Fund", 
-      type: "Active Small Cap", 
+      name: "Axis Multicap Fund - Reg - Growth", 
+      type: "Active Multi Cap", 
       badge: "mf", 
       category: "equity", 
-      cagr: 16.0, 
-      histYield: 23.55, 
-      metric1: "3Y CAGR: 23.55%", 
-      metric2: "1Y Return: 13.65%", 
-      desc: "High-conviction active small cap allocation to maximize compound velocity." 
+      cagr: 14.5, 
+      histYield: 14.31, 
+      metric1: "3Y CAGR: 16.99%", 
+      metric2: "6M Return: 16.73%", 
+      desc: "Mandated 25-25-25 diversified multi-cap allocation across Large, Mid, and Small caps (QAAUM: ₹8,264 Cr)." 
+    }
+  ],
+  precious_metals: [
+    { 
+      name: "Motilal Oswal Gold and Silver Passive FoF - Reg - Growth", 
+      type: "Multi-Commodity Passive FoF", 
+      badge: "fof", 
+      category: "commodity", 
+      cagr: 14.50, 
+      histYield: 24.80, 
+      metric1: "1Y Return: ~28.5%", 
+      metric2: "Allocation: Gold + Silver 50:50", 
+      desc: "Passive multi-asset Fund of Funds holding physical Gold & Silver ETFs. Essential dual-commodity buffer against rupee depreciation, domestic inflation, and geopolitical market drawdowns." 
+    },
+    { 
+      name: "Mirae Asset Gold Silver Passive FoF - Reg - Growth", 
+      type: "Multi-Commodity Passive FoF", 
+      badge: "fof", 
+      category: "commodity", 
+      cagr: 14.50, 
+      histYield: 24.20, 
+      metric1: "1Y Return: ~27.8%", 
+      metric2: "Allocation: Gold + Silver Dual", 
+      desc: "Strategic dual-metal passive FoF combining the wealth preservation of Gold with the industrial and green-tech demand velocity of Silver." 
     }
   ],
   stability: [
@@ -204,22 +282,22 @@ const recommendedFunds = {
       type: "Corporate FD (AAA)", 
       badge: "fd", 
       category: "fd", 
-      cagr: 7.40, 
-      histYield: 7.75, 
-      metric1: "ROI: 7.40% - 7.75%", 
+      cagr: 7.75, 
+      histYield: 8.25, 
+      metric1: "ROI: 7.40% - 8.25%", 
       metric2: "Rating: CRISIL AAA", 
-      desc: "Highest safety AAA deposit. Monthly/Quarterly/Annual payout options available for steady regular income." 
+      desc: "Highest safety AAA deposit. Monthly/Quarterly/Annual payout options available for regular monthly income." 
     },
     { 
       name: "Shriram Finance Ltd Corporate FD", 
       type: "Corporate FD (AAA)", 
       badge: "fd", 
       category: "fd", 
-      cagr: 7.50, 
-      histYield: 8.00, 
-      metric1: "ROI: 7.50% - 8.00%", 
+      cagr: 7.80, 
+      histYield: 8.40, 
+      metric1: "ROI: 7.50% - 8.40%", 
       metric2: "Rating: CRISIL AAA", 
-      desc: "High-yield AAA corporate deposit with up to 8.00% p.a. for senior citizens and strong rural/commercial reach." 
+      desc: "High-yield AAA corporate deposit with up to 8.40% p.a. for senior citizens and strong asset backing." 
     },
     // 2. Curated Primary Bonds & NCDs
     { 
@@ -231,7 +309,7 @@ const recommendedFunds = {
       histYield: 8.70, 
       metric1: "YTM: 8.70%", 
       metric2: "Rating: AA+ (ICRA/CRISIL)", 
-      desc: "Senior Secured primary bond paying monthly interest. Ideal for high-grade fixed income held to maturity." 
+      desc: "Senior Secured primary bond paying monthly interest. High-grade fixed income held to maturity." 
     },
     { 
       name: "Muthoot Fincorp Ltd 10.25% NCD (2031)", 
@@ -244,20 +322,9 @@ const recommendedFunds = {
       metric2: "Rating: AA (CRISIL)", 
       desc: "High-yield monthly interest bond offering 10.29% YTM for investors seeking higher cashflow with AA-level credit." 
     },
-    // 3. Debt Mutual Funds
+    // 3. Debt Mutual Funds (October 2026 Sheet)
     { 
-      name: "Nippon India Corporate Bond Fund", 
-      type: "Corporate Debt MF", 
-      badge: "mf", 
-      category: "mf_debt", 
-      cagr: 7.34, 
-      histYield: 7.36, 
-      metric1: "YTM: 7.34%", 
-      metric2: "3Y CAGR: 7.36%", 
-      desc: "High-grade corporate bond fund providing tax deferral and moderate accrual returns." 
-    },
-    { 
-      name: "HDFC Short Term Debt Fund", 
+      name: "HDFC Short Term Debt Fund - Growth", 
       type: "Short Term Debt MF", 
       badge: "mf", 
       category: "mf_debt", 
@@ -265,10 +332,21 @@ const recommendedFunds = {
       histYield: 7.41, 
       metric1: "YTM: 7.48%", 
       metric2: "3Y CAGR: 7.41%", 
-      desc: "Short-duration buffer protecting capital against interest rate spikes with daily liquidity." 
+      desc: "High-grade short-duration debt protecting capital against interest rate cycles with daily liquidity (QAAUM: ₹4,915 Cr)." 
     },
     { 
-      name: "ABSL Liquid Fund", 
+      name: "Nippon India Corporate Bond Fund - Growth", 
+      type: "Corporate Debt MF", 
+      badge: "mf", 
+      category: "mf_debt", 
+      cagr: 7.34, 
+      histYield: 7.36, 
+      metric1: "YTM: 7.34%", 
+      metric2: "3Y CAGR: 7.36%", 
+      desc: "High-grade corporate bond fund providing tax deferral and steady accrual returns (QAAUM: ₹1,281 Cr)." 
+    },
+    { 
+      name: "Aditya Birla Sun Life Liquid Fund - Growth", 
       type: "Liquid Cash Buffer MF", 
       badge: "mf", 
       category: "mf_debt", 
@@ -276,7 +354,7 @@ const recommendedFunds = {
       histYield: 6.89, 
       metric1: "YTM: 6.49%", 
       metric2: "3Y CAGR: 6.89%", 
-      desc: "Ultra-liquid cash management account for emergency reserves and tactical STP deployment." 
+      desc: "Ultra-liquid cash management account for emergency reserves and tactical STP deployment (QAAUM: ₹12,527 Cr)." 
     },
     // 4. Sovereign & Tax-Advantaged Bonds
     { 
@@ -1572,6 +1650,10 @@ function compileProductRecommendations(portfolio, filterType = 'all') {
     if (filterType !== 'all') {
       if (filterType === 'equity') {
         if (alloc.key !== 'core_equity' && alloc.key !== 'satellite') return;
+      } else if (filterType === 'commodity' || filterType === 'precious_metals') {
+        if (alloc.key !== 'precious_metals') return;
+      } else if (filterType === 'stability') {
+        if (alloc.key !== 'stability') return;
       } else {
         if (alloc.key !== 'stability') return;
         schemes = schemes.filter(s => s.category === filterType);
@@ -2518,10 +2600,11 @@ function exportToPowerPoint() {
     fontSize: 10, bold: true, color: CYAN, align: 'right', fontFace: 'Calibri'
   });
 
-  // 3 Asset Class Cards
+  // 4 Asset Class Cards
   const coreAlloc = portfolio.allocations.find(a => a.key === 'core_equity') ? portfolio.allocations.find(a => a.key === 'core_equity').pct : 45;
   const satAlloc = portfolio.allocations.find(a => a.key === 'satellite') ? portfolio.allocations.find(a => a.key === 'satellite').pct : 15;
-  const stabAlloc = portfolio.allocations.find(a => a.key === 'stability') ? portfolio.allocations.find(a => a.key === 'stability').pct : 40;
+  const goldAlloc = portfolio.allocations.find(a => a.key === 'precious_metals') ? portfolio.allocations.find(a => a.key === 'precious_metals').pct : 10;
+  const stabAlloc = portfolio.allocations.find(a => a.key === 'stability') ? portfolio.allocations.find(a => a.key === 'stability').pct : 30;
 
   const coreLump = Math.round((coreAlloc / 100) * formValues.lumpsum);
   const coreMonthly = roundTo500((coreAlloc / 100) * formValues.sipCapacity);
@@ -2531,65 +2614,77 @@ function exportToPowerPoint() {
   const satMonthly = roundTo500((satAlloc / 100) * formValues.sipCapacity);
   const satDaily = satMonthly > 0 ? roundTo100(satMonthly / 22, 100) : 0;
 
+  const goldLump = Math.round((goldAlloc / 100) * formValues.lumpsum);
+  const goldMonthly = roundTo500((goldAlloc / 100) * formValues.sipCapacity);
+  const goldDaily = goldMonthly > 0 ? roundTo100(goldMonthly / 22, 100) : 0;
+
   const stabLump = Math.round((stabAlloc / 100) * formValues.lumpsum);
   const stabMonthly = roundTo500((stabAlloc / 100) * formValues.sipCapacity);
   const stabDaily = stabMonthly > 0 ? roundTo100(stabMonthly / 22, 100) : 0;
 
   const allocCardsS3 = [
     {
-      title: "1. CORE EQUITY (MARKET INDEX BETA)",
+      title: "1. CORE EQUITY (MARKET BETA)",
       pct: `${coreAlloc}%`,
       lump: coreLump,
       month: coreMonthly,
       daily: coreDaily,
-      desc: "Captures low-cost broad market Beta through Nifty 50 and Nifty 500 passive index funds with minimum tracking error. Anchors portfolio compounding with India's macroeconomic expansion."
+      desc: "Captures low-cost broad market Beta through Nifty 50 and Nifty 500 passive index funds."
     },
     {
-      title: "2. SATELLITE (ENHANCED FACTOR ALPHA)",
+      title: "2. SATELLITE (FACTOR ALPHA)",
       pct: `${satAlloc}%`,
       lump: satLump,
       month: satMonthly,
       daily: satDaily,
-      desc: "Targets structural excess returns (Alpha) through Nifty200 Momentum 30 factor index funds and high-conviction Active Mid/Small Cap mutual funds to maximize long-term wealth acceleration."
+      desc: "Targets excess returns through Nifty200 Momentum 30 and top Active Small/Midcap mutual funds."
     },
     {
-      title: "3. STABILITY (RISK MITIGATION & INCOME)",
+      title: "3. GOLD & SILVER (MULTI-COMMODITY)",
+      pct: `${goldAlloc}%`,
+      lump: goldLump,
+      month: goldMonthly,
+      daily: goldDaily,
+      desc: "Motilal Oswal & Mirae Asset Gold and Silver Passive FoFs for currency defense and crash buffering."
+    },
+    {
+      title: "4. STABILITY (CAPITAL PRESERVATION)",
       pct: `${stabAlloc}%`,
       lump: stabLump,
       month: stabMonthly,
       daily: stabDaily,
-      desc: "Protects capital using CRISIL AAA Corporate FDs (Bajaj/Shriram 7.75%-8.0%), Senior Secured NCDs (AA+ Sammaan/Muthoot 8.7%-10.3% YTM), Debt MFs, and Sovereign Floating Rate Bonds."
+      desc: "CRISIL AAA Corporate FDs (Bajaj/Shriram), Senior Secured NCDs (8.7%-10.3%), and Short Term Debt MFs."
     }
   ];
 
   allocCardsS3.forEach((c, i) => {
-    const xPos = 0.6 + i * 4.1;
+    const xPos = 0.6 + i * 3.08;
     s3.addShape(pptx.shapes.RECTANGLE, {
-      x: xPos, y: 2.7, w: 3.93, h: 2.7,
+      x: xPos, y: 2.7, w: 2.92, h: 2.7,
       fill: { color: CARD_BG }, line: { color: CARD_BORDER, width: 1 }
     });
 
     s3.addText(c.title, {
-      x: xPos + 0.15, y: 2.82, w: 2.8, h: 0.25,
-      fontSize: 8.5, bold: true, color: GOLD, fontFace: 'Calibri'
+      x: xPos + 0.12, y: 2.82, w: 2.0, h: 0.25,
+      fontSize: 7.8, bold: true, color: GOLD, fontFace: 'Calibri'
     });
     s3.addText(c.pct, {
-      x: xPos + 2.95, y: 2.8, w: 0.8, h: 0.3,
-      fontSize: 13, bold: true, color: WHITE, align: 'right', fontFace: 'Calibri'
+      x: xPos + 2.15, y: 2.8, w: 0.65, h: 0.3,
+      fontSize: 12, bold: true, color: WHITE, align: 'right', fontFace: 'Calibri'
     });
 
     const metricsArr = [
-      { text: "Monthly SIP: ", options: { fontSize: 8.5, color: TEXT_MUTED } },
-      { text: `${formatINR(c.month)}/mo\n`, options: { fontSize: 9.5, bold: true, color: WHITE } },
-      { text: "— OR Daily SIP: ", options: { fontSize: 8.5, color: TEXT_MUTED } },
-      { text: `${formatINR(c.daily)}/day\n`, options: { fontSize: 9.5, bold: true, color: GOLD_LIGHT } },
-      { text: "— OR Lump Sum: ", options: { fontSize: 8.5, color: TEXT_MUTED } },
-      { text: `${formatINR(c.lump)}\n\n`, options: { fontSize: 9.5, bold: true, color: CYAN } },
-      { text: c.desc, options: { fontSize: 8.2, color: TEXT_MUTED } }
+      { text: "Monthly SIP: ", options: { fontSize: 8, color: TEXT_MUTED } },
+      { text: `${formatINR(c.month)}/mo\n`, options: { fontSize: 9, bold: true, color: WHITE } },
+      { text: "— OR Daily SIP: ", options: { fontSize: 8, color: TEXT_MUTED } },
+      { text: `${formatINR(c.daily)}/day\n`, options: { fontSize: 9, bold: true, color: GOLD_LIGHT } },
+      { text: "— OR Lump Sum: ", options: { fontSize: 8, color: TEXT_MUTED } },
+      { text: `${formatINR(c.lump)}\n\n`, options: { fontSize: 9, bold: true, color: CYAN } },
+      { text: c.desc, options: { fontSize: 7.8, color: TEXT_MUTED } }
     ];
 
     s3.addText(metricsArr, {
-      x: xPos + 0.15, y: 3.12, w: 3.63, h: 2.2,
+      x: xPos + 0.12, y: 3.12, w: 2.68, h: 2.2,
       valign: 'top', margin: 0, fontFace: 'Calibri'
     });
   });
@@ -3772,20 +3867,215 @@ async function handleDirectContact(evt) {
 }
 window.handleDirectContact = handleDirectContact;
 
-// Direct WhatsApp Connect Handlers for Product & Loan cards
-function connectWithExpert(productName) {
-  const text = `Hello Arthika Advisors, I would like to know more and connect with an expert regarding *${productName}*.`;
-  const url = `https://wa.me/${ADVISOR_CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
-  window.open(url, '_blank');
-}
-window.connectWithExpert = connectWithExpert;
+// =========================================================================
+// NIVESH RECOMMENDATION MASTER SHEET DATABASE (OCTOBER 2026 DATA)
+// =========================================================================
+const niveshOct2026MasterSheet = [
+  // Multi-Commodity FoFs (Mandatory House Allocation)
+  {
+    category: "Gold & Silver FoF",
+    subCat: "Multi-Commodity Passive FoF",
+    name: "Motilal Oswal Gold and Silver Passive FoF - Reg - Growth",
+    aum: 385,
+    largePct: 0,
+    midPct: 0,
+    smallPct: 0,
+    r1m: 3.80,
+    r3m: 9.45,
+    r6m: 16.80,
+    r1y: 28.50,
+    r3y: 24.80,
+    rInception: 22.40,
+    highlight: true
+  },
+  {
+    category: "Gold & Silver FoF",
+    subCat: "Multi-Commodity Passive FoF",
+    name: "Mirae Asset Gold Silver Passive FoF - Reg - Growth",
+    aum: 290,
+    largePct: 0,
+    midPct: 0,
+    smallPct: 0,
+    r1m: 3.65,
+    r3m: 9.20,
+    r6m: 16.40,
+    r1y: 27.80,
+    r3y: 24.20,
+    rInception: 21.90,
+    highlight: true
+  },
+  // Equity - Large Cap
+  { category: "Large Cap", subCat: "Equity", name: "Bandhan Large Cap Fund - Reg - Growth", aum: 1616, largePct: 80.35, midPct: 11.22, smallPct: 8.00, r1m: -6.36, r3m: -3.91, r6m: 4.68, r1y: -3.57, r3y: 10.17, rInception: 10.34 },
+  { category: "Large Cap", subCat: "Equity", name: "Invesco India Large Cap Fund - Growth", aum: 1415, largePct: 80.06, midPct: 10.11, smallPct: 9.22, r1m: -6.84, r3m: -4.08, r6m: 9.08, r1y: -1.33, r3y: 11.09, rInception: 11.86 },
+  { category: "Large Cap", subCat: "Equity", name: "Quant Large Cap Fund - Reg - Growth", aum: 2833, largePct: 55.03, midPct: 10.10, smallPct: 4.13, r1m: -3.51, r3m: -3.04, r6m: 14.26, r1y: 1.87, r3y: 10.84, rInception: 10.61 },
+  { category: "Large Cap", subCat: "Equity", name: "Tata Large Cap Fund - Reg - Growth", aum: 2053, largePct: 85.17, midPct: 6.12, smallPct: 5.91, r1m: -6.88, r3m: -6.16, r6m: 3.13, r1y: -5.67, r3y: 7.62, rInception: 17.75 },
 
-function connectLoanExpert(loanType) {
-  const text = `Hello Arthika Advisors, I would like to connect with your expert to apply for *${loanType}*.`;
-  const url = `https://wa.me/${ADVISOR_CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
-  window.open(url, '_blank');
+  // Large & Mid Cap
+  { category: "Large & Mid Cap", subCat: "Equity", name: "Axis Large & Mid Cap Fund - Reg - Growth", aum: 12364, largePct: 46.70, midPct: 36.48, smallPct: 7.60, r1m: -5.34, r3m: -2.66, r6m: 10.84, r1y: 2.49, r3y: 12.71, rInception: 16.36 },
+  { category: "Large & Mid Cap", subCat: "Equity", name: "Invesco India Large & Mid Cap Fund - Growth", aum: 7600, largePct: 39.52, midPct: 36.55, smallPct: 23.81, r1m: -5.34, r3m: -4.13, r6m: 18.17, r1y: 4.75, r3y: 19.75, rInception: 13.04 },
+  { category: "Large & Mid Cap", subCat: "Equity", name: "Sundaram Large and Mid Cap Fund - Reg - Growth", aum: 5284, largePct: 36.84, midPct: 36.69, smallPct: 23.78, r1m: -6.28, r3m: -1.69, r6m: 13.08, r1y: 3.50, r3y: 11.72, rInception: 11.73 },
+  { category: "Large & Mid Cap", subCat: "Equity", name: "WhiteOak Capital Large & Mid Cap Fund - Reg - Growth", aum: 2113, largePct: 45.92, midPct: 39.61, smallPct: 2.80, r1m: -7.35, r3m: -4.06, r6m: 7.30, r1y: -0.14, r3y: null, rInception: 9.95 },
+
+  // Mid Cap
+  { category: "Mid Cap", subCat: "Equity", name: "Aditya Birla Sun Life Mid Cap Fund - Plan A - Growth", aum: 5325, largePct: 7.17, midPct: 66.35, smallPct: 24.55, r1m: -6.51, r3m: -3.46, r6m: 13.22, r1y: 3.93, r3y: 12.22, rInception: 20.05 },
+  { category: "Mid Cap", subCat: "Equity", name: "Axis Midcap Fund - Growth", aum: 21036, largePct: 18.82, midPct: 68.40, smallPct: 5.59, r1m: -5.42, r3m: -2.50, r6m: 11.48, r1y: 3.57, r3y: 13.89, rInception: 17.00 },
+  { category: "Mid Cap", subCat: "Equity", name: "Bandhan Mid Cap Fund - Reg - Growth", aum: 2035, largePct: 16.18, midPct: 66.41, smallPct: 15.27, r1m: -5.02, r3m: -0.61, r6m: 17.14, r1y: 6.51, r3y: 15.03, rInception: 16.00 },
+  { category: "Mid Cap", subCat: "Equity", name: "Baroda BNP Paribas Midcap Fund - Growth", aum: 2171, largePct: 12.37, midPct: 68.60, smallPct: 14.92, r1m: -6.42, r3m: -5.36, r6m: 8.28, r1y: 4.74, r3y: 13.27, rInception: 12.21 },
+  { category: "Mid Cap", subCat: "Equity", name: "Canara Robeco Mid Cap Fund - Reg - Growth", aum: 3243, largePct: 18.00, midPct: 70.37, smallPct: 6.95, r1m: -5.06, r3m: -2.70, r6m: 12.86, r1y: 3.34, r3y: 14.40, rInception: 15.96 },
+
+  // Small Cap
+  { category: "Small Cap", subCat: "Equity", name: "Invesco India Small Cap Fund - Reg - Growth", aum: 7814, largePct: 13.18, midPct: 15.70, smallPct: 66.36, r1m: -4.23, r3m: -0.81, r6m: 23.20, r1y: 12.59, r3y: 19.91, rInception: 21.37 },
+  { category: "Small Cap", subCat: "Equity", name: "ITI Small Cap Fund - Reg - Growth", aum: 1343, largePct: 8.33, midPct: 22.49, smallPct: 65.11, r1m: -3.65, r3m: 2.27, r6m: 29.15, r1y: 17.76, r3y: 21.21, rInception: 19.79 },
+  { category: "Small Cap", subCat: "Equity", name: "Mahindra Manulife Small Cap Fund - Reg - Growth", aum: 3812, largePct: 10.31, midPct: 22.21, smallPct: 63.09, r1m: -4.21, r3m: 2.81, r6m: 23.81, r1y: 14.00, r3y: 17.47, rInception: 22.75 },
+  { category: "Small Cap", subCat: "Equity", name: "Union Small Cap Fund - Reg - Growth", aum: 1864, largePct: 4.17, midPct: 17.21, smallPct: 77.33, r1m: -3.77, r3m: 2.84, r6m: 26.14, r1y: 19.24, r3y: 15.11, rInception: 15.40 },
+
+  // Multi Cap
+  { category: "Multi Cap", subCat: "Equity", name: "Aditya Birla Sun Life Multi-Cap Fund - Reg - Growth", aum: 6219, largePct: 37.08, midPct: 28.28, smallPct: 31.79, r1m: -4.65, r3m: 0.00, r6m: 15.10, r1y: 5.29, r3y: 12.07, rInception: 14.21 },
+  { category: "Multi Cap", subCat: "Equity", name: "Axis Multicap Fund - Reg - Growth", aum: 8264, largePct: 40.38, midPct: 27.55, smallPct: 30.59, r1m: -4.72, r3m: 1.88, r6m: 16.73, r1y: 6.69, r3y: 16.99, rInception: 14.31 },
+  { category: "Multi Cap", subCat: "Equity", name: "Bank of India Multi Cap Fund - Reg - Growth", aum: 1043, largePct: 31.20, midPct: 33.36, smallPct: 29.82, r1m: -4.24, r3m: -2.04, r6m: 12.82, r1y: 8.85, r3y: 14.86, rInception: 19.95 },
+  { category: "Multi Cap", subCat: "Equity", name: "ICICI Prudential Multi Cap Fund - Growth", aum: 13377, largePct: 37.64, midPct: 29.89, smallPct: 30.45, r1m: -6.78, r3m: -4.75, r6m: 10.39, r1y: 3.25, r3y: 13.07, rInception: 14.70 },
+  { category: "Multi Cap", subCat: "Equity", name: "Mahindra Manulife Multi Cap Fund - Reg - Growth", aum: 5462, largePct: 36.63, midPct: 29.14, smallPct: 24.30, r1m: -5.73, r3m: -0.32, r6m: 14.75, r1y: 8.57, r3y: 14.19, rInception: 15.18 },
+
+  // Flexi Cap
+  { category: "Flexi Cap", subCat: "Equity", name: "360 ONE Flexicap Fund - Reg - Growth", aum: 1213, largePct: 46.06, midPct: 17.22, smallPct: 33.30, r1m: -2.28, r3m: 1.32, r6m: 18.27, r1y: 6.45, r3y: 14.42, rInception: 15.23 },
+  { category: "Flexi Cap", subCat: "Equity", name: "Aditya Birla Sun Life Flexi Cap Fund - Growth", aum: 19698, largePct: 54.34, midPct: 26.85, smallPct: 17.26, r1m: -5.87, r3m: -1.22, r6m: 10.29, r1y: 4.45, r3y: 12.68, rInception: 20.43 },
+  { category: "Flexi Cap", subCat: "Equity", name: "Bajaj Finserv Flexi Cap Fund - Reg - Growth", aum: 5943, largePct: 41.15, midPct: 24.56, smallPct: 31.50, r1m: -5.64, r3m: -3.11, r6m: 11.18, r1y: 2.57, r3y: 13.96, rInception: 13.67 },
+  { category: "Flexi Cap", subCat: "Equity", name: "ICICI Prudential Flexi Cap Fund - Reg - Growth", aum: 17300, largePct: 59.90, midPct: 12.10, smallPct: 24.61, r1m: -6.13, r3m: -0.91, r6m: 12.26, r1y: 0.87, r3y: 13.62, rInception: 13.78 },
+  { category: "Flexi Cap", subCat: "Equity", name: "ITI Flexi Cap Fund - Reg - Growth", aum: 1178, largePct: 47.49, midPct: 16.32, smallPct: 28.91, r1m: -3.75, r3m: 0.11, r6m: 18.29, r1y: 9.52, r3y: 15.74, rInception: 20.02 },
+
+  // ELSS & Focused
+  { category: "ELSS", subCat: "Tax Saver", name: "Motilal Oswal ELSS Tax Saver Fund - Reg - Growth", aum: 2929, largePct: 12.12, midPct: 34.88, smallPct: 46.21, r1m: -5.55, r3m: -1.97, r6m: 16.03, r1y: 5.82, r3y: 18.51, rInception: 15.62 },
+  { category: "ELSS", subCat: "Tax Saver", name: "HSBC ELSS Tax saver Fund - Reg - Growth", aum: 3220, largePct: 47.94, midPct: 18.67, smallPct: 31.53, r1m: -5.62, r3m: -2.21, r6m: 10.66, r1y: 1.11, r3y: 13.81, rInception: 13.50 },
+  { category: "Focused", subCat: "Equity", name: "HSBC Focused Fund - Reg - Growth", aum: 1550, largePct: 46.38, midPct: 34.24, smallPct: 15.04, r1m: -4.94, r3m: 0.11, r6m: 13.02, r1y: 4.45, r3y: 12.19, rInception: 16.79 },
+  { category: "Focused", subCat: "Equity", name: "ITI Focused Fund - Reg - Growth", aum: 553, largePct: 52.11, midPct: 18.82, smallPct: 21.62, r1m: -5.72, r3m: -3.89, r6m: 9.16, r1y: 3.13, r3y: 14.08, rInception: 14.55 },
+
+  // Value & Dividend Yield
+  { category: "Value", subCat: "Equity", name: "Quant Value Fund - Reg - Growth", aum: 1312, largePct: 38.99, midPct: 14.26, smallPct: 19.28, r1m: -4.63, r3m: -7.69, r6m: 16.60, r1y: 10.01, r3y: 17.47, rInception: 16.90 },
+  { category: "Value", subCat: "Equity", name: "Axis Value Fund - Reg - Growth", aum: 1113, largePct: 59.69, midPct: 16.64, smallPct: 20.25, r1m: -5.74, r3m: -0.47, r6m: 10.40, r1y: 3.78, r3y: 14.95, rInception: 13.88 },
+  { category: "Dividend Yield", subCat: "Equity", name: "LIC MF Dividend Yield Fund - Reg - Growth", aum: 620, largePct: 44.32, midPct: 18.44, smallPct: 33.34, r1m: -5.07, r3m: -2.50, r6m: 15.10, r1y: 2.76, r3y: 15.82, rInception: 15.83 },
+
+  // Sectoral / Thematic
+  { category: "Thematic", subCat: "Infrastructure", name: "Bank of India Manufacturing & Infrastructure Fund - Growth", aum: 604, largePct: 32.48, midPct: 26.24, smallPct: 33.27, r1m: -2.10, r3m: -0.37, r6m: 15.97, r1y: 14.95, r3y: 19.22, rInception: 11.98 },
+  { category: "Thematic", subCat: "Manufacturing", name: "Aditya Birla Sun Life Manufacturing Equity Fund - Reg - Growth", aum: 1061, largePct: 35.27, midPct: 25.18, smallPct: 36.17, r1m: -4.98, r3m: 4.25, r6m: 21.63, r1y: 19.33, r3y: 18.94, rInception: 12.25 },
+  { category: "Thematic", subCat: "PSU", name: "SBI PSU Fund - Growth", aum: 2552, largePct: 71.60, midPct: 17.14, smallPct: 8.84, r1m: -5.58, r3m: -7.18, r6m: -3.34, r1y: -0.05, r3y: 16.25, rInception: 7.47 },
+
+  // Hybrid & Dynamic Asset Allocation / BAF
+  { category: "Hybrid", subCat: "Multi Asset", name: "Nippon India Multi Asset Allocation Fund - Reg - Growth", aum: 11818, largePct: 39.07, midPct: 9.90, smallPct: 6.82, r1m: -3.95, r3m: -1.21, r6m: 4.97, r1y: 6.63, r3y: 16.70, rInception: 15.60 },
+  { category: "Hybrid", subCat: "Multi Asset", name: "Quant Multi Asset Allocation Fund - Growth", aum: 2774, largePct: 57.72, midPct: 7.90, smallPct: 2.72, r1m: -2.20, r3m: -2.84, r6m: 6.24, r1y: 11.58, r3y: 19.85, rInception: 11.56 },
+  { category: "Hybrid", subCat: "Balanced Advantage", name: "Aditya Birla Sun Life Balanced Advantage Fund - Growth", aum: 7564, largePct: 39.27, midPct: 19.84, smallPct: 13.58, r1m: -4.11, r3m: -1.12, r6m: 6.01, r1y: 3.30, r3y: 9.62, rInception: 9.47 },
+  { category: "Hybrid", subCat: "Aggressive Hybrid", name: "Bank of India Aggressive Hybrid Fund - Reg - Growth", aum: 1260, largePct: 0.00, midPct: 40.36, smallPct: 26.33, r1m: -1.74, r3m: 1.49, r6m: 16.17, r1y: 12.05, r3y: 14.55, rInception: 15.43 },
+  { category: "Hybrid", subCat: "Arbitrage", name: "ICICI Prudential Arbitrage Fund - Reg - Growth", aum: 13543, largePct: 57.03, midPct: 13.63, smallPct: 2.21, r1m: 0.20, r3m: 1.39, r6m: 2.96, r1y: 6.08, r3y: 6.70, rInception: 6.19 },
+
+  // Index Funds
+  { category: "Index", subCat: "Momentum", name: "Motilal Oswal Nifty 200 Momentum 30 Index Fund - Reg - Growth", aum: 251, largePct: 66.11, midPct: 33.63, smallPct: 0.00, r1m: -5.02, r3m: -5.41, r6m: 4.95, r1y: -4.03, r3y: 7.39, rInception: 7.73 },
+  { category: "Index", subCat: "Nifty 500", name: "Motilal Oswal Nifty 500 Index Fund - Reg - Growth", aum: 490, largePct: 67.72, midPct: 21.15, smallPct: 11.11, r1m: -6.38, r3m: -5.34, r6m: 4.61, r1y: -4.62, r3y: 8.09, rInception: 13.41 },
+  { category: "Index", subCat: "Nifty 50", name: "SBI Nifty Index Fund - Growth", aum: 2101, largePct: 98.67, midPct: 1.34, smallPct: 0.00, r1m: -6.80, r3m: -6.40, r6m: -0.55, r1y: -9.16, r3y: 5.20, rInception: 12.87 },
+  { category: "Index", subCat: "Next 50", name: "Kotak Nifty Next 50 Index Fund - Reg - Growth", aum: 188, largePct: 87.00, midPct: 13.15, smallPct: 0.00, r1m: -5.40, r3m: -4.16, r6m: 11.55, r1y: 1.58, r3y: 15.32, rInception: 12.96 },
+  { category: "Index", subCat: "Midcap 150", name: "Aditya Birla Sun Life Nifty Midcap 150 Index Fund - Reg - Growth", aum: 113, largePct: 11.60, midPct: 84.11, smallPct: 4.24, r1m: -6.98, r3m: -5.19, r6m: 8.82, r1y: 1.67, r3y: 12.30, rInception: 16.96 },
+  { category: "Index", subCat: "Smallcap 250", name: "ICICI Prudential Nifty Smallcap 250 Index Fund - Reg - Growth", aum: 129, largePct: 0.00, midPct: 7.27, smallPct: 92.63, r1m: -4.47, r3m: -1.38, r6m: 18.79, r1y: 3.56, r3y: 12.12, rInception: 12.06 },
+
+  // Debt Funds
+  { category: "Debt", subCat: "Liquid", name: "Aditya Birla Sun Life Liquid Fund - Growth", aum: 12527, largePct: 0, midPct: 0, smallPct: 0, r1m: 5.77, r3m: 6.63, r6m: 6.72, r1y: 6.35, r3y: 6.89, rInception: 6.96 },
+  { category: "Debt", subCat: "Short Duration", name: "HDFC Short Term Debt Fund - Growth", aum: 4915, largePct: 0, midPct: 0, smallPct: 0, r1m: 2.06, r3m: 8.83, r6m: 6.11, r1y: 5.45, r3y: 7.41, rInception: 7.91 },
+  { category: "Debt", subCat: "Corporate Bond", name: "Nippon India Corporate Bond Fund - Growth", aum: 1281, largePct: 0, midPct: 0, smallPct: 0, r1m: 1.89, r3m: 9.35, r6m: 6.04, r1y: 4.90, r3y: 7.36, rInception: 7.41 },
+  { category: "Debt", subCat: "Banking & PSU", name: "Axis Banking & PSU Debt Fund - Growth", aum: 3362, largePct: 0, midPct: 0, smallPct: 0, r1m: 1.78, r3m: 8.69, r6m: 5.83, r1y: 5.02, r3y: 6.93, rInception: 7.53 }
+];
+
+let currentMasterSheetFilter = 'all';
+
+function openRecommendationSheetModal() {
+  const modal = document.getElementById('modal-master-rec-sheet');
+  if (modal) {
+    modal.style.display = 'flex';
+    renderMasterRecSheet('all', '');
+  }
 }
-window.connectLoanExpert = connectLoanExpert;
+window.openRecommendationSheetModal = openRecommendationSheetModal;
+
+function closeRecommendationSheetModal() {
+  const modal = document.getElementById('modal-master-rec-sheet');
+  if (modal) modal.style.display = 'none';
+}
+window.closeRecommendationSheetModal = closeRecommendationSheetModal;
+
+function filterMasterRecSheet(category, evt) {
+  currentMasterSheetFilter = category;
+  if (evt) {
+    document.querySelectorAll('#rec-sheet-filter-chips .filter-chip').forEach(btn => btn.classList.remove('active'));
+    evt.currentTarget.classList.add('active');
+  }
+  const searchKeyword = (document.getElementById('rec-sheet-search-input')?.value || '').trim();
+  renderMasterRecSheet(category, searchKeyword);
+}
+window.filterMasterRecSheet = filterMasterRecSheet;
+
+function handleMasterSheetSearch(keyword) {
+  renderMasterRecSheet(currentMasterSheetFilter, keyword.trim());
+}
+window.handleMasterSheetSearch = handleMasterSheetSearch;
+
+function renderMasterRecSheet(categoryFilter = 'all', keyword = '') {
+  const tbody = document.getElementById('rec-sheet-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  let filtered = niveshOct2026MasterSheet;
+
+  if (categoryFilter !== 'all') {
+    if (categoryFilter === 'Equity') {
+      filtered = filtered.filter(f => f.category === 'Large Cap' || f.category === 'Large & Mid Cap' || f.category === 'Mid Cap' || f.category === 'Small Cap' || f.category === 'Multi Cap' || f.category === 'Flexi Cap' || f.category === 'ELSS' || f.category === 'Focused' || f.category === 'Value' || f.category === 'Dividend Yield' || f.category === 'Thematic');
+    } else if (categoryFilter === 'Hybrid') {
+      filtered = filtered.filter(f => f.category === 'Hybrid');
+    } else if (categoryFilter === 'Debt') {
+      filtered = filtered.filter(f => f.category === 'Debt');
+    } else if (categoryFilter === 'Index') {
+      filtered = filtered.filter(f => f.category === 'Index');
+    } else if (categoryFilter === 'Gold & Silver FoF') {
+      filtered = filtered.filter(f => f.category === 'Gold & Silver FoF');
+    }
+  }
+
+  if (keyword) {
+    const kLower = keyword.toLowerCase();
+    filtered = filtered.filter(f => f.name.toLowerCase().includes(kLower) || f.category.toLowerCase().includes(kLower) || f.subCat.toLowerCase().includes(kLower));
+  }
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #9ca3af; padding: 2.5rem;">No mutual fund schemes matched your search.</td></tr>`;
+    return;
+  }
+
+  filtered.forEach(f => {
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+    if (f.highlight) {
+      tr.style.background = 'rgba(234, 179, 8, 0.08)';
+    }
+
+    const fmtPct = (val) => val !== null && val !== undefined ? `${val > 0 ? '+' : ''}${val.toFixed(2)}%` : '--';
+    const colorPct = (val) => val > 0 ? 'color: #34d399;' : (val < 0 ? 'color: #f87171;' : 'color: #cbd5e1;');
+
+    tr.innerHTML = `
+      <td style="padding: 0.75rem 0.5rem; font-weight: 600; color: white;">
+        ${f.name} ${f.highlight ? '<span style="background: rgba(234, 179, 8, 0.2); color: #f59e0b; font-size: 0.68rem; padding: 0.15rem 0.4rem; border-radius: 4px; margin-left: 0.4rem; border: 1px solid rgba(234, 179, 8, 0.4);">★ House Pick</span>' : ''}
+      </td>
+      <td style="padding: 0.75rem 0.5rem; color: var(--primary); font-weight: 600; font-size: 0.8rem;">${f.category}</td>
+      <td style="padding: 0.75rem 0.5rem; text-align: right; color: #ffffff;">₹${f.aum.toLocaleString('en-IN')} Cr</td>
+      <td style="padding: 0.75rem 0.5rem; text-align: center; color: #cbd5e1; font-size: 0.78rem;">${f.largePct.toFixed(0)}% / ${f.midPct.toFixed(0)}% / ${f.smallPct.toFixed(0)}%</td>
+      <td style="padding: 0.75rem 0.5rem; text-align: right; ${colorPct(f.r1m)} font-weight: 600;">${fmtPct(f.r1m)}</td>
+      <td style="padding: 0.75rem 0.5rem; text-align: right; ${colorPct(f.r6m)} font-weight: 600;">${fmtPct(f.r6m)}</td>
+      <td style="padding: 0.75rem 0.5rem; text-align: right; ${colorPct(f.r1y)} font-weight: 700;">${fmtPct(f.r1y)}</td>
+      <td style="padding: 0.75rem 0.5rem; text-align: right; ${colorPct(f.r3y)} font-weight: 700;">${fmtPct(f.r3y)}</td>
+      <td style="padding: 0.75rem 0.5rem; text-align: right; color: var(--color-gold); font-weight: 700;">${fmtPct(f.rInception)}</td>
+      <td style="padding: 0.75rem 0.5rem; text-align: center;">
+        <a href="https://wa.me/919637717533?text=Hello%20Arthika%20Advisors%2C%20I%20would%20like%20to%20invest%20in%20${encodeURIComponent(f.name)}." target="_blank" rel="noopener noreferrer" style="background: #25D366; color: white; padding: 0.35rem 0.75rem; border-radius: 6px; text-decoration: none; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem;">
+          <span>💬</span> Inquire
+        </a>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
 
 // Start
 window.addEventListener('DOMContentLoaded', init);

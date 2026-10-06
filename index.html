@@ -954,7 +954,7 @@
             </div>
             <div style="text-align: right;">
               <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-dark); font-weight: 700;">Date of Analysis</div>
-              <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700; color: white;" id="report-meta-date">September 2026</div>
+              <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700; color: white;" id="report-meta-date">October 2026</div>
             </div>
           </div>
         </div>
@@ -994,7 +994,7 @@
         <section class="panel" style="margin-bottom: 2rem;">
           <h3 class="panel-title">
             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" stroke-width="2"/></svg>
-            SECTION 2 — Recommended Model Portfolio Allocation
+            SECTION 2 — Recommended Model Portfolio Allocation (Multi-Asset Architecture)
           </h3>
           <div style="display: grid; grid-template-columns: 320px 1fr; gap: 2rem; align-items: center;">
             <div style="position: relative; width: 260px; height: 260px; margin: 0 auto;">
@@ -1016,11 +1016,88 @@
           <div id="allocation-cards-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-top: 1.5rem;"></div>
         </section>
 
-        <!-- SECTION 3: SIP ROADMAP & FREEDOM SWP -->
+        <!-- SECTION 3: CURATED PRODUCT & SCHEME RECOMMENDATIONS (OCTOBER 2026 SHEET) -->
+        <section class="panel" style="margin-bottom: 2rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+            <div>
+              <h3 class="panel-title" style="margin: 0;">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" stroke-width="2"/></svg>
+                SECTION 3 — Curated Scheme Recommendations & Allocation (October 2026)
+              </h3>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.35rem 0 0 0;">
+                Tailored scheme selection from Nivesh October 2026 Master Database with mandatory multi-commodity Gold & Silver allocation.
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <div class="mode-toggle-group">
+                <button id="btn-mode-historical" class="mode-toggle-btn active" onclick="setReturnCalculationMode('historical')">
+                  📈 Historical 3Y Yields
+                </button>
+                <button id="btn-mode-conservative" class="mode-toggle-btn" onclick="setReturnCalculationMode('conservative')">
+                  🛡️ Conservative Model
+                </button>
+              </div>
+              <button onclick="openRecommendationSheetModal()" class="btn-hero-secondary" style="font-size: 0.78rem; padding: 0.45rem 0.85rem; border-color: var(--primary); color: var(--primary) !important;">
+                📑 View Oct 2026 Master Sheet
+              </button>
+            </div>
+          </div>
+
+          <!-- Gold & Silver Multi-Commodity House Recommendation Spotlight -->
+          <div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(10, 20, 36, 0.9)); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+              <span style="font-size: 1.8rem;">🏆</span>
+              <div>
+                <h4 style="margin: 0; color: #f59e0b; font-size: 0.95rem;">Mandatory Multi-Commodity House Overlay: Gold & Silver Passive FoFs</h4>
+                <p style="margin: 0.2rem 0 0 0; color: #d1d5db; font-size: 0.8rem;">
+                  Every portfolio allocates a strategic 10% to <strong>Motilal Oswal Gold and Silver Passive FoF</strong> or <strong>Mirae Asset Gold Silver Passive FoF</strong> to hedge inflation, currency depreciation, and equity turbulence.
+                </p>
+              </div>
+            </div>
+            <span class="badge" style="background: rgba(234, 179, 8, 0.2); color: #f59e0b; border: 1px solid rgba(234, 179, 8, 0.5); font-weight: 700; font-size: 0.75rem;">10% MANDATORY ALLOCATION</span>
+          </div>
+
+          <!-- Filter Chips -->
+          <div class="product-filter-bar">
+            <button class="filter-chip active" onclick="filterProducts('all', event)">🌟 All Asset Classes</button>
+            <button class="filter-chip" onclick="filterProducts('equity', event)">📈 Core Equity & Flexicap</button>
+            <button class="filter-chip" onclick="filterProducts('precious_metals', event)">🏆 Gold & Silver FoF</button>
+            <button class="filter-chip" onclick="filterProducts('stability', event)">🏛️ Stability (All Fixed Income)</button>
+            <button class="filter-chip" onclick="filterProducts('fd', event)">🏢 Corporate FDs (AAA)</button>
+            <button class="filter-chip" onclick="filterProducts('ncd', event)">📑 Secured NCDs (AA+)</button>
+            <button class="filter-chip" onclick="filterProducts('mf_debt', event)">🛡️ Debt Mutual Funds</button>
+            <button class="filter-chip" onclick="filterProducts('gov', event)">💰 54EC / Sovereign Bonds</button>
+          </div>
+
+          <!-- Product Table -->
+          <div style="overflow-x: auto; background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px solid var(--border-color);">
+            <table class="report-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left;">
+              <thead>
+                <tr style="background: rgba(19, 34, 56, 0.9);">
+                  <th style="padding: 0.85rem 0.5rem; color: var(--primary);">Recommended Scheme / Asset</th>
+                  <th style="padding: 0.85rem 0.5rem; color: var(--primary);">Asset Class</th>
+                  <th style="padding: 0.85rem 0.5rem; text-align: right; color: var(--primary);">Weight</th>
+                  <th style="padding: 0.85rem 0.5rem; text-align: right; color: var(--primary);">Monthly SIP</th>
+                  <th style="padding: 0.85rem 0.5rem; text-align: right; color: var(--color-gold);">Daily Micro-SIP</th>
+                  <th style="padding: 0.85rem 0.5rem; text-align: right; color: var(--primary);">Lump Sum</th>
+                  <th style="padding: 0.85rem 0.5rem; text-align: center; color: var(--primary);">3Y CAGR / Return</th>
+                  <th style="padding: 0.85rem 0.5rem; text-align: center; color: var(--primary);">Risk Stance</th>
+                  <th style="padding: 0.85rem 0.5rem; text-align: right; color: var(--color-gold);">Projected Value</th>
+                  <th style="padding: 0.85rem 0.5rem; color: var(--primary);">Strategic Rationale</th>
+                </tr>
+              </thead>
+              <tbody id="rec-products-tbody">
+                <!-- Injected dynamically via compileProductRecommendations() -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SECTION 4: SIP ROADMAP & FREEDOM SWP -->
         <section class="panel" style="margin-bottom: 2rem;">
           <h3 class="panel-title">
             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" stroke-width="2"/></svg>
-            SECTION 3 — Wealth Journey Comparison: Step-Up vs. Daily SIP vs. Freedom SWP
+            SECTION 4 — Wealth Journey Comparison: Step-Up vs. Daily SIP vs. Freedom SWP
           </h3>
           <div id="sip-strategy-comparison-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;"></div>
         </section>
@@ -1449,6 +1526,67 @@
           <span>💬</span> Submit & Connect with Advisor on WhatsApp
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- ==================== OCTOBER 2026 MASTER RECOMMENDATION SHEET MODAL ==================== -->
+  <div id="modal-master-rec-sheet" class="universal-modal-overlay" onclick="if(event.target === this) closeRecommendationSheetModal()">
+    <div class="universal-modal-card" style="max-width: 1100px; max-height: 90vh; display: flex; flex-direction: column; padding: 1.5rem;">
+      <button class="modal-close-btn" onclick="closeRecommendationSheetModal()">&times;</button>
+      
+      <div style="margin-bottom: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <span style="font-size: 1.8rem;">📑</span>
+          <div>
+            <h3 style="color: white; margin: 0; font-size: 1.35rem;">Nivesh Recommendation Sheet — October 2026</h3>
+            <p style="color: var(--text-muted); font-size: 0.82rem; margin: 0.2rem 0 0 0;">
+              AMFI Reg. Mutual Fund Schemes Database across Large, Mid, Small, Multi, Flexi, Hybrid, Debt, Index, and Gold/Silver Passive FoFs.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls: Filters and Search -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+        <div id="rec-sheet-filter-chips" class="product-filter-bar" style="margin: 0;">
+          <button class="filter-chip active" onclick="filterMasterRecSheet('all', event)">🌟 All Schemes</button>
+          <button class="filter-chip" onclick="filterMasterRecSheet('Gold & Silver FoF', event)">🏆 Gold & Silver FoF</button>
+          <button class="filter-chip" onclick="filterMasterRecSheet('Equity', event)">📈 Equity (All)</button>
+          <button class="filter-chip" onclick="filterMasterRecSheet('Hybrid', event)">⚖️ Hybrid</button>
+          <button class="filter-chip" onclick="filterMasterRecSheet('Debt', event)">🛡️ Debt</button>
+          <button class="filter-chip" onclick="filterMasterRecSheet('Index', event)">📊 Index</button>
+        </div>
+        <div style="position: relative; width: 280px; max-width: 100%;">
+          <input type="text" id="rec-sheet-search-input" placeholder="🔍 Search scheme or category..." oninput="handleMasterSheetSearch(this.value)" class="text-input" style="padding: 0.5rem 0.85rem; font-size: 0.85rem; background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); border-radius: 6px; color: white; width: 100%;">
+        </div>
+      </div>
+
+      <!-- Scrollable Table -->
+      <div style="overflow-y: auto; overflow-x: auto; flex: 1; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(0,0,0,0.2);">
+        <table class="report-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left;">
+          <thead style="position: sticky; top: 0; background: #0c182c; z-index: 2;">
+            <tr style="border-bottom: 2px solid var(--border-color);">
+              <th style="padding: 0.75rem 0.5rem; color: var(--primary);">Scheme Name</th>
+              <th style="padding: 0.75rem 0.5rem; color: var(--primary);">Category</th>
+              <th style="padding: 0.75rem 0.5rem; text-align: right; color: var(--primary);">AUM</th>
+              <th style="padding: 0.75rem 0.5rem; text-align: center; color: var(--primary);">Large/Mid/Small</th>
+              <th style="padding: 0.75rem 0.5rem; text-align: right; color: var(--primary);">1M Ret</th>
+              <th style="padding: 0.75rem 0.5rem; text-align: right; color: var(--primary);">6M Ret</th>
+              <th style="padding: 0.75rem 0.5rem; text-align: right; color: var(--primary);">1Y Ret</th>
+              <th style="padding: 0.75rem 0.5rem; text-align: right; color: var(--primary);">3Y Ret</th>
+              <th style="padding: 0.75rem 0.5rem; text-align: right; color: var(--color-gold);">Inception</th>
+              <th style="padding: 0.75rem 0.5rem; text-align: center; color: var(--primary);">Action</th>
+            </tr>
+          </thead>
+          <tbody id="rec-sheet-tbody">
+            <!-- Injected dynamically -->
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted);">
+        <span>Source: Nivesh Recommendation Sheet — October 2026. AMFI ARN-361236.</span>
+        <button onclick="closeRecommendationSheetModal()" class="btn-hero-secondary" style="padding: 0.35rem 0.85rem; font-size: 0.75rem;">Close Explorer</button>
+      </div>
     </div>
   </div>
 
