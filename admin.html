@@ -439,9 +439,7 @@
     }
 
     function startAdvisorConsultation() {
-      sessionStorage.setItem('advisor_meeting_mode', 'true');
-      sessionStorage.setItem('advisor_token', currentAuthToken);
-      window.location.href = '/?mode=advisor';
+      window.location.href = '/';
     }
     window.startAdvisorConsultation = startAdvisorConsultation;
 

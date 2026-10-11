@@ -734,34 +734,11 @@ const advisorDirectionConcl = document.getElementById('advisor-direction-concl')
 let isAdvisorMeetingMode = false;
 
 function checkAdvisorMeetingMode() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const hasAdminToken = typeof localStorage !== 'undefined' && !!localStorage.getItem('arthika_admin_token');
-  if (urlParams.get('mode') === 'advisor' || sessionStorage.getItem('advisor_meeting_mode') === 'true' || hasAdminToken) {
-    isAdvisorMeetingMode = true;
-    const banner = document.getElementById('advisor-meeting-banner');
-    if (banner) banner.style.display = 'flex';
-    
-    const badgeModeEl = document.getElementById('badge-mode');
-    if (badgeModeEl) {
-      badgeModeEl.textContent = 'Advisor Live Consultation Mode (ARN-361236)';
-      badgeModeEl.style.background = 'rgba(197, 160, 89, 0.2)';
-      badgeModeEl.style.color = '#c5a059';
-      badgeModeEl.style.borderColor = '#c5a059';
-    }
-
-    const btnReqOtp = document.getElementById('btn-request-otp');
-    if (btnReqOtp) {
-      btnReqOtp.innerHTML = '🚀 Begin Consultation (Skip OTP for Meeting)';
-      btnReqOtp.style.background = 'linear-gradient(135deg, #c5a059, #9a7833)';
-      btnReqOtp.style.color = '#0a1424';
-    }
-
-    const advPanel = document.getElementById('advisor-completion-panel');
-    const clientPanel = document.getElementById('client-completion-panel');
-    const topBar = document.getElementById('advisor-top-action-bar');
-    if (advPanel) advPanel.style.display = 'block';
-    if (clientPanel) clientPanel.style.display = 'none';
-    if (topBar) topBar.style.display = 'flex';
+  // Landing page is strictly for clients. Admin rights are accessed only after logging in at /admin.html
+  isAdvisorMeetingMode = false;
+  if (typeof sessionStorage !== 'undefined') {
+    sessionStorage.removeItem('advisor_meeting_mode');
+    sessionStorage.removeItem('advisor_token');
   }
 }
 
@@ -1401,19 +1378,7 @@ function finishQuiz() {
   if (dashboardContainer) dashboardContainer.style.display = 'block';
   if (btnRetakeQuiz) btnRetakeQuiz.style.display = 'inline-block';
   
-  if (isAdvisorMeetingMode) {
-    if (badgeMode) badgeMode.textContent = "Advisor Live Meeting Plan (ARN-361236)";
-    const advPanel = document.getElementById('advisor-completion-panel');
-    const clientPanel = document.getElementById('client-completion-panel');
-    const topBar = document.getElementById('advisor-top-action-bar');
-    const advClientName = document.getElementById('advisor-plan-client-name');
-    if (advPanel) advPanel.style.display = 'block';
-    if (clientPanel) clientPanel.style.display = 'none';
-    if (topBar) topBar.style.display = 'flex';
-    if (advClientName) advClientName.textContent = formValues.customerName || "Valued Client";
-  } else {
-    if (badgeMode) badgeMode.textContent = "Client Wealth Roadmap (ARN-361236)";
-  }
+  if (badgeMode) badgeMode.textContent = "Client Wealth Roadmap (ARN-361236)";
   
   // Save & Submit lead to Backend Server
   captureClientLead();
@@ -1428,18 +1393,11 @@ function resetQuiz() {
   onboardingContainer.style.display = 'block';
   if (btnRetakeQuiz) btnRetakeQuiz.style.display = 'none';
   
-  const advPanel = document.getElementById('advisor-completion-panel');
-  const clientPanel = document.getElementById('client-completion-panel');
-  const topBar = document.getElementById('advisor-top-action-bar');
-  if (advPanel) advPanel.style.display = 'none';
-  if (clientPanel) clientPanel.style.display = 'block';
-  if (topBar) topBar.style.display = 'none';
-  
   if (onboardingWelcome) onboardingWelcome.style.display = 'block';
   if (onboardingQuiz) onboardingQuiz.style.display = 'none';
   if (onboardingAnalyzing) onboardingAnalyzing.style.display = 'none';
   if (onboardingResult) onboardingResult.style.display = 'none';
-  if (badgeMode) badgeMode.textContent = isAdvisorMeetingMode ? "Advisor Live Consultation Mode (ARN-361236)" : "Client Diagnostic";
+  if (badgeMode) badgeMode.textContent = "Client Diagnostic";
 }
 
 // CFP Plan Compile Engine
