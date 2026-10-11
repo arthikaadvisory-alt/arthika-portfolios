@@ -6,6 +6,7 @@
   <title>Advisor Command Center | Arthika Advisors (ARN-361236)</title>
   <link rel="stylesheet" href="styles.css">
   <script src="pptxgen.bundle.js"></script>
+  <script src="html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --admin-bg: #070d18;
@@ -344,9 +345,15 @@
         <!-- Injected dynamically -->
       </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; border-top: 1px solid var(--admin-border); padding-top: 1rem;">
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; border-top: 1px solid var(--admin-border); padding-top: 1rem; flex-wrap: wrap;">
+        <button id="mdl-btn-download-pdf" class="btn-action" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 0.6rem 1.25rem;">
+          📄 Download 11-Slide PDF Report
+        </button>
         <button id="mdl-btn-download-ppt" class="btn-action" style="padding: 0.6rem 1.25rem;">
           📊 Download 11-Slide PPTX Deck
+        </button>
+        <button id="mdl-btn-print-plan" class="btn-secondary" style="padding: 0.6rem 1.25rem;">
+          🖨️ Print / Save as PDF
         </button>
         <button onclick="closeLeadDetailModal()" class="btn-secondary" style="padding: 0.6rem 1.25rem;">
           Close
@@ -588,15 +595,25 @@
               <strong style="color: var(--admin-gold); font-size: 0.85rem;">${portfolio}</strong>
             </td>
             <td style="text-align: right; white-space: nowrap;">
-              <button onclick="downloadLeadPPTX(${idx})" class="btn-action" style="margin-bottom: 0.25rem;">
-                📊 Download PPTX
-              </button><br>
-              <button onclick="viewLeadDetail(${idx})" class="btn-secondary" style="margin-right: 0.25rem;">
-                👁️ View Sheet
-              </button>
-              <button onclick="deleteLead('${lead.id}')" class="btn-delete">
-                🗑️
-              </button>
+              <div style="display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-end;">
+                <button onclick="downloadLeadPDF(${idx})" class="btn-action" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 0.35rem 0.75rem; font-size: 0.78rem;">
+                  📄 Download PDF
+                </button>
+                <div style="display: flex; gap: 0.25rem;">
+                  <button onclick="downloadLeadPPTX(${idx})" class="btn-secondary" style="font-size: 0.72rem; padding: 0.25rem 0.5rem;" title="Download PowerPoint Deck">
+                    📊 PPTX
+                  </button>
+                  <button onclick="printLeadPlan(${idx})" class="btn-secondary" style="font-size: 0.72rem; padding: 0.25rem 0.5rem;" title="Print / Save as PDF">
+                    🖨️ Print
+                  </button>
+                  <button onclick="viewLeadDetail(${idx})" class="btn-secondary" style="font-size: 0.72rem; padding: 0.25rem 0.5rem;" title="View Sheet">
+                    👁️ View
+                  </button>
+                  <button onclick="deleteLead('${lead.id}')" class="btn-delete" style="padding: 0.25rem 0.45rem; font-size: 0.72rem;" title="Delete Lead">
+                    🗑️
+                  </button>
+                </div>
+              </div>
             </td>
           </tr>
         `;
@@ -658,7 +675,9 @@
       `;
 
       document.getElementById('mdl-detail-content').innerHTML = content;
+      document.getElementById('mdl-btn-download-pdf').onclick = () => downloadLeadPDF(idx);
       document.getElementById('mdl-btn-download-ppt').onclick = () => downloadLeadPPTX(idx);
+      document.getElementById('mdl-btn-print-plan').onclick = () => printLeadPlan(idx);
       document.getElementById('modal-lead-detail').style.display = 'flex';
     }
 
@@ -666,23 +685,36 @@
       document.getElementById('modal-lead-detail').style.display = 'none';
     }
 
+    // 1-Click PDF Download for a specific client
+    function downloadLeadPDF(idx) {
+      const lead = allLeads[idx];
+      if (!lead) return;
+      if (typeof exportToPDF === 'function') {
+        exportToPDF(lead);
+      } else {
+        alert('PDF generator is initializing. Please try again.');
+      }
+    }
+
     // 1-Click PPT Download for a specific client
     function downloadLeadPPTX(idx) {
       const lead = allLeads[idx];
       if (!lead) return;
-
-      // Hydrate global formValues & risk state from lead data
-      if (typeof formValues !== 'undefined' && lead.formValues) {
-        Object.assign(formValues, lead.formValues);
-        if (lead.formValues.ageGroup) currentAgeGroup = lead.formValues.ageGroup;
-        if (lead.formValues.riskTolerance) currentRiskProfile = lead.formValues.riskTolerance;
-      }
-
-      // Trigger pptx generator with client specific data
       if (typeof exportToPowerPoint === 'function') {
-        exportToPowerPoint();
+        exportToPowerPoint(lead);
       } else {
         alert('PowerPoint generator loaded. Exporting client presentation...');
+      }
+    }
+
+    // Direct Print / Save to PDF for a specific client
+    function printLeadPlan(idx) {
+      const lead = allLeads[idx];
+      if (!lead) return;
+      if (typeof printPresentationPlan === 'function') {
+        printPresentationPlan(lead);
+      } else {
+        alert('Print preview is initializing. Please try again.');
       }
     }
 

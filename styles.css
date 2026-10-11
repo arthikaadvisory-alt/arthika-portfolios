@@ -1409,9 +1409,21 @@ footer {
 
 /* Print styles for model portfolio guide generation */
 @media print {
-  body {
+  body:not(.printing-deck) {
     background: white;
     color: black;
+  }
+  body.printing-deck {
+    background: #070d18 !important;
+    color: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .pdf-slide-page {
+    page-break-after: always !important;
+    break-after: page !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
   .app-container {
     padding: 0;

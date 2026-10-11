@@ -735,7 +735,8 @@ let isAdvisorMeetingMode = false;
 
 function checkAdvisorMeetingMode() {
   const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('mode') === 'advisor' || sessionStorage.getItem('advisor_meeting_mode') === 'true') {
+  const hasAdminToken = typeof localStorage !== 'undefined' && !!localStorage.getItem('arthika_admin_token');
+  if (urlParams.get('mode') === 'advisor' || sessionStorage.getItem('advisor_meeting_mode') === 'true' || hasAdminToken) {
     isAdvisorMeetingMode = true;
     const banner = document.getElementById('advisor-meeting-banner');
     if (banner) banner.style.display = 'flex';
@@ -754,6 +755,13 @@ function checkAdvisorMeetingMode() {
       btnReqOtp.style.background = 'linear-gradient(135deg, #c5a059, #9a7833)';
       btnReqOtp.style.color = '#0a1424';
     }
+
+    const advPanel = document.getElementById('advisor-completion-panel');
+    const clientPanel = document.getElementById('client-completion-panel');
+    const topBar = document.getElementById('advisor-top-action-bar');
+    if (advPanel) advPanel.style.display = 'block';
+    if (clientPanel) clientPanel.style.display = 'none';
+    if (topBar) topBar.style.display = 'flex';
   }
 }
 
@@ -765,7 +773,9 @@ function init() {
     reportMetaDate.textContent = now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
   }
   checkAdvisorMeetingMode();
-  resetQuiz();
+  if (typeof onboardingContainer !== 'undefined' && onboardingContainer) {
+    resetQuiz();
+  }
 
   // Initialize interactive smart calculators
   try {
@@ -1387,18 +1397,22 @@ function evaluateResults() {
 }
 
 function finishQuiz() {
-  onboardingContainer.style.display = 'none';
-  dashboardContainer.style.display = 'block';
-  btnRetakeQuiz.style.display = 'inline-block';
+  if (onboardingContainer) onboardingContainer.style.display = 'none';
+  if (dashboardContainer) dashboardContainer.style.display = 'block';
+  if (btnRetakeQuiz) btnRetakeQuiz.style.display = 'inline-block';
   
   if (isAdvisorMeetingMode) {
-    badgeMode.textContent = "Advisor Live Meeting Plan (ARN-361236)";
-    const btnPpt = document.getElementById('btn-advisor-export-ppt');
-    const btnPrint = document.getElementById('btn-advisor-print-plan');
-    if (btnPpt) btnPpt.style.display = 'inline-block';
-    if (btnPrint) btnPrint.style.display = 'inline-block';
+    if (badgeMode) badgeMode.textContent = "Advisor Live Meeting Plan (ARN-361236)";
+    const advPanel = document.getElementById('advisor-completion-panel');
+    const clientPanel = document.getElementById('client-completion-panel');
+    const topBar = document.getElementById('advisor-top-action-bar');
+    const advClientName = document.getElementById('advisor-plan-client-name');
+    if (advPanel) advPanel.style.display = 'block';
+    if (clientPanel) clientPanel.style.display = 'none';
+    if (topBar) topBar.style.display = 'flex';
+    if (advClientName) advClientName.textContent = formValues.customerName || "Valued Client";
   } else {
-    badgeMode.textContent = "Client Wealth Roadmap (ARN-361236)";
+    if (badgeMode) badgeMode.textContent = "Client Wealth Roadmap (ARN-361236)";
   }
   
   // Save & Submit lead to Backend Server
@@ -1409,20 +1423,23 @@ function finishQuiz() {
 }
 
 function resetQuiz() {
+  if (!dashboardContainer || !onboardingContainer) return;
   dashboardContainer.style.display = 'none';
   onboardingContainer.style.display = 'block';
-  btnRetakeQuiz.style.display = 'none';
+  if (btnRetakeQuiz) btnRetakeQuiz.style.display = 'none';
   
-  const btnPpt = document.getElementById('btn-advisor-export-ppt');
-  const btnPrint = document.getElementById('btn-advisor-print-plan');
-  if (btnPpt) btnPpt.style.display = 'none';
-  if (btnPrint) btnPrint.style.display = 'none';
+  const advPanel = document.getElementById('advisor-completion-panel');
+  const clientPanel = document.getElementById('client-completion-panel');
+  const topBar = document.getElementById('advisor-top-action-bar');
+  if (advPanel) advPanel.style.display = 'none';
+  if (clientPanel) clientPanel.style.display = 'block';
+  if (topBar) topBar.style.display = 'none';
   
-  onboardingWelcome.style.display = 'block';
-  onboardingQuiz.style.display = 'none';
-  onboardingAnalyzing.style.display = 'none';
-  onboardingResult.style.display = 'none';
-  badgeMode.textContent = isAdvisorMeetingMode ? "Advisor Live Consultation Mode (ARN-361236)" : "Client Diagnostic";
+  if (onboardingWelcome) onboardingWelcome.style.display = 'block';
+  if (onboardingQuiz) onboardingQuiz.style.display = 'none';
+  if (onboardingAnalyzing) onboardingAnalyzing.style.display = 'none';
+  if (onboardingResult) onboardingResult.style.display = 'none';
+  if (badgeMode) badgeMode.textContent = isAdvisorMeetingMode ? "Advisor Live Consultation Mode (ARN-361236)" : "Client Diagnostic";
 }
 
 // CFP Plan Compile Engine
@@ -2180,10 +2197,27 @@ function switchTab(evt, tabId) {
 /// -------------------------------------------------------------
 // PPTX PRESENTATION EXPORT ENGINE (10 EXECUTIVE SLIDES - UNIFIED DECK)
 // -------------------------------------------------------------
-function exportToPowerPoint() {
+function exportToPowerPoint(customLead) {
   if (typeof PptxGenJS === 'undefined') {
     alert("PowerPoint generation library is loading. Please try again in a moment.");
     return;
+  }
+
+  if (customLead) {
+    if (customLead.formValues) {
+      Object.assign(formValues, customLead.formValues);
+      if (customLead.formValues.customerName) formValues.customerName = customLead.formValues.customerName;
+      else if (customLead.name) formValues.customerName = customLead.name;
+      if (customLead.formValues.ageGroup) currentAgeGroup = customLead.formValues.ageGroup;
+      else currentAgeGroup = formValues.age < 40 ? 'young' : (formValues.age < 60 ? 'mid' : 'retired');
+      if (customLead.formValues.riskTolerance) currentRiskProfile = customLead.formValues.riskTolerance;
+      else if (customLead.riskProfile) currentRiskProfile = customLead.riskProfile.toLowerCase();
+    } else {
+      if (customLead.name) formValues.customerName = customLead.name;
+      if (customLead.mobile) formValues.mobile = customLead.mobile;
+      if (customLead.email) formValues.email = customLead.email;
+      if (customLead.riskProfile) currentRiskProfile = customLead.riskProfile.toLowerCase();
+    }
   }
 
   try {
@@ -3438,6 +3472,881 @@ function exportToPowerPoint() {
 }
 
 window.exportToPowerPoint = exportToPowerPoint;
+
+// -------------------------------------------------------------
+// 11-SLIDE EXECUTIVE PRESENTATION ENGINE (PDF & PRINT GENERATOR)
+// -------------------------------------------------------------
+function generatePresentationDeckHTML(customLead) {
+  let targetFv = { ...formValues };
+  let targetAgeGroup = currentAgeGroup;
+  let targetRisk = currentRiskProfile;
+
+  if (customLead) {
+    if (customLead.formValues) {
+      targetFv = { ...customLead.formValues };
+      if (customLead.formValues.customerName) targetFv.customerName = customLead.formValues.customerName;
+      else if (customLead.name) targetFv.customerName = customLead.name;
+      if (customLead.formValues.ageGroup) targetAgeGroup = customLead.formValues.ageGroup;
+      else targetAgeGroup = targetFv.age < 40 ? 'young' : (targetFv.age < 60 ? 'mid' : 'retired');
+      if (customLead.formValues.riskTolerance) targetRisk = customLead.formValues.riskTolerance;
+      else if (customLead.riskProfile) targetRisk = customLead.riskProfile.toLowerCase();
+    } else {
+      if (customLead.name) targetFv.customerName = customLead.name;
+      if (customLead.mobile) targetFv.mobile = customLead.mobile;
+      if (customLead.email) targetFv.email = customLead.email;
+      if (customLead.riskProfile) targetRisk = customLead.riskProfile.toLowerCase();
+    }
+  }
+
+  const clientName = targetFv.customerName || targetFv.name || "Valued Investor";
+  const contactBrief = targetFv.mobile ? `+91 ${targetFv.mobile}` : (targetFv.email || '');
+  const key = `${targetAgeGroup}_${targetRisk}`;
+  const portfolio = portfolios[key] || portfolios['young_moderate'];
+
+  const surplus = Number(targetFv.income || 0) - Number(targetFv.expenses || 0) - Number(targetFv.loans || 0);
+  const savingsRate = Number(targetFv.income || 0) > 0 ? (surplus / Number(targetFv.income)) * 100 : 0;
+  const assetBase = Number(targetFv.investments || 0) + Number(targetFv.lumpsum || 0) + Number(targetFv.emergencyFund || 0);
+  const emergencyTarget = 6 * (Number(targetFv.expenses || 0) + Number(targetFv.loans || 0));
+  const termTarget = 12 * 12 * Number(targetFv.income || 0);
+
+  // Return calculation
+  let weightedHistSum = 0;
+  let weightSum = 0;
+  portfolio.allocations.forEach(alloc => {
+    let schemes = recommendedFunds[alloc.key] || [];
+    if (alloc.key === 'stability') {
+      if (targetFv.stabilityPreference === 'fds_ncds') schemes = schemes.filter(s => s.category === 'fd' || s.category === 'ncd');
+      else if (targetFv.stabilityPreference === 'mf_debt') schemes = schemes.filter(s => s.category === 'mf_debt');
+      else if (targetFv.stabilityPreference === 'sovereign') schemes = schemes.filter(s => s.category === 'gov');
+    }
+    if (schemes.length > 0) {
+      const avgHist = schemes.reduce((acc, s) => acc + (s.histYield || s.cagr), 0) / schemes.length;
+      weightedHistSum += avgHist * (alloc.pct / 100);
+      weightSum += (alloc.pct / 100);
+    }
+  });
+  const histPortfolioReturn = weightSum > 0 ? parseFloat((weightedHistSum / weightSum).toFixed(2)) : portfolio.estimatedReturn;
+  const conservativeReturn = portfolio.estimatedReturn;
+
+  const target = roundTo1000(Number(targetFv.targetCorpus || 2000000));
+  const t = Number(targetFv.horizon || 8);
+  const inflRate = 0.06;
+  const inflatedTarget = roundTo1000(target * Math.pow(1 + inflRate, t));
+  const initial = Math.round(Number(targetFv.lumpsum || 0));
+  const monthly = targetFv.sipFrequency === 'daily' ? roundTo500(Number(targetFv.dailySipAmount || 900) * 22) : roundTo500(Number(targetFv.sipCapacity || 20000));
+  const daily = monthly > 0 ? roundTo100(monthly / 22, 100) : 0;
+
+  const n = t * 12;
+  const rCons = conservativeReturn / 100;
+  const monthlyRateCons = rCons / 12;
+  const fvInitialCons = initial * Math.pow(1 + rCons, t);
+  const fvMonthlyCons = monthly > 0 ? monthly * ((Math.pow(1 + monthlyRateCons, n) - 1) / monthlyRateCons) * (1 + monthlyRateCons) : 0;
+  const totalProjectedCons = Math.round(fvInitialCons + fvMonthlyCons);
+  const shortfallCons = inflatedTarget - totalProjectedCons;
+  const addSipRequiredCons = shortfallCons > 0 ? roundTo500((shortfallCons * monthlyRateCons) / ((Math.pow(1 + monthlyRateCons, n) - 1) * (1 + monthlyRateCons))) : 0;
+
+  const rHist = histPortfolioReturn / 100;
+  const monthlyRateHist = rHist / 12;
+  const fvInitialHist = initial * Math.pow(1 + rHist, t);
+  const fvMonthlyHist = monthly > 0 ? monthly * ((Math.pow(1 + monthlyRateHist, n) - 1) / monthlyRateHist) * (1 + monthlyRateHist) : 0;
+  const totalProjectedHist = Math.round(fvInitialHist + fvMonthlyHist);
+  const shortfallHist = inflatedTarget - totalProjectedHist;
+  const addSipRequiredHist = shortfallHist > 0 ? roundTo500((shortfallHist * monthlyRateHist) / ((Math.pow(1 + monthlyRateHist, n) - 1) * (1 + monthlyRateHist))) : 0;
+
+  const totalInvested = Math.round(initial + (monthly * n));
+
+  // Step-up Projections
+  const stepUpRate = 0.10;
+  let stepUpFvCons = initial * Math.pow(1 + rCons, t);
+  for (let k = 1; k <= t; k++) {
+    const curM = roundTo500(monthly * Math.pow(1 + stepUpRate, k - 1));
+    const fvYSip = curM * ((Math.pow(1 + monthlyRateCons, 12) - 1) / monthlyRateCons) * (1 + monthlyRateCons);
+    stepUpFvCons += fvYSip * Math.pow(1 + rCons, t - k);
+  }
+  stepUpFvCons = Math.round(stepUpFvCons);
+  const extraWealthCons = Math.round(stepUpFvCons - totalProjectedCons);
+  const extraWealthPctCons = totalProjectedCons > 0 ? ((extraWealthCons / totalProjectedCons) * 100) : 0;
+
+  let stepUpFvHist = initial * Math.pow(1 + rHist, t);
+  for (let k = 1; k <= t; k++) {
+    const curM = roundTo500(monthly * Math.pow(1 + stepUpRate, k - 1));
+    const fvYSip = curM * ((Math.pow(1 + monthlyRateHist, 12) - 1) / monthlyRateHist) * (1 + monthlyRateHist);
+    stepUpFvHist += fvYSip * Math.pow(1 + rHist, t - k);
+  }
+  stepUpFvHist = Math.round(stepUpFvHist);
+  const extraWealthHist = Math.round(stepUpFvHist - totalProjectedHist);
+  const extraWealthPctHist = totalProjectedHist > 0 ? ((extraWealthHist / totalProjectedHist) * 100) : 0;
+
+  // Daily Micro-SIP
+  const dailyMonthEquiv = Math.round(daily * 22);
+  const dailyTotalInvested = Math.round(initial + (dailyMonthEquiv * n));
+  const dailyFvMonthlyCons = dailyMonthEquiv > 0 ? dailyMonthEquiv * ((Math.pow(1 + monthlyRateCons, n) - 1) / monthlyRateCons) * (1 + monthlyRateCons) : 0;
+  const dailyTotalFvCons = Math.round(fvInitialCons + dailyFvMonthlyCons);
+  const dailyFvMonthlyHist = dailyMonthEquiv > 0 ? dailyMonthEquiv * ((Math.pow(1 + monthlyRateHist, n) - 1) / monthlyRateHist) * (1 + monthlyRateHist) : 0;
+  const dailyTotalFvHist = Math.round(fvInitialHist + dailyFvMonthlyHist);
+
+  // Freedom SWP
+  const safeSwpAnnualRate = 0.07;
+  const baseCorpusFreedomCons = (targetFv.sipStrategy === 'stepup' ? stepUpFvCons : totalProjectedCons);
+  const monthlyFreedomPensionCons = roundTo500((baseCorpusFreedomCons * safeSwpAnnualRate) / 12);
+  const freedomMultCons = monthly > 0 ? (monthlyFreedomPensionCons / monthly).toFixed(1) : "0.0";
+
+  const baseCorpusFreedomHist = (targetFv.sipStrategy === 'stepup' ? stepUpFvHist : totalProjectedHist);
+  const monthlyFreedomPensionHist = roundTo500((baseCorpusFreedomHist * safeSwpAnnualRate) / 12);
+  const freedomMultHist = monthly > 0 ? (monthlyFreedomPensionHist / monthly).toFixed(1) : "0.0";
+
+  // Milestones
+  const milestones = [];
+  for (let yr = 1; yr <= t; yr++) {
+    const periods = yr * 12;
+    const inv = Math.round(initial + (monthly * periods));
+    const fvInitC = initial * Math.pow(1 + rCons, yr);
+    const fvMC = monthly > 0 ? monthly * ((Math.pow(1 + monthlyRateCons, periods) - 1) / monthlyRateCons) * (1 + monthlyRateCons) : 0;
+    const fvInitH = initial * Math.pow(1 + rHist, yr);
+    const fvMH = monthly > 0 ? monthly * ((Math.pow(1 + monthlyRateHist, periods) - 1) / monthlyRateHist) * (1 + monthlyRateHist) : 0;
+    milestones.push({
+      yr: `Yr ${yr}`,
+      invested: inv,
+      fvCons: Math.round(fvInitC + fvMC),
+      fvHist: Math.round(fvInitH + fvMH)
+    });
+  }
+
+  // Base Slide Shell Helper
+  function slideWrap(title, subtitle, slideNum, bodyContent) {
+    return `
+      <section class="pdf-slide-page" style="width: 1280px; height: 720px; min-width: 1280px; min-height: 720px; max-width: 1280px; max-height: 720px; background-color: #070d18; color: #f3f4f6; font-family: 'Inter', Calibri, system-ui, -apple-system, sans-serif; padding: 20px 32px; box-sizing: border-box; page-break-after: always; break-after: page; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin: 0 auto 20px auto; border: 1px solid rgba(197, 160, 89, 0.25); position: relative;">
+        <!-- Header -->
+        <div style="border-bottom: 1px solid #2a3f5f; padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: #c5a059; font-weight: 700; font-size: 11px; letter-spacing: 0.05em;">🛡️ ARTHIKA ADVISORS | AMFI Regn. ARN-361236 | Model Portfolios</span>
+          <span style="color: #94a3b8; font-size: 10px;">Client: <strong style="color: white;">${clientName}</strong> ${contactBrief ? ' (' + contactBrief + ')' : ''} | Horizon: <strong>${t} Yrs</strong> | Date: <strong>October 2026</strong></span>
+        </div>
+        <!-- Title -->
+        <div style="margin-top: 6px; margin-bottom: 8px;">
+          <h2 style="font-size: 17px; font-weight: 700; color: #ffffff; margin: 0; text-transform: uppercase; letter-spacing: 0.02em;">${title}</h2>
+          <div style="font-size: 10.5px; color: #dfc599; margin-top: 2px;">${subtitle}</div>
+        </div>
+        <!-- Body -->
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;">
+          ${bodyContent}
+        </div>
+        <!-- Footer -->
+        <div style="border-top: 1px solid #2a3f5f; padding-top: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 9px;">
+          <span style="color: #5e6f85;">Confidential — Prepared by Arthika Advisors | AMFI Regn. ARN-361236 | Certified Financial Planning & Wealth Architecture Framework</span>
+          <span style="color: #c5a059; font-weight: 700; font-size: 10px;">Slide ${slideNum} of 11</span>
+        </div>
+      </section>
+    `;
+  }
+
+  // --- SLIDE 1 ---
+  const s1 = slideWrap("1. INVESTOR SNAPSHOT & GAPS ANALYSIS", "Client Diagnostic Profile, Cashflow Dynamics & Balance Sheet Capacity", 1, `
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 10px;">
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 9.5px; margin-bottom: 6px;">CLIENT PROFILE</div>
+        <div style="font-size: 9.5px; line-height: 1.6;">
+          <div><span style="color: #94a3b8;">Client Name:</span> <strong style="color: #c5a059;">${clientName}</strong></div>
+          <div><span style="color: #94a3b8;">Mobile / WA:</span> <strong style="color: white;">${contactBrief || 'Not Provided'}</strong></div>
+          <div><span style="color: #94a3b8;">Age & City:</span> <strong style="color: white;">${targetFv.age || 38} Yrs | ${targetFv.residence || 'Pune'}</strong></div>
+          <div><span style="color: #94a3b8;">Tax & Horizon:</span> <strong style="color: #dfc599;">${targetFv.taxSlab || 10}% Slab | ${t} Yrs</strong></div>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 9.5px; margin-bottom: 6px;">MONTHLY CASHFLOW</div>
+        <div style="font-size: 9.5px; line-height: 1.6;">
+          <div><span style="color: #94a3b8;">Net Take-Home:</span> <strong style="color: white;">${formatINR(targetFv.income)}/mo</strong></div>
+          <div><span style="color: #94a3b8;">Expenses & Debt:</span> <strong style="color: #94a3b8;">${formatINR(Number(targetFv.expenses || 0) + Number(targetFv.loans || 0))}/mo</strong></div>
+          <div><span style="color: #94a3b8;">Net Surplus:</span> <strong style="color: #10b981;">${formatINR(surplus)}/mo</strong></div>
+          <div><span style="color: #94a3b8;">Net Savings Rate:</span> <strong style="color: #dfc599;">${savingsRate.toFixed(1)}% (Target >30%)</strong></div>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 9.5px; margin-bottom: 6px;">INVESTMENT OPTIONS (CFP)</div>
+        <div style="font-size: 9.5px; line-height: 1.6;">
+          <div><span style="color: #94a3b8;">SIP:</span> <strong style="color: #c5a059;">${formatINR(monthly)}/mo (₹500 mult)</strong></div>
+          <div><span style="color: #94a3b8;">— OR Daily SIP:</span> <strong style="color: #dfc599;">${formatINR(daily)}/day (22 Days)</strong></div>
+          <div><span style="color: #94a3b8;">— OR Lump Sum:</span> <strong style="color: #38bdf8;">${formatINR(initial)} (Exact)</strong></div>
+          <div><span style="color: #94a3b8;">Selected Mode:</span> <strong style="color: white;">${targetFv.sipFrequency === 'daily' ? 'Daily Micro-SIP' : 'Monthly Regular SIP'}</strong></div>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 9.5px; margin-bottom: 6px;">ASSET BASE & STANCE</div>
+        <div style="font-size: 9.5px; line-height: 1.6;">
+          <div><span style="color: #94a3b8;">Current Investments:</span> <strong style="color: white;">${formatINR(targetFv.investments)}</strong></div>
+          <div><span style="color: #94a3b8;">Total Liquid Cushion:</span> <strong style="color: white;">${formatINR(assetBase)}</strong></div>
+          <div><span style="color: #94a3b8;">Risk Stance:</span> <strong style="color: #38bdf8;">${targetRisk.toUpperCase()}</strong></div>
+          <div><span style="color: #94a3b8;">Growth Mode:</span> <strong style="color: #10b981;">${(targetFv.sipStrategy || 'stepup').toUpperCase()}</strong></div>
+        </div>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #38bdf8; font-weight: 700; font-size: 9.5px; margin-bottom: 4px;">🛡️ EMERGENCY BUFFER DIAGNOSTIC</div>
+        <div style="font-size: 9px; color: #94a3b8;">Current: <strong>${formatINR(targetFv.emergencyFund)}</strong> / Target: <strong>${formatINR(emergencyTarget)}</strong></div>
+        <div style="font-size: 9px; font-weight: 700; color: ${Number(targetFv.emergencyFund || 0) < emergencyTarget ? '#f43f5e' : '#10b981'}; margin: 4px 0;">
+          STATUS: ${Number(targetFv.emergencyFund || 0) < emergencyTarget ? 'DEFICIT DETECTED (High Priority)' : 'HEALTHY BUFFER (Compliant)'}
+        </div>
+        <div style="font-size: 8.5px; color: #94a3b8; line-height: 1.4;">
+          Emergency reserves must cover 6 months of living expenses + EMIs in high-yield liquid mutual funds or sweep-in FDs to prevent liquidating long-term equity SIPs during market downturns.
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #dfc599; font-weight: 700; font-size: 9.5px; margin-bottom: 4px;">👨‍👩‍👧 LIFE & HEALTH INSURANCE DEFENSE</div>
+        <div style="font-size: 9px; color: #94a3b8;">Life: <strong>${formatINR(targetFv.termInsurance)}</strong> (Target: ${formatINR(termTarget)}) | Health: <strong>${formatINR(targetFv.healthInsurance)}</strong></div>
+        <div style="font-size: 9px; font-weight: 700; color: ${Number(targetFv.termInsurance || 0) < termTarget ? '#f59e0b' : '#10b981'}; margin: 4px 0;">
+          STATUS: ${Number(targetFv.termInsurance || 0) < termTarget ? 'TERM PROTECTION GAP (Action Needed)' : 'FULLY COVERED (Protected)'}
+        </div>
+        <div style="font-size: 8.5px; color: #94a3b8; line-height: 1.4;">
+          Ensure life cover equals 10x–12x annual income via pure online term insurance. Maintain a minimum ₹5 Lakhs base family health floater + ₹25 Lakhs Super Top-Up independent of corporate cover.
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 9.5px; margin-bottom: 4px;">⚖️ BEHAVIORAL & CASHFLOW DIRECTIVE</div>
+        <div style="font-size: 9px; color: #94a3b8;">Risk Capacity: <strong>HIGH</strong> | Willingness: <strong>${targetRisk.toUpperCase()}</strong></div>
+        <div style="font-size: 9px; font-weight: 700; color: #10b981; margin: 4px 0;">
+          SAVINGS EFFICIENCY: ${savingsRate >= 30 ? 'EXCELLENT (>30%)' : 'MODERATE (<30%)'}
+        </div>
+        <div style="font-size: 8.5px; color: #94a3b8; line-height: 1.4;">
+          Behavioral recommendation: Automate SIP investments on the 1st of every month. Avoid panic selling during market corrections and activate an automated +10% annual Step-Up mandate.
+        </div>
+      </div>
+    </div>
+  `);
+
+  // --- SLIDE 2 ---
+  const s2 = slideWrap("2. MACROECONOMIC & MARKET OUTLOOK", "Current Indian Macro Landscape, Geopolitical Dynamics & Strategic Positioning (October 2026)", 2, `
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1;">
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10.5px; margin-bottom: 8px;">🇮🇳 INDIAN MACROECONOMIC FUNDAMENTALS</div>
+        <ul style="margin: 0; padding-left: 14px; font-size: 9.5px; color: #94a3b8; line-height: 1.6;">
+          <li><strong style="color: white;">GDP Growth Leadership:</strong> India's FY26/FY27 GDP growth projected at 6.8%–7.2%, outpacing all major global economies.</li>
+          <li><strong style="color: white;">Tax & Revenue Buoyancy:</strong> Monthly gross GST collections averaging ₹1.85+ Lakh Crore reflecting rapid corporate formalization.</li>
+          <li><strong style="color: white;">Private CapEx Momentum:</strong> Multi-year expansion cycles underway across Infrastructure, Power, Renewable Energy, and PLI Manufacturing.</li>
+          <li><strong style="color: white;">Corporate Balance Sheets:</strong> Domestic corporate leverage at decadal lows with return on equity (ROE) expanding across mid/large caps.</li>
+        </ul>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10.5px; margin-bottom: 8px;">📈 INTEREST RATES, YIELDS & INFLATION</div>
+        <ul style="margin: 0; padding-left: 14px; font-size: 9.5px; color: #94a3b8; line-height: 1.6;">
+          <li><strong style="color: white;">10-Year G-Sec Sovereign Yield:</strong> Hovering near 6.94%, creating attractive accrual lock-in opportunities for high-grade debt.</li>
+          <li><strong style="color: white;">CPI Inflation Comfort:</strong> Headline inflation moderated to ~4.45%, firmly within the RBI's 4.0% (+/-2%) target corridor.</li>
+          <li><strong style="color: white;">Monetary Policy Stance:</strong> RBI maintaining neutral-to-easing liquidity; global rate cuts (US Fed easing) support emerging market capital.</li>
+          <li><strong style="color: white;">Sovereign Resilience:</strong> India's foreign exchange reserves surpass $680 Billion, shielding the Rupee from sudden currency shocks.</li>
+        </ul>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10.5px; margin-bottom: 8px;">🌍 GEOPOLITICAL DYNAMICS & CAPITAL FLOWS</div>
+        <ul style="margin: 0; padding-left: 14px; font-size: 9.5px; color: #94a3b8; line-height: 1.6;">
+          <li><strong style="color: white;">Domestic SIP Moat:</strong> Retail monthly SIP inflows reaching record ₹23,000+ Crore/month, creating an institutional floor against FII volatility.</li>
+          <li><strong style="color: white;">Energy & Crude Oil:</strong> Brent crude stabilizing within $80–$90/barrel amid OPEC+ supply discipline and Red Sea trade management.</li>
+          <li><strong style="color: white;">Precious Metals (Gold/Silver):</strong> Gold rallied 9%+ in recent months, demonstrating its role as a premier domestic crash & currency hedge.</li>
+          <li><strong style="color: white;">Global Supply Chains:</strong> 'China+1' structural manufacturing shifts continue directing multinational FDI into Indian industrial corridors.</li>
+        </ul>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10.5px; margin-bottom: 8px;">🎯 STRATEGIC ASSET POSITIONING (HOUSE VIEW)</div>
+        <ul style="margin: 0; padding-left: 14px; font-size: 9.5px; color: #94a3b8; line-height: 1.6;">
+          <li><strong style="color: white;">Equities (Core & Satellite):</strong> Prime long-term compounding engine (3-5+ year horizon). Accumulate via SIP/STP in Nifty 500 & Momentum factors.</li>
+          <li><strong style="color: white;">Fixed Income & Stability:</strong> Avoid high-duration traps. Focus on AAA Corporate FDs (7.5%-8.0%) and Senior Secured NCDs (8.7%-10.3%).</li>
+          <li><strong style="color: white;">Daily Micro-SIP Edge:</strong> Leverage daily ₹100 micro-allocations (22 trading days) to eliminate market-timing anxiety seamlessly.</li>
+          <li><strong style="color: white;">Annual Rebalancing:</strong> Rebalance portfolios if Core/Satellite segments drift by >5% absolute weight to capture low valuations systematically.</li>
+        </ul>
+      </div>
+    </div>
+  `);
+
+  // --- SLIDE 3 ---
+  const coreAlloc = portfolio.allocations.find(a => a.key === 'core_equity') ? portfolio.allocations.find(a => a.key === 'core_equity').pct : 45;
+  const satAlloc = portfolio.allocations.find(a => a.key === 'satellite') ? portfolio.allocations.find(a => a.key === 'satellite').pct : 15;
+  const goldAlloc = portfolio.allocations.find(a => a.key === 'precious_metals') ? portfolio.allocations.find(a => a.key === 'precious_metals').pct : 10;
+  const stabAlloc = portfolio.allocations.find(a => a.key === 'stability') ? portfolio.allocations.find(a => a.key === 'stability').pct : 30;
+
+  const coreMonth = roundTo500((coreAlloc / 100) * monthly);
+  const coreD = coreMonth > 0 ? roundTo100(coreMonth / 22, 100) : 0;
+  const satMonth = roundTo500((satAlloc / 100) * monthly);
+  const satD = satMonth > 0 ? roundTo100(satMonth / 22, 100) : 0;
+  const goldMonth = roundTo500((goldAlloc / 100) * monthly);
+  const goldD = goldMonth > 0 ? roundTo100(goldMonth / 22, 100) : 0;
+  const stabMonth = roundTo500((stabAlloc / 100) * monthly);
+  const stabD = stabMonth > 0 ? roundTo100(stabMonth / 22, 100) : 0;
+
+  const s3 = slideWrap("3. RECOMMENDED PORTFOLIO ASSET ALLOCATION", "Nobel-Laureate Markowitz Modern Portfolio Theory & Multi-Asset Allocation Architecture", 3, `
+    <div style="background: #172642; border: 1px solid #c5a059; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <div style="font-size: 13px; font-weight: 700; color: #c5a059;">PROPOSED PORTFOLIO: ${portfolio.name.toUpperCase()} (${portfolio.target})</div>
+        <div style="font-size: 10px; color: white; margin-top: 3px;">
+          Target Conservative Return: <strong>${conservativeReturn.toFixed(1)}% CAGR</strong> | Weighted Historical 3Y: <strong>${histPortfolioReturn.toFixed(1)}% CAGR</strong> | Equity Ratio: <strong>${portfolio.equityPct}%</strong>
+        </div>
+      </div>
+      <div style="text-align: right; color: #38bdf8; font-weight: 700; font-size: 10px; line-height: 1.3;">
+        Nobel Markowitz Model<br>Core-Satellite Strategy
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px;">
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10px; margin-bottom: 4px;">1. CORE EQUITY (MARKET BETA)</div>
+        <div style="font-size: 20px; font-weight: 800; color: white; margin-bottom: 6px;">${coreAlloc}%</div>
+        <div style="font-size: 9px; line-height: 1.5; color: #94a3b8;">
+          <div>Monthly SIP: <strong style="color: white;">${formatINR(coreMonth)}/mo</strong></div>
+          <div>Daily SIP: <strong style="color: #dfc599;">${formatINR(coreD)}/day</strong></div>
+          <div>Lump Sum: <strong style="color: #38bdf8;">${formatINR(Math.round((coreAlloc / 100) * initial))}</strong></div>
+          <p style="margin: 6px 0 0 0; font-size: 8px; color: #64748b;">Captures low-cost broad market Beta through Nifty 50 and Nifty 500 passive index funds.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10px; margin-bottom: 4px;">2. SATELLITE (FACTOR ALPHA)</div>
+        <div style="font-size: 20px; font-weight: 800; color: white; margin-bottom: 6px;">${satAlloc}%</div>
+        <div style="font-size: 9px; line-height: 1.5; color: #94a3b8;">
+          <div>Monthly SIP: <strong style="color: white;">${formatINR(satMonth)}/mo</strong></div>
+          <div>Daily SIP: <strong style="color: #dfc599;">${formatINR(satD)}/day</strong></div>
+          <div>Lump Sum: <strong style="color: #38bdf8;">${formatINR(Math.round((satAlloc / 100) * initial))}</strong></div>
+          <p style="margin: 6px 0 0 0; font-size: 8px; color: #64748b;">Targets structural excess returns (Alpha) through Nifty200 Momentum 30 and Active Small/Midcap mutual funds.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #eab308; border-radius: 6px; padding: 10px;">
+        <div style="color: #eab308; font-weight: 700; font-size: 10px; margin-bottom: 4px;">3. GOLD & SILVER (MULTI-COMMODITY)</div>
+        <div style="font-size: 20px; font-weight: 800; color: #eab308; margin-bottom: 6px;">${goldAlloc}%</div>
+        <div style="font-size: 9px; line-height: 1.5; color: #94a3b8;">
+          <div>Monthly SIP: <strong style="color: white;">${formatINR(goldMonth)}/mo</strong></div>
+          <div>Daily SIP: <strong style="color: #dfc599;">${formatINR(goldD)}/day</strong></div>
+          <div>Lump Sum: <strong style="color: #38bdf8;">${formatINR(Math.round((goldAlloc / 100) * initial))}</strong></div>
+          <p style="margin: 6px 0 0 0; font-size: 8px; color: #eab308;">Motilal Oswal Gold and Silver Passive FoF & Mirae Asset Gold Silver Passive FoF for non-correlated inflation hedging.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10px; margin-bottom: 4px;">4. STABILITY (RISK MITIGATION)</div>
+        <div style="font-size: 20px; font-weight: 800; color: white; margin-bottom: 6px;">${stabAlloc}%</div>
+        <div style="font-size: 9px; line-height: 1.5; color: #94a3b8;">
+          <div>Monthly SIP: <strong style="color: white;">${formatINR(stabMonth)}/mo</strong></div>
+          <div>Daily SIP: <strong style="color: #dfc599;">${formatINR(stabD)}/day</strong></div>
+          <div>Lump Sum: <strong style="color: #38bdf8;">${formatINR(Math.round((stabAlloc / 100) * initial))}</strong></div>
+          <p style="margin: 6px 0 0 0; font-size: 8px; color: #64748b;">Protects capital using CRISIL AAA Corporate FDs, Senior Secured NCDs (8.7%-10.3%), and Debt MFs.</p>
+        </div>
+      </div>
+    </div>
+    <div style="background: #172642; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px 14px;">
+      <div style="color: #c5a059; font-weight: 700; font-size: 9.5px; margin-bottom: 4px;">ACADEMIC NOBEL LAUREATE PORTFOLIO FRAMEWORK</div>
+      <div style="font-size: 8.5px; color: #94a3b8; line-height: 1.5;">
+        • <strong>Markowitz Mean-Variance Optimization:</strong> Blends negatively correlated asset classes (Equity, Fixed Income, Gold/Silver FoF) to eliminate uncompensated risk.<br>
+        • <strong>William Sharpe CAPM:</strong> Isolates ultra-low-cost market Beta (70% core) while targeting active factor Alpha (30% satellite) to maximize Sharpe Ratio.<br>
+        • <strong>Richard Thaler Behavioral Glide Path:</strong> Automates asset allocation shifts across lifecycle stages to remove emotional decision errors during market corrections.
+      </div>
+    </div>
+  `);
+
+  // --- BUILD SLIDE 4 & 5 TABLES ---
+  function buildTableRows(isHistorical) {
+    let html = '';
+    let totMonthly = 0;
+    let totDaily = 0;
+    let totLump = 0;
+    let totFv = 0;
+
+    portfolio.allocations.forEach(alloc => {
+      let schemes = recommendedFunds[alloc.key] || [];
+      if (alloc.key === 'stability') {
+        if (targetFv.stabilityPreference === 'fds_ncds') schemes = schemes.filter(s => s.category === 'fd' || s.category === 'ncd');
+        else if (targetFv.stabilityPreference === 'mf_debt') schemes = schemes.filter(s => s.category === 'mf_debt');
+        else if (targetFv.stabilityPreference === 'sovereign') schemes = schemes.filter(s => s.category === 'gov');
+      }
+
+      if (schemes.length === 0) return;
+
+      schemes.forEach(sch => {
+        const subAllocPct = alloc.pct / schemes.length;
+        const fLump = Math.round((subAllocPct / 100) * initial);
+        const fMonth = roundTo500((subAllocPct / 100) * monthly);
+        const fDaily = fMonth > 0 ? roundTo100(fMonth / 22, 100) : 0;
+
+        const appliedRate = isHistorical ? (sch.histYield || sch.cagr) : sch.cagr;
+        const itemR = appliedRate / 100;
+        const itemMonthlyRate = itemR / 12;
+        const fvL = fLump * Math.pow(1 + itemR, t);
+        const effSip = targetFv.sipFrequency === 'daily' ? (fDaily * 22) : fMonth;
+        const fvS = effSip > 0 ? effSip * ((Math.pow(1 + itemMonthlyRate, n) - 1) / itemMonthlyRate) * (1 + itemMonthlyRate) : 0;
+        const itemTotalFv = Math.round(fvL + fvS);
+
+        totMonthly += fMonth;
+        totDaily += fDaily;
+        totLump += fLump;
+        totFv += itemTotalFv;
+
+        html += `
+          <tr>
+            <td style="padding: 5px 8px; font-weight: 600; color: white;">${sch.name}</td>
+            <td style="padding: 5px 8px; color: #38bdf8;">${sch.type}</td>
+            <td style="padding: 5px 8px; text-align: right;">${subAllocPct.toFixed(1)}%</td>
+            <td style="padding: 5px 8px; text-align: right;">${fMonth > 0 ? formatINR(fMonth) : '--'}</td>
+            <td style="padding: 5px 8px; text-align: right; color: #dfc599; font-weight: 700;">${fDaily > 0 ? formatINR(fDaily) : '--'}</td>
+            <td style="padding: 5px 8px; text-align: right;">${fLump > 0 ? formatINR(fLump) : '--'}</td>
+            <td style="padding: 5px 8px; text-align: center; color: #10b981; font-weight: 700;">${isHistorical ? (sch.metric1 || appliedRate.toFixed(2) + '%') : appliedRate.toFixed(2) + '% p.a.'}</td>
+            <td style="padding: 5px 8px; text-align: right; color: #dfc599; font-weight: 700;">${formatINR(itemTotalFv)} (@ ${appliedRate.toFixed(1)}%)</td>
+          </tr>
+        `;
+      });
+    });
+
+    const totRet = isHistorical ? histPortfolioReturn : conservativeReturn;
+    html += `
+      <tr style="background: #1e3a5f; color: #c5a059; font-weight: 700; border-top: 2px solid #c5a059;">
+        <td style="padding: 6px 8px; color: #c5a059;">TOTAL PORTFOLIO (${isHistorical ? 'HISTORICAL YIELD MATCH' : 'CONSERVATIVE BASELINE'})</td>
+        <td style="padding: 6px 8px; color: #c5a059;">Multi-Asset</td>
+        <td style="padding: 6px 8px; text-align: right; color: white;">100.0%</td>
+        <td style="padding: 6px 8px; text-align: right; color: white;">${formatINR(roundTo500(totMonthly))}</td>
+        <td style="padding: 6px 8px; text-align: right; color: #dfc599;">${formatINR(roundTo100(totDaily))}</td>
+        <td style="padding: 6px 8px; text-align: right; color: white;">${formatINR(Math.round(totLump))}</td>
+        <td style="padding: 6px 8px; text-align: center; color: #10b981;">${totRet.toFixed(1)}% CAGR</td>
+        <td style="padding: 6px 8px; text-align: right; color: #c5a059;">${formatINR(totFv)}</td>
+      </tr>
+    `;
+    return html;
+  }
+
+  // --- SLIDE 4 ---
+  const s4 = slideWrap("4. CURATED PRODUCT PORTFOLIO — CONSERVATIVE BENCHMARK MODEL", "Expected returns projected using standard conservative benchmark parameters (Equities: 12.0% p.a., Fixed Income: 7.5% p.a.)", 4, `
+    <div style="background: #132238; border: 1px solid #c5a059; border-radius: 6px; padding: 6px 12px; margin-bottom: 8px; font-size: 9px; color: #dfc599;">
+      🛡️ <strong>CONSERVATIVE BENCHMARK MODEL:</strong> Utilizes prudent long-term baseline capital market assumptions (Equities: 12.0% p.a., Stability/Debt: 7.5% p.a.) recommended for fiduciary risk management & statutory goal-planning.
+    </div>
+    <div style="overflow-x: auto; border: 1px solid #2a3f5f; border-radius: 6px;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 8.5px; text-align: left;">
+        <thead style="background: #1e3a5f; color: #c5a059;">
+          <tr>
+            <th style="padding: 6px 8px;">Product / Scheme Name</th>
+            <th style="padding: 6px 8px;">Category</th>
+            <th style="padding: 6px 8px; text-align: right;">Weight</th>
+            <th style="padding: 6px 8px; text-align: right;">Monthly SIP</th>
+            <th style="padding: 6px 8px; text-align: right;">Daily SIP</th>
+            <th style="padding: 6px 8px; text-align: right;">Lump Sum</th>
+            <th style="padding: 6px 8px; text-align: center;">Benchmark CAGR</th>
+            <th style="padding: 6px 8px; text-align: right;">Expected Maturity Value (@ Conservative)</th>
+          </tr>
+        </thead>
+        <tbody style="background: #0d1829;">
+          ${buildTableRows(false)}
+        </tbody>
+      </table>
+    </div>
+  `);
+
+  // --- SLIDE 5 ---
+  const s5 = slideWrap("5. CURATED PRODUCT PORTFOLIO — HISTORICAL YIELDS & COUPONS SCENARIO", "Projections matching exact historical yields, 3Y trailing CAGRs, and primary bond/deposit coupons", 5, `
+    <div style="background: #132238; border: 1px solid #38bdf8; border-radius: 6px; padding: 6px 12px; margin-bottom: 8px; font-size: 9px; color: #38bdf8;">
+      📈 <strong>HISTORICAL YIELDS & COUPONS SCENARIO:</strong> Projections strictly match actual 3Y trailing performance and coupons (SBI Nifty: 13.80%, Motilal 500: 15.73%, HSBC Midcap: 23.26%, Bandhan Small Cap: 23.55%, Sammaan NCD: 8.70%, Muthoot NCD: 10.29%, Bajaj FD: 7.75%, Shriram FD: 8.00%).
+    </div>
+    <div style="overflow-x: auto; border: 1px solid #2a3f5f; border-radius: 6px;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 8.5px; text-align: left;">
+        <thead style="background: #1e3a5f; color: #c5a059;">
+          <tr>
+            <th style="padding: 6px 8px;">Product / Scheme Name</th>
+            <th style="padding: 6px 8px;">Category</th>
+            <th style="padding: 6px 8px; text-align: right;">Weight</th>
+            <th style="padding: 6px 8px; text-align: right;">Monthly SIP</th>
+            <th style="padding: 6px 8px; text-align: right;">Daily SIP</th>
+            <th style="padding: 6px 8px; text-align: right;">Lump Sum</th>
+            <th style="padding: 6px 8px; text-align: center;">Actual 3Y CAGR / Coupon</th>
+            <th style="padding: 6px 8px; text-align: right;">Expected Maturity Value (@ Historical Yield)</th>
+          </tr>
+        </thead>
+        <tbody style="background: #0d1829;">
+          ${buildTableRows(true)}
+        </tbody>
+      </table>
+    </div>
+  `);
+
+  // --- SLIDE 6 ---
+  const s6 = slideWrap("6. GOAL-BASED WEALTH ROADMAP — CONSERVATIVE BENCHMARK MODEL", `Inflation-Adjusted Target vs. Compounded Trajectory from Year 1 to ${t} (Conservative Benchmark: ${conservativeReturn.toFixed(1)}% CAGR)`, 6, `
+    <div style="background: #132238; border: 1px solid #c5a059; border-radius: 6px; padding: 6px 12px; margin-bottom: 8px; font-size: 9px; color: #dfc599;">
+      🛡️ <strong>CONSERVATIVE BENCHMARK MODEL:</strong> Prudent trajectory compounding at standard parameters (Equities: 12.0% p.a., Stability/Debt: 7.5% p.a. | ${conservativeReturn.toFixed(1)}% CAGR).
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10px; margin-bottom: 6px;">🎯 GOAL TARGET & INFLATION PARAMETERS</div>
+        <div style="font-size: 9.5px; line-height: 1.6; color: #94a3b8;">
+          <div>Primary Goal: <strong style="color: white;">${(targetFv.targetGoal || 'WEALTH ACCELERATION').toUpperCase()}</strong> | Horizon: <strong style="color: white;">${t} Years</strong></div>
+          <div>Today's Cost: <strong style="color: white;">${formatINR(target)}</strong> | Assumed Inflation: <strong style="color: #dfc599;">6.0% p.a.</strong></div>
+          <div>Inflation-Adjusted Target Cost: <strong style="color: #c5a059; font-size: 11px;">${formatINR(inflatedTarget)}</strong> (+59% due to inflation)</div>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10px; margin-bottom: 6px;">📊 CONSERVATIVE ACCUMULATION & GAP DIAGNOSTIC</div>
+        <div style="font-size: 9.5px; line-height: 1.6; color: #94a3b8;">
+          <div>Total Invested Capital: <strong style="color: white;">${formatINR(totalInvested)}</strong> (Lumpsum: ${formatINR(initial)} + SIP)</div>
+          <div>Conservative Projected Corpus (${conservativeReturn.toFixed(1)}% CAGR): <strong style="color: #10b981; font-size: 11px;">${formatINR(totalProjectedCons)}</strong></div>
+          <div>Goal Status: <strong style="color: ${shortfallCons <= 0 ? '#10b981' : '#f43f5e'};">${shortfallCons <= 0 ? 'SURPLUS OF +' + formatINR(Math.abs(shortfallCons)) : 'SHORTFALL OF -' + formatINR(shortfallCons) + ' (Add\'l SIP ' + formatINR(addSipRequiredCons) + '/mo)'}</strong></div>
+        </div>
+      </div>
+    </div>
+    <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px; flex: 1;">
+      <div style="color: #38bdf8; font-weight: 700; font-size: 9.5px; margin-bottom: 8px;">📈 TIMELINE WEALTH ACCUMULATION MILESTONES (YEAR 1 TO YEAR ${t})</div>
+      <div style="display: grid; grid-template-columns: repeat(${milestones.length}, 1fr); gap: 6px; align-items: flex-end; height: 160px; padding: 10px 0; border-bottom: 1px solid #2a3f5f;">
+        ${milestones.map(m => {
+          const maxVal = Math.max(...milestones.map(x => Math.max(x.invested, x.fvCons)));
+          const hInv = Math.round((m.invested / maxVal) * 120);
+          const hFv = Math.round((m.fvCons / maxVal) * 120);
+          return `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+              <div style="display: flex; gap: 4px; align-items: flex-end; width: 100%; justify-content: center;">
+                <div style="width: 45%; height: ${Math.max(10, hInv)}px; background: #38bdf8; border-radius: 2px;" title="Invested: ${formatINR(m.invested)}"></div>
+                <div style="width: 45%; height: ${Math.max(10, hFv)}px; background: #10b981; border-radius: 2px;" title="Corpus: ${formatINR(m.fvCons)}"></div>
+              </div>
+              <div style="font-size: 8px; color: #94a3b8; margin-top: 4px;">${m.yr}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div style="display: flex; justify-content: center; gap: 20px; font-size: 8.5px; margin-top: 8px;">
+        <span style="color: #38bdf8;">■ Cumulative Invested Capital</span>
+        <span style="color: #10b981;">■ Projected Wealth Corpus (@ ${conservativeReturn.toFixed(1)}% CAGR)</span>
+      </div>
+    </div>
+  `);
+
+  // --- SLIDE 7 ---
+  const s7 = slideWrap("7. GOAL-BASED WEALTH ROADMAP — HISTORICAL YIELDS & COUPONS SCENARIO", `Inflation-Adjusted Target vs. Compounded Trajectory from Year 1 to ${t} (Historical 3Y Weighted Performance: ${histPortfolioReturn.toFixed(1)}% CAGR)`, 7, `
+    <div style="background: #132238; border: 1px solid #38bdf8; border-radius: 6px; padding: 6px 12px; margin-bottom: 8px; font-size: 9px; color: #38bdf8;">
+      📈 <strong>HISTORICAL YIELDS & COUPONS SCENARIO:</strong> Wealth compounding strictly matching exact historical 3Y trailing performance and primary coupon yields (${histPortfolioReturn.toFixed(1)}% CAGR).
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10px; margin-bottom: 6px;">🎯 GOAL TARGET & INFLATION PARAMETERS</div>
+        <div style="font-size: 9.5px; line-height: 1.6; color: #94a3b8;">
+          <div>Primary Goal: <strong style="color: white;">${(targetFv.targetGoal || 'WEALTH ACCELERATION').toUpperCase()}</strong> | Horizon: <strong style="color: white;">${t} Years</strong></div>
+          <div>Today's Cost: <strong style="color: white;">${formatINR(target)}</strong> | Assumed Inflation: <strong style="color: #dfc599;">6.0% p.a.</strong></div>
+          <div>Inflation-Adjusted Target Cost: <strong style="color: #c5a059; font-size: 11px;">${formatINR(inflatedTarget)}</strong> (+59% due to inflation)</div>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10px; margin-bottom: 6px;">📊 HISTORICAL YIELD ACCUMULATION & GAP DIAGNOSTIC</div>
+        <div style="font-size: 9.5px; line-height: 1.6; color: #94a3b8;">
+          <div>Total Invested Capital: <strong style="color: white;">${formatINR(totalInvested)}</strong> (Lumpsum: ${formatINR(initial)} + SIP)</div>
+          <div>Historical Yield Projected Corpus (${histPortfolioReturn.toFixed(1)}% CAGR): <strong style="color: #10b981; font-size: 11px;">${formatINR(totalProjectedHist)}</strong></div>
+          <div>Goal Status: <strong style="color: ${shortfallHist <= 0 ? '#10b981' : '#f43f5e'};">${shortfallHist <= 0 ? 'SURPLUS OF +' + formatINR(Math.abs(shortfallHist)) + ' (Growth Trajectory)' : 'SHORTFALL OF -' + formatINR(shortfallHist) + ' (Add\'l SIP ' + formatINR(addSipRequiredHist) + '/mo)'}</strong></div>
+        </div>
+      </div>
+    </div>
+    <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 10px; flex: 1;">
+      <div style="color: #c5a059; font-weight: 700; font-size: 9.5px; margin-bottom: 8px;">📈 TIMELINE WEALTH ACCUMULATION MILESTONES (HISTORICAL YIELDS TRAJECTORY: YEAR 1 TO YEAR ${t})</div>
+      <div style="display: grid; grid-template-columns: repeat(${milestones.length}, 1fr); gap: 6px; align-items: flex-end; height: 160px; padding: 10px 0; border-bottom: 1px solid #2a3f5f;">
+        ${milestones.map(m => {
+          const maxVal = Math.max(...milestones.map(x => Math.max(x.invested, x.fvHist)));
+          const hInv = Math.round((m.invested / maxVal) * 120);
+          const hFv = Math.round((m.fvHist / maxVal) * 120);
+          return `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+              <div style="display: flex; gap: 4px; align-items: flex-end; width: 100%; justify-content: center;">
+                <div style="width: 45%; height: ${Math.max(10, hInv)}px; background: #38bdf8; border-radius: 2px;" title="Invested: ${formatINR(m.invested)}"></div>
+                <div style="width: 45%; height: ${Math.max(10, hFv)}px; background: #eab308; border-radius: 2px;" title="Historical Corpus: ${formatINR(m.fvHist)}"></div>
+              </div>
+              <div style="font-size: 8px; color: #94a3b8; margin-top: 4px;">${m.yr}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div style="display: flex; justify-content: center; gap: 20px; font-size: 8.5px; margin-top: 8px;">
+        <span style="color: #38bdf8;">■ Cumulative Invested Capital</span>
+        <span style="color: #eab308;">■ Projected Wealth Corpus (@ ${histPortfolioReturn.toFixed(1)}% CAGR)</span>
+      </div>
+    </div>
+  `);
+
+  // --- SLIDE 8 ---
+  const s8 = slideWrap("8. WEALTH ACCELERATION: STEP-UP SIP vs. FREEDOM SIP JOURNEY — CONSERVATIVE BENCHMARK MODEL", `Dynamic SIP Accelerators projected using standard conservative benchmark parameters (Equities: 12.0% p.a., Fixed Income: 7.5% p.a. | ${conservativeReturn.toFixed(1)}% CAGR)`, 8, `
+    <div style="background: #132238; border: 1px solid #c5a059; border-radius: 6px; padding: 6px 12px; margin-bottom: 12px; font-size: 9px; color: #dfc599;">
+      🛡️ <strong>CONSERVATIVE BENCHMARK MODEL:</strong> Prudent baseline projection demonstrating the power of +10% Step-Up SIP and Freedom SIP under standard advisory return parameters (${conservativeReturn.toFixed(1)}% CAGR).
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; flex: 1;">
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10px; margin-bottom: 2px;">1. REGULAR MONTHLY SIP</div>
+        <div style="font-size: 8px; color: #38bdf8; margin-bottom: 8px;">Fixed Nominal Baseline</div>
+        <div style="font-size: 9px; line-height: 1.6; color: #94a3b8;">
+          <div>Monthly SIP:<br><strong style="color: white; font-size: 11px;">${formatINR(monthly)}/mo</strong></div>
+          <div>Total Capital Invested:<br><strong style="color: #94a3b8;">${formatINR(totalInvested)}</strong></div>
+          <div>Expected Corpus (${t} Yrs):<br><strong style="color: #c5a059; font-size: 12px;">${formatINR(totalProjectedCons)}</strong></div>
+          <p style="margin: 8px 0 0 0; font-size: 8px; color: #64748b;">Fixed nominal contribution over entire tenure. Standard disciplined investing in strict multiples of ₹500.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10px; margin-bottom: 2px;">2. DAILY MICRO-SIP</div>
+        <div style="font-size: 8px; color: #dfc599; margin-bottom: 8px;">Rupee Cost Averaging (RCA)</div>
+        <div style="font-size: 9px; line-height: 1.6; color: #94a3b8;">
+          <div>Daily SIP Amount:<br><strong style="color: #dfc599; font-size: 11px;">${formatINR(daily)}/day</strong></div>
+          <div>Monthly Equiv (22 Days):<br><strong style="color: white;">${formatINR(dailyMonthEquiv)}/mo</strong></div>
+          <div>Expected Corpus (${t} Yrs):<br><strong style="color: #dfc599; font-size: 12px;">${formatINR(dailyTotalFvCons)}</strong></div>
+          <p style="margin: 8px 0 0 0; font-size: 8px; color: #64748b;">250+ annual buy-points averaging volatility. Daily automated micro-investments across 22 working days.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #10b981; border-radius: 6px; padding: 12px;">
+        <div style="color: #10b981; font-weight: 700; font-size: 10px; margin-bottom: 2px;">3. STEP-UP SIP (+10%/YR)</div>
+        <div style="font-size: 8px; color: #10b981; margin-bottom: 8px;">CFP Growth Booster</div>
+        <div style="font-size: 9px; line-height: 1.6; color: #94a3b8;">
+          <div>Starting Monthly SIP:<br><strong style="color: white; font-size: 11px;">${formatINR(monthly)}/mo</strong></div>
+          <div>Year ${t} Monthly SIP:<br><strong style="color: white;">${formatINR(roundTo500(monthly * Math.pow(1.10, t - 1)))}/mo</strong></div>
+          <div>Accelerated Corpus (${t} Yrs):<br><strong style="color: #10b981; font-size: 12px;">${formatINR(stepUpFvCons)}</strong></div>
+          <div style="color: #10b981; font-weight: 700; font-size: 10px; margin-top: 4px;">+${formatINR(extraWealthCons)} (+${extraWealthPctCons.toFixed(0)}%)</div>
+          <p style="margin: 4px 0 0 0; font-size: 8px; color: #64748b;">Boosts SIP by 10% annually with salary increments. Shortens goal timelines by 3–5 years.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #38bdf8; border-radius: 6px; padding: 12px;">
+        <div style="color: #38bdf8; font-weight: 700; font-size: 10px; margin-bottom: 2px;">4. FREEDOM SIP (RETIREMENT SWP)</div>
+        <div style="font-size: 8px; color: #38bdf8; margin-bottom: 8px;">Lifetime Financial Freedom</div>
+        <div style="font-size: 9px; line-height: 1.6; color: #94a3b8;">
+          <div>Accumulation Phase:<br><strong style="color: white;">${t} Years Systematic</strong></div>
+          <div>Target Maturity Corpus:<br><strong style="color: white; font-size: 11px;">${formatINR(baseCorpusFreedomCons)}</strong></div>
+          <div>Monthly Freedom SWP:<br><strong style="color: #38bdf8; font-size: 12px;">${formatINR(monthlyFreedomPensionCons)}/mo</strong></div>
+          <div style="color: #38bdf8; font-weight: 700; font-size: 10px; margin-top: 4px;">${freedomMultCons}x initial monthly SIP</div>
+          <p style="margin: 4px 0 0 0; font-size: 8px; color: #64748b;">At maturity, corpus transitions to stability assets to pay tax-efficient monthly income for life with 0% capital loss.</p>
+        </div>
+      </div>
+    </div>
+  `);
+
+  // --- SLIDE 9 ---
+  const s9 = slideWrap("9. WEALTH ACCELERATION: STEP-UP SIP vs. FREEDOM SIP JOURNEY — HISTORICAL YIELDS SCENARIO", `Dynamic SIP Accelerators projected strictly matching exact historical 3Y trailing performance and primary coupon yields (${histPortfolioReturn.toFixed(1)}% CAGR)`, 9, `
+    <div style="background: #132238; border: 1px solid #38bdf8; border-radius: 6px; padding: 6px 12px; margin-bottom: 12px; font-size: 9px; color: #38bdf8;">
+      📈 <strong>HISTORICAL YIELDS & COUPONS SCENARIO:</strong> Demonstrates terminal wealth acceleration and higher lifetime SWP retirement pensions when schemes compound at historical 3Y CAGRs and primary coupons (${histPortfolioReturn.toFixed(1)}% CAGR).
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; flex: 1;">
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10px; margin-bottom: 2px;">1. REGULAR MONTHLY SIP</div>
+        <div style="font-size: 8px; color: #38bdf8; margin-bottom: 8px;">Fixed Nominal Baseline</div>
+        <div style="font-size: 9px; line-height: 1.6; color: #94a3b8;">
+          <div>Monthly SIP:<br><strong style="color: white; font-size: 11px;">${formatINR(monthly)}/mo</strong></div>
+          <div>Total Capital Invested:<br><strong style="color: #94a3b8;">${formatINR(totalInvested)}</strong></div>
+          <div>Expected Corpus (${t} Yrs):<br><strong style="color: #c5a059; font-size: 12px;">${formatINR(totalProjectedHist)}</strong></div>
+          <p style="margin: 8px 0 0 0; font-size: 8px; color: #64748b;">Compounding strictly at weighted historical 3Y CAGR across selected asset allocations.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10px; margin-bottom: 2px;">2. DAILY MICRO-SIP</div>
+        <div style="font-size: 8px; color: #dfc599; margin-bottom: 8px;">Rupee Cost Averaging (RCA)</div>
+        <div style="font-size: 9px; line-height: 1.6; color: #94a3b8;">
+          <div>Daily SIP Amount:<br><strong style="color: #dfc599; font-size: 11px;">${formatINR(daily)}/day</strong></div>
+          <div>Monthly Equiv (22 Days):<br><strong style="color: white;">${formatINR(dailyMonthEquiv)}/mo</strong></div>
+          <div>Expected Corpus (${t} Yrs):<br><strong style="color: #dfc599; font-size: 12px;">${formatINR(dailyTotalFvHist)}</strong></div>
+          <p style="margin: 8px 0 0 0; font-size: 8px; color: #64748b;">Daily automated micro-investments in multiples of ₹100 across 22 working days. High-frequency Rupee Cost Averaging.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #10b981; border-radius: 6px; padding: 12px;">
+        <div style="color: #10b981; font-weight: 700; font-size: 10px; margin-bottom: 2px;">3. STEP-UP SIP (+10%/YR)</div>
+        <div style="font-size: 8px; color: #10b981; margin-bottom: 8px;">CFP Growth Booster</div>
+        <div style="font-size: 9px; line-height: 1.6; color: #94a3b8;">
+          <div>Starting Monthly SIP:<br><strong style="color: white; font-size: 11px;">${formatINR(monthly)}/mo</strong></div>
+          <div>Year ${t} Monthly SIP:<br><strong style="color: white;">${formatINR(roundTo500(monthly * Math.pow(1.10, t - 1)))}/mo</strong></div>
+          <div>Accelerated Corpus (${t} Yrs):<br><strong style="color: #10b981; font-size: 12px;">${formatINR(stepUpFvHist)}</strong></div>
+          <div style="color: #10b981; font-weight: 700; font-size: 10px; margin-top: 4px;">+${formatINR(extraWealthHist)} (+${extraWealthPctHist.toFixed(0)}%)</div>
+          <p style="margin: 4px 0 0 0; font-size: 8px; color: #64748b;">Boosts SIP by 10% annually with salary increments. Massive compounding over historical bull cycles.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #38bdf8; border-radius: 6px; padding: 12px;">
+        <div style="color: #38bdf8; font-weight: 700; font-size: 10px; margin-bottom: 2px;">4. FREEDOM SIP (RETIREMENT SWP)</div>
+        <div style="font-size: 8px; color: #38bdf8; margin-bottom: 8px;">Lifetime Financial Freedom</div>
+        <div style="font-size: 9px; line-height: 1.6; color: #94a3b8;">
+          <div>Accumulation Phase:<br><strong style="color: white;">${t} Years Systematic</strong></div>
+          <div>Target Maturity Corpus:<br><strong style="color: white; font-size: 11px;">${formatINR(baseCorpusFreedomHist)}</strong></div>
+          <div>Monthly Freedom SWP:<br><strong style="color: #38bdf8; font-size: 12px;">${formatINR(monthlyFreedomPensionHist)}/mo</strong></div>
+          <div style="color: #38bdf8; font-weight: 700; font-size: 10px; margin-top: 4px;">${freedomMultHist}x initial monthly SIP</div>
+          <p style="margin: 4px 0 0 0; font-size: 8px; color: #64748b;">At maturity, historical accumulated corpus switches to stability assets for superior inflation-protected SWP income.</p>
+        </div>
+      </div>
+    </div>
+  `);
+
+  // --- SLIDE 10 ---
+  const s10 = slideWrap("10. PROTECTION & CONTINGENCY DIAGNOSTICS", "Shielding Wealth from Catastrophic Shocks: Emergency Reserves, Health, Life & Estate", 10, `
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1;">
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #38bdf8; font-weight: 700; font-size: 10.5px; margin-bottom: 4px;">🛡️ PILLAR 1: EMERGENCY BUFFER DEFENSE</div>
+        <div style="font-size: 9px; font-weight: 700; color: ${Number(targetFv.emergencyFund || 0) < emergencyTarget ? '#f43f5e' : '#10b981'}; margin-bottom: 4px;">
+          STATUS: ${Number(targetFv.emergencyFund || 0) < emergencyTarget ? 'CRITICAL DEFICIT (Action Required)' : 'COMPLIANT BUFFER (Shielded)'}
+        </div>
+        <div style="font-size: 9px; color: #94a3b8; line-height: 1.5;">
+          <div>CFP Benchmark: <strong>6–12 months expenses (${formatINR(emergencyTarget)})</strong></div>
+          <div>Current Liquid Reserve: <strong style="color: white;">${formatINR(targetFv.emergencyFund)}</strong></div>
+          <p style="margin: 6px 0 0 0; color: #cbd5e1;">Advisory Protocol: Maintain liquid buffer in ABSL Liquid Fund or bank sweep accounts. Never invest emergency capital into equity or high-volatility products.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #dfc599; font-weight: 700; font-size: 10.5px; margin-bottom: 4px;">👨‍👩‍👧 PILLAR 2: LIFE INSURANCE & INCOME REPLACEMENT</div>
+        <div style="font-size: 9px; font-weight: 700; color: ${Number(targetFv.termInsurance || 0) < termTarget ? '#f59e0b' : '#10b981'}; margin-bottom: 4px;">
+          STATUS: ${Number(targetFv.termInsurance || 0) < termTarget ? 'COVERAGE GAP (Urgent Term Cover Needed)' : 'FULLY COVERED (Protected)'}
+        </div>
+        <div style="font-size: 9px; color: #94a3b8; line-height: 1.5;">
+          <div>CFP Benchmark: <strong>10x–12x gross annual income (${formatINR(termTarget)})</strong></div>
+          <div>Current Term Life Cover: <strong style="color: white;">${formatINR(targetFv.termInsurance)}</strong></div>
+          <p style="margin: 6px 0 0 0; color: #cbd5e1;">Advisory Protocol: Secure pure online term insurance covering your earning horizon up to age 65–70. Surrender high-cost traditional endowment/ULIP policies.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #10b981; font-weight: 700; font-size: 10.5px; margin-bottom: 4px;">🏥 PILLAR 3: HEALTH & MEDICAL SHIELD</div>
+        <div style="font-size: 9px; font-weight: 700; color: #10b981; margin-bottom: 4px;">
+          STATUS: BASE HEALTH COVER ACTIVE (Protected)
+        </div>
+        <div style="font-size: 9px; color: #94a3b8; line-height: 1.5;">
+          <div>CFP Benchmark: <strong>₹5–₹10 Lakhs Base Floater + ₹25 Lakhs Super Top-Up</strong></div>
+          <div>Current Health Policy: <strong style="color: white;">${formatINR(targetFv.healthInsurance)}</strong></div>
+          <p style="margin: 6px 0 0 0; color: #cbd5e1;">Advisory Protocol: Never rely solely on corporate employer insurance. Maintain an independent family floater with comprehensive restoration and no room-rent capping.</p>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 12px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 10.5px; margin-bottom: 4px;">📜 PILLAR 4: ESTATE & NOMINEE GOVERNANCE</div>
+        <div style="font-size: 9px; font-weight: 700; color: #38bdf8; margin-bottom: 4px;">
+          STATUS: COMPLIANCE AUDIT RECOMMENDED (Periodic Review)
+        </div>
+        <div style="font-size: 9px; color: #94a3b8; line-height: 1.5;">
+          <div>CFP Benchmark: <strong>100% folios registered with primary and secondary nominees</strong></div>
+          <div>Audit Scope: <strong>Mutual fund folios, bank accounts, demat accounts & property deeds</strong></div>
+          <p style="margin: 6px 0 0 0; color: #cbd5e1;">Advisory Protocol: Ensure all folio nominations are actively updated. Create a registered Will if holding real estate or private business assets. Maintain an encrypted emergency vault.</p>
+        </div>
+      </div>
+    </div>
+  `);
+
+  // --- SLIDE 11 ---
+  const s11 = slideWrap("11. ACTIONABLE EXECUTION PLAN", "Phased Deployment Roadmap, Systematic Execution & Ongoing Portfolio Governance", 11, `
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1;">
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 14px;">
+        <div style="color: #38bdf8; font-weight: 700; font-size: 11px;">PHASE 1: IMMEDIATE SETUP</div>
+        <div style="font-size: 8.5px; color: #94a3b8; margin-bottom: 10px;">Days 1 to 30</div>
+        <div style="font-size: 9px; line-height: 1.6; color: #cbd5e1;">
+          <div style="margin-bottom: 8px;"><strong style="color: white;">1. C-KYC & Auto-Debit Registration:</strong><br>Complete central digital KYC verification and activate online bank e-Mandates/NACH for seamless automated SIP deductions.</div>
+          <div style="margin-bottom: 8px;"><strong style="color: white;">2. Lock Emergency Buffer Reserve:</strong><br>Deploy ${formatINR(emergencyTarget)} into ABSL Liquid Fund before initiating long-term equity allocations.</div>
+          <div style="margin-bottom: 8px;"><strong style="color: white;">3. Activate Core & Satellite SIPs:</strong><br>Initiate recommended Monthly SIP (${formatINR(monthly)}) with an Automated Annual +10% Step-Up Mandate.</div>
+          <div><strong style="color: white;">4. Setup Daily Micro-SIP Schedule:</strong><br>Configure daily auto-investing of ${formatINR(daily)}/day in multiples of ₹100 for high-frequency Rupee Cost Averaging.</div>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 14px;">
+        <div style="color: #c5a059; font-weight: 700; font-size: 11px;">PHASE 2: DEPLOYMENT & OPTIMIZATION</div>
+        <div style="font-size: 8.5px; color: #94a3b8; margin-bottom: 10px;">Days 31 to 90</div>
+        <div style="font-size: 9px; line-height: 1.6; color: #cbd5e1;">
+          <div style="margin-bottom: 8px;"><strong style="color: white;">1. Systematic Lump Sum STP Deployment:</strong><br>Deploy available lumpsum (${formatINR(initial)}) via 6–12 month Systematic Transfer Plans to average entry valuations.</div>
+          <div style="margin-bottom: 8px;"><strong style="color: white;">2. High-Yield Fixed Income Lock-In:</strong><br>Allocate stability assets into AAA Corporate FDs (Bajaj/Shriram 7.75%-8.0%) and Senior Secured NCDs (AA+ 8.7%-10.3% YTM) for regular cashflow.</div>
+          <div style="margin-bottom: 8px;"><strong style="color: white;">3. Freedom SIP Maturity Triggers:</strong><br>Register target maturity date (${t} Years) to automatically switch corpus into systematic monthly SWP payouts.</div>
+          <div><strong style="color: white;">4. Eliminate High-Cost Legacy Funds:</strong><br>Audit and prune legacy underperforming mutual funds with high expense ratios or duplicate portfolio overlaps.</div>
+        </div>
+      </div>
+      <div style="background: #0f1c30; border: 1px solid #2a3f5f; border-radius: 6px; padding: 14px;">
+        <div style="color: #10b981; font-weight: 700; font-size: 11px;">PHASE 3: GOVERNANCE & MAINTENANCE</div>
+        <div style="font-size: 8.5px; color: #94a3b8; margin-bottom: 10px;">Annual Checkpoints</div>
+        <div style="font-size: 9px; line-height: 1.6; color: #cbd5e1;">
+          <div style="margin-bottom: 8px;"><strong style="color: white;">1. 5% Rebalance Band Trigger:</strong><br>Review portfolio annually; rebalance asset weights if Core Equity, Satellite, or Stability drift by >5% from target allocation.</div>
+          <div style="margin-bottom: 8px;"><strong style="color: white;">2. Step-Up SIP Verification:</strong><br>Verify that the +10% annual escalation executes smoothly aligned with your annual appraisal/salary increment cycle.</div>
+          <div style="margin-bottom: 8px;"><strong style="color: white;">3. Annual LTCG Tax Harvesting:</strong><br>Harvest Long-Term Capital Gains annually up to the statutory IT exemption limit to boost compounding efficiency.</div>
+          <div><strong style="color: white;">4. Annual Comprehensive Portfolio Audit:</strong><br>Schedule annual review with Arthika Advisors to adjust for life milestones, career shifts, and goal revisions.</div>
+        </div>
+      </div>
+    </div>
+  `);
+
+  return `
+    <div class="presentation-deck-wrapper" style="background: #070d18; color: #f3f4f6; width: 1280px; margin: 0 auto;">
+      ${s1}
+      ${s2}
+      ${s3}
+      ${s4}
+      ${s5}
+      ${s6}
+      ${s7}
+      ${s8}
+      ${s9}
+      ${s10}
+      ${s11}
+    </div>
+  `;
+}
+window.generatePresentationDeckHTML = generatePresentationDeckHTML;
+
+// 1-Click Direct PDF Export using html2pdf
+async function exportToPDF(customLead) {
+  let cName = "Valued_Investor";
+  if (customLead) {
+    cName = customLead.name || (customLead.formValues && (customLead.formValues.customerName || customLead.formValues.name)) || "Valued_Investor";
+  } else if (formValues && formValues.customerName) {
+    cName = formValues.customerName;
+  }
+  const cleanName = cName.replace(/[^a-zA-Z0-9]/g, '_');
+  const filename = `Arthika_Wealth_Plan_${cleanName}_Report.pdf`;
+
+  const tempContainer = document.createElement('div');
+  tempContainer.id = 'temp-pdf-export-container';
+  tempContainer.style.position = 'fixed';
+  tempContainer.style.left = '-99999px';
+  tempContainer.style.top = '0';
+  tempContainer.style.width = '1280px';
+  tempContainer.style.zIndex = '-9999';
+  tempContainer.innerHTML = generatePresentationDeckHTML(customLead);
+  document.body.appendChild(tempContainer);
+
+  if (typeof html2pdf !== 'undefined') {
+    const opt = {
+      margin: 0,
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 1.5, useCORS: true, logging: false, scrollY: 0 },
+      jsPDF: { unit: 'in', format: [13.33, 7.5], orientation: 'landscape' }
+    };
+    try {
+      await html2pdf().set(opt).from(tempContainer).save();
+    } catch (err) {
+      console.warn("html2pdf export failed, launching print dialog fallback:", err);
+      printPresentationPlan(customLead);
+    } finally {
+      if (document.body.contains(tempContainer)) {
+        document.body.removeChild(tempContainer);
+      }
+    }
+  } else {
+    document.body.removeChild(tempContainer);
+    printPresentationPlan(customLead);
+  }
+}
+window.exportToPDF = exportToPDF;
+
+// Direct Print / Save as PDF Presentation Window
+function printPresentationPlan(customLead) {
+  const deckHtml = generatePresentationDeckHTML(customLead);
+  const printWin = window.open('', '_blank', 'width=1320,height=800');
+  if (!printWin) {
+    alert("Popup blocked. Please allow popups for this portal to generate the PDF print preview.");
+    return;
+  }
+  printWin.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Arthika Advisors - Certified Financial Plan</title>
+      <meta charset="utf-8">
+      <style>
+        @page { size: landscape; margin: 0; }
+        body { margin: 0; padding: 0; background: #070d18; color: #f3f4f6; font-family: 'Inter', Calibri, system-ui, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        @media print {
+          .no-print { display: none !important; }
+          .pdf-slide-page { margin: 0 !important; border: none !important; page-break-after: always !important; break-after: page !important; width: 100vw !important; height: 100vh !important; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="no-print" style="background: #11223b; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #c5a059; position: sticky; top: 0; z-index: 9999;">
+        <span style="color: #c5a059; font-weight: 700; font-size: 14px;">Arthika Advisors — 11-Slide Financial Plan Print & Save to PDF</span>
+        <div>
+          <button onclick="window.print()" style="background: #10b981; color: white; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 10px; font-size: 13px;">🖨️ Print / Save as PDF</button>
+          <button onclick="window.close()" style="background: rgba(255,255,255,0.15); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;">Close</button>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; padding: 20px 0;">
+        ${deckHtml}
+      </div>
+      <script>
+        window.onload = function() {
+          setTimeout(function() { window.print(); }, 600);
+        };
+      <\/script>
+    </body>
+    </html>
+  `);
+  printWin.document.close();
+}
+window.printPresentationPlan = printPresentationPlan;
 
 // =========================================================================
 // SECTION: INTERACTIVE SMART CALCULATORS ENGINE
